@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Router from "vue-router";
-import HelloWorld from "@/components/HelloWorld";
+import SelectWalletContainer from "@/containers/SelectWalletContainer.vue";
 import VueRouter from "vue-router";
 
 Vue.use(Router);
@@ -8,7 +8,7 @@ Vue.use(Router);
 const routes = [
   {
     path: "/dashboard",
-    component: HelloWorld
+    component: SelectWalletContainer
   }
 ];
 const router = new VueRouter({

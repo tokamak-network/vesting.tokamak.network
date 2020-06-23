@@ -18,13 +18,15 @@
 import HeaderContainer from "@/containers/HeaderContainer.vue";
 import AccessWalletLayout from "@/layouts/AccessWalletLayout.vue";
 import FooterContainer from "@/containers/FooterContainer.vue";
+import MainLayout from "@/layouts/MainLayout.vue";
 
 export default {
   name: "App",
   components: {
     "header-container": HeaderContainer,
     "access-wallet-layout": AccessWalletLayout,
-    "footer-container": FooterContainer
+    "footer-container": FooterContainer,
+    "main-layout": MainLayout
   },
   data() {
     return {

@@ -2,14 +2,9 @@
   <div class="header-container">
     <div class="header">
       <div class="header-title-container">
-        <a
-          class="header-title"
-          target="_self"
-          rel="noopener noreferrer"
-          href="#"
-        >
+        <div class="header-title" target="_self" rel="noopener noreferrer">
           Tokamak Network Vesting Dashboard
-        </a>
+        </div>
       </div>
       <div class="header-link-container">
         <a
