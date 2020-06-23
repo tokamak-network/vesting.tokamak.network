@@ -1,8 +1,26 @@
-import Vue from 'vue'
-import App from './App.vue'
+import Vue from 'vue';
+import Notifications from 'vue-notification';
+Vue.use(Notifications);
 
-Vue.config.productionTip = false
+import App from './App.vue';
+import router from './router';
+import store from './store';
+
+import '@/assets/css/960.css';
+// import '@/assets/css/reset.css';
+import '@/assets/css/text.css';
+import * as filters from '@/filters';
+
+// https://vuedose.tips/tips/measure-runtime-performance-in-vue-js-apps
+const isDev = process.env.NODE_ENV !== 'production';
+Vue.config.performance = isDev;
+
+Object.keys(filters).forEach(key => {
+  Vue.filter(key, filters[key]);
+});
 
 new Vue({
+  router,
+  store,
   render: h => h(App),
-}).$mount('#app')
+}).$mount('#app');
