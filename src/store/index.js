@@ -1,6 +1,6 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-
+Vue.use(Vuex)
 // import router from '@/router'
 // import web3EthABI from 'web3-eth-abi'
 import { cloneDeep, isEqual } from 'lodash'
@@ -12,7 +12,9 @@ import { setPendingTransactions, getPendingTransactions } from '@/helpers/localS
 // import SwapperABI from '@/contracts/abi/Swapper.json'
 import VestingTokenABI from '@/contracts/abi/VestingToken.json'
 import TokenABI from '@/contracts/abi/TON.json'
-Vue.use(Vuex)
+
+// import { createCurrency } from '@makerdao/currency';
+// const _TON = createCurrency('TON');
 
 const initialState = {
   loading: false,
@@ -27,12 +29,14 @@ const initialState = {
   blockNumber: 0,
   blockTimestamp: 0,
 
-  // contract of managers
+  // contract of tokens
   TON: {},
-  WTON: {},
-  STON: {},
-  PTON: {},
-  MTON: {},
+  SeedTON: {},
+  PrivateTON: {},
+  MarketingTON: {},
+  StrategicTON: {},
+
+
   Benificiary: {},
 
   // operator
@@ -56,7 +60,7 @@ export default new Vuex.Store({
         state[key] = initialState[key]
       })
     },
-    IS_LOADINNG: (state, isLoading) => {
+    IS_LOADING: (state, isLoading) => {
       state.loading = isLoading
     },
     SIGN_IN: (state) => {
@@ -68,8 +72,20 @@ export default new Vuex.Store({
     SET_USER: (state, user) => {
       state.user = user
     },
-    SET_TOKENS: (state, tokens) => {
-      state.tokens = tokens
+    SET_TON_BALANCE: (state, balance) => {
+      state.tonBalance = balance;
+    },
+    SET_MARKETING_TON_BALANCE: (state, balance) => {
+      state.marketingTonBalance = balance;
+    },
+    SET_STRATEGIC_TON_BALANCE: (state, balance) => {
+      state.strategicTonBalance = balance;
+    },
+    SET_PRIVATE_TON_BALANCE: (state, balance) => {
+      state.privateTonBalance = balance;
+    },
+    SET_SEED_TON_BALANCE: (state, balance) => {
+      state.seedTonBalance = balance;
     },
     SET_MARKETING_TON_START: (state, startDate) => {
       state.startDate = startDate
@@ -88,8 +104,19 @@ export default new Vuex.Store({
         state.transactions.push(newTransaction)
       }
     },
+    SET_BLOCK_NUMBER: (state, number) => {
+      state.blockNumber = number;
+    },
+    SET_BLOCK_TIMESTAMP: (state, timestamp) => {
+      state.blockTimestamp = timestamp;
+    },
     SET_PENDING_TRANSACTIONS: (state, pendingTransactions) => {
       state.pendingTransactions = pendingTransactions
+    },
+    SET_TOKENS: (state, tokens) => {
+      for (const [name, contract] of Object.entries(tokens)) {
+        state[name] = contract;
+      }
     },
     ADD_PENDING_TRANSACTION: (state, newPendingTransaction) => {
       if (!state.pendingTransactions.find(pendingTransaction => pendingTransaction.transactionHash === newPendingTransaction.transactionHash)) {
@@ -131,15 +158,43 @@ export default new Vuex.Store({
     },
     async set (context, web3) {
       const blockNumber = await web3.eth.getBlockNumber()
-      const block = await web3.eth.getBlock(blockNumber)
+      // const block = await web3.eth.getBlock(blockNumber)
       context.commit('SET_BLOCK_NUMBER', blockNumber)
-      context.commit('SET_BLOCK_TIMESTAMP', block.timestamp)
+      // context.commit('SET_BLOCK_TIMESTAMP', block.timestamp)
 
       await Promise.all([
-        context.dispatch('setBalance'),
-        context.dispatch('checkPendingTransactions')
+        context.dispatch('checkPendingTransactions'),
+        context.dispatch('setBalance')
       ])
     },
+    async setTokens (context, tokens) {
+      const user = context.state.user;
+      for (const [name, address] of Object.entries(tokens)) {
+        tokens[name] = createWeb3Contract(TokenABI, address, user);
+      }
+    },
+    // async setBalance (context){
+    //   // const web3 = context.state.web3;
+    //   const user = context.state.user;
+
+    //   const TON = context.state.TON;
+    //   const privateTON = context.state.PrivateTON;
+    //   const marketingTON = context.state.MarketingTON;
+    //   const seedTON = context.state.SeedTON;
+    //   const strategicTON = context.state.StrategicTON;
+
+    //   const tonBalance = await TON.methods.balanceOf(user).call();
+    //   const privateTonBalance = await privateTON.methods.balanceOf(user).call();
+    //   const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
+    //   const seedTonBalance = await seedTON.methods.balanceOf(user).call();
+    //   const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
+
+    //   context.commit('SET_TON_BALANCE', _TON.wei(tonBalance.toString()));
+    //   context.commit('SET_PRIVATE_TON_BALANCE', _TON.wei(privateTonBalance.toString()));
+    //   context.commit('SET_MARKETING_TON_BALANCE', _TON.wei(marketingTonBalance.toString()));
+    //   context.commit('SET_SEED_TON_BALANCE', _TON.wei(seedTonBalance.toString()));
+    //   context.commit('SET_STRATEGIC_TON_BALANCE', _TON.wei(strategicTonBalance.toString()));
+    // },
     async setTransactionsAndPendingTransactions (context, transactions) {
       context.commit('SET_TRANSACTIONS', transactions)
 
@@ -185,7 +240,6 @@ export default new Vuex.Store({
     async updateUser (context, user) {
       context.commit('UPDATE_USER', user)
     },
-
     async setUsers (context) {
       const user = context.state.user
       // about contract

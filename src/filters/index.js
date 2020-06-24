@@ -27,7 +27,6 @@ export function formattedTimestamp (timestamp) {
 export function fromNow (timestamp, suffix) {
   return moment.unix(timestamp).fromNow(suffix);
 }
-
 export function stringToTON (amount) {
   try {
     return _TON.ray(amount);
