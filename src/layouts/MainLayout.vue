@@ -1,26 +1,14 @@
 <template>
   <div class="main-layout">
     <div class="button-container">
-      <token-button
-        v-if="seed"
-        :label="'Seed'"
-        @op-clicked="changeTab('seed')"
-      />
-      <token-button
-        v-if="privates"
-        :label="'Private'"
-        @op-clicked="changeTab('privates')"
-      />
-      <token-button
-        v-if="marketing"
-        :label="'Marketing'"
-        @op-clicked="changeTab('marketing')"
-      />
-      <token-button
-        v-if="strategic"
-        :label="'Strategic'"
-        @op-clicked="changeTab('strategic')"
-      />
+      <button
+        v-for="token in tokens"
+        @click="changeTab(token)"
+        :key="token"
+        :class="{ 'tab-clicked': activeTab === token }"
+      >
+        {{ token }}
+      </button>
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
@@ -35,7 +23,7 @@
     </div>
     <div class="table-container">
       <div class="table-info">
-        <info :tab="tab" />
+        <info :tab="tab === '' ? tokens[0] : tab" />
       </div>
       <div class="table-graph">
         <graph />
@@ -44,27 +32,24 @@
   </div>
 </template>
 <script>
-import TokenButton from "@/components/TokenButton.vue";
 import Info from "@/components/Info.vue";
 import Graph from "@/components/Graph.vue";
 export default {
   components: {
-    "token-button": TokenButton,
     info: Info,
     graph: Graph
   },
   data() {
     return {
-      tab: "seed",
-      seed: true,
-      privates: true,
-      marketing: false,
-      strategic: true,
-      address: "0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7"
+      tokens: ["seed", "privates", "marketing", "strategic", "blah"],
+      tab: "",
+      address: "0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7",
+      activeTab: ""
     };
   },
   methods: {
     changeTab(tab) {
+      this.activeTab = tab;
       this.tab = tab;
     }
   }
@@ -124,5 +109,31 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+button {
+  width: 72px;
+  height: 30px;
+  padding-top: 2px;
+  font-family: Roboto;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  font-size: 11px;
+  color: #161819;
+}
+
+.button:hover {
+  cursor: pointer;
+  background-color: #ecf1f3;
+}
+
+.disable:hover {
+  cursor: not-allowed;
+}
+
+.tab-clicked {
+  background-color: #1e4e85;
+  color: #ffffff;
 }
 </style>
