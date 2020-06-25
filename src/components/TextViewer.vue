@@ -64,12 +64,13 @@ img {
   font-style: normal;
   letter-spacing: normal;
   color: #161819;
+  min-width: 100px;
 }
 
 .content {
   display: inline-block;
   flex: 1;
-  text-align: right;
+  text-align: center;
   padding-right: 16px;
   font-family: Roboto;
   font-size: 10px;
@@ -79,6 +80,7 @@ img {
   letter-spacing: normal;
   color: #161819;
   word-break: break-word;
+  min-width: 300px;
 }
 
 .divider {

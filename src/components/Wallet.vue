@@ -1,55 +1,55 @@
 <template>
   <div
-    class='wallet'
+    class="wallet"
     :class="{ 'not-allowed': loading }"
-    @click='connectWallet'
+    @click="connectWallet"
   >
     <img
-      class='wallet-image'
-      src='@/assets/images/Metamask.jpg'
-      width='25'
-      height='23'
+      class="wallet-image"
+      src="@/assets/Images/Metamask.jpg"
+      width="25"
+      height="23"
     />
-    <div class='wallet-title'>
+    <div class="wallet-title">
       {{ title }}
     </div>
   </div>
 </template>
 
 <script>
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 export default {
   props: {
     image: {
       type: String,
-      default: ''
+      default: '',
     },
     title: {
       type: String,
-      default: ''
+      default: '',
     },
     connect: {
       type: Function,
-      default: () => {}
-    }
+      default: () => {},
+    },
   },
   data () {
     return {
-      loading: false
-    }
+      loading: false,
+    };
   },
   computed: mapState(['web3']),
   methods: {
     async connectWallet () {
-      if (this.loading) return
+      if (this.loading) return;
 
-      this.loading = true
-      await this.connect()
-      this.loading = false
-    }
-  }
-}
+      this.loading = true;
+      await this.connect();
+      this.loading = false;
+    },
+  },
+};
 </script>
 
 <style scoped>
