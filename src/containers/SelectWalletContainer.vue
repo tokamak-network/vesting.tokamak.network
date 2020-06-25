@@ -15,7 +15,7 @@
 
 <script>
 import Web3 from 'web3'
-import { getConfig } from '../../config.js'
+// import { getConfig } from '../../config.js'
 // import { setProvider } from '@/helpers/Contract';
 
 import Wallet from '@/components/Wallet.vue'
@@ -74,13 +74,13 @@ export default {
         throw new Error('No web3 provider detected')
       }
 
-      if (provider.networkVersion !== getConfig().network) {
-        throw new Error(
-          `Please connect to the '${this.$options.filters.nameOfNetwork(
-            getConfig().network
-          )}' network`
-        )
-      }
+      // if (provider.networkVersion !== getConfig().network) {
+      //   throw new Error(
+      //     `Please connect to the '${this.$options.filters.nameOfNetwork(
+      //       getConfig().network
+      //     )}' network`
+      //   )
+      // }
 
       return new Web3(provider)
     }

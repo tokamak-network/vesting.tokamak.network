@@ -70,12 +70,8 @@
 </template>
 
 <script>
-// import { cloneDeep, isEqual, range, uniq, orderBy } from 'lodash';
-
-// import { setPendingTransactions, getPendingTransactions } from '@/helpers/localStorage';
-// import SwapperABI from '@/contracts/abi/Swapper.json';
 import { mapState, mapGetters } from 'vuex';
-
+// import SwapperABI from '@/contracts/abi/Swapper.json';
 // import { getConfig } from '../../config.js';
 import TextViewer from '@/components/TextViewer.vue';
 
@@ -84,15 +80,8 @@ export default {
   components: {
     'text-viewer': TextViewer,
   },
-  data () {
-    return {
-      releasable: '',
-    }
-  },
-  props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'decimals', 'beneficiary', 'owner', 'revocable', 'revoked'],
-  // created () {
-  //   this.getVestingInfo()
-  // },
+  props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'owner', 'revocable', 'revoked', 'releasable'],
+  
   computed : {
     ...mapState([
       'web3',
@@ -101,10 +90,6 @@ export default {
     ...mapGetters([
       'vestingInfo'
     ]),
-    // calcReleasable () {
-    //   this.releasable = vested ? vested - released : null
-    //   return releasable
-    // },
   },
 }
 </script>

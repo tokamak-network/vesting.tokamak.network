@@ -43,9 +43,9 @@
             :end='end' 
             :cliff='cliff' 
             :total='total' 
-            :released='released' 
+            :released='released'
+            :releasable='releasable'
             :vested='vested'
-            :decimals='decimals' 
             :beneficiary='beneficiary' 
             :owner='owner' 
             :revocable='revocable' 
@@ -68,8 +68,9 @@ import UserInfo from '@/containers/UserInfoContainer.vue'
 
 import { createWeb3Contract } from '@/helpers/Contract';
 import { getConfig } from '../../config.js'
-import TokenABI from '@/contracts/abi/TON.json';
+// import TokenABI from '@/contracts/abi/TON.json';
 import VestingTokenABI from '@/contracts/abi/VestingToken.json';
+
 import store from '@/store/index.js';
 
 export default {
@@ -106,48 +107,52 @@ export default {
       total: '',
       released: '',
       vested: '',
-      decimals: '',
       beneficiary: '',
       owner: '',
       revocable: '',
       revoked: '',
-      name: '',
-      symbol: '',
       releasable: '',
     }
   },
   methods: {
     async changeTab (tab) {
       this.tab = tab
-      const network = getConfig().contractAddress[tab]
+      const network = getConfig().rinkeby.contractAddress[tab]
+      // console.log(network)
       this.address = network.token
-      const tokenAddress = this.address
-      const tokenContract = createWeb3Contract(TokenABI, tokenAddress)
+      console.log(network.vesting)
+      // const tokenAddress = this.address
+      // const tokenContract = createWeb3Contract(TokenABI, tokenAddress)
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
 
       const startDate = await tokenVesting.methods.start().call();
       const duration = await tokenVesting.methods.duration().call();
-      const endDate = startDate.plus(duration)
+      const endDate = startDate + duration
 
-      const balance = await tokenContract.methods.balanceOf(store.state.user).call();
-      const releasedAmount = await tokenVesting.released(tokenContract) // check token
-      console.log(balance)
-      this.totalBalance = balance
+      const released = await tokenVesting.methods.released(store.state.user).call();
+
+      const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
 
       this.start = startDate
       this.end = endDate
       this.cliff = await tokenVesting.methods.cliff().call()
-      this.total = balance
-      this.released = releasedAmount
-      this.vested = await tokenVesting.methods.vestedAmount(tokenContract).call()
-      this.decimals = await tokenContract.methods.decimals().call()
-      this.beneficiary = await tokenVesting.methods.beneficiary().call(),
-      this.owner = await tokenVesting.methods.owner().call()
-      this.revocable = await tokenVesting.methods.revocable().call()
-      this.revoked = await tokenVesting.methods.revoked(tokenContract).call()
-      this.name = await tokenContract.methods.name().call()
-      this.symbol = await tokenContract.methods.symbol().call()
-      
+      this.released = released
+      this.total = releasableAmount + released
+      this.releasable = releasableAmount
+      // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
+      this.beneficiary = store.state.user
+      // this.owner = await tokenVesting.methods.owner().call()
+      // this.revocable = await tokenVesting.methods.revocable().call()
+      // this.revoked = await tokenVesting.methods.revoked(store.state.user).call()
+      const init = await tokenVesting.methods.initiated().call();
+      console.log(init)
+
+      // console.log(this.start)
+      // console.log(this.end)
+      // console.log(this.cliff)
+      // console.log(this.released)
+      // console.log(this.total)
+      // console.log(this.releasable)
     },
     // poll () {
     //   this.polling = setInterval(() => {

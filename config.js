@@ -6,6 +6,7 @@ const config = {
     'network': '1',
     'contractAddress': {
       'TON': '',
+      'Swapper': '',
       'StrategicTON': {
         'token': '0x2801265c6f888f5a9e1b72ee175fc0091e007080',
         'vesting': ''
@@ -30,22 +31,23 @@ const config = {
     'prefixAddress': 'https://rinkeby.etherscan.io/address/',
     'network': '4',
     'contractAddress': {
-      'TON': '',
+      'TON': '0xceBc1eBcAFc7dB4F5A6848554F385aEa2Da86c09',
+      'Swapper': '0x4d678902A155bcd40A061410E85B1614dd8E314A',
       'StrategicTON': {
         'token': '',
-        'vesting': ''
+        'vesting': '0x999cd9f58C9C4283f94c1C66b3f65CE1130889E3'
       },
       'PrivateTON': {
         'token': '',
-        'vesting': ''
+        'vesting': '0x90F0AB1EA35a98176e82932bDf01A0a0FcA2A2Ee'
       },
       'SeedTON': {
         'token': '',
-        'vesting': ''
+        'vesting': '0x059572D593C0d84dfEE1662061344615FECb6486'
       },
       'MarketingTON': {
         'token': '',
-        'vesting': ''
+        'vesting': '0x50f27d040D24B51d7E0d39122C2E367228cC2D2A'
       },
     }
   },
@@ -56,6 +58,7 @@ const config = {
     'network': '1337',
     'contractAddress': {
       'TON': '',
+      'Swapper': '',
       'StrategicTON': {
         'token': '',
         'vesting': ''
@@ -86,7 +89,8 @@ export function getConfig () {
   case 'development':
     return config.development;
   default:
-    return config.mainnet;
+    // return config.mainnet;
+    return config;
   }
 }
 
