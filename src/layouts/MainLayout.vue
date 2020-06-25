@@ -42,41 +42,56 @@
         </div>
       </div>
       <div class="table-graph">
-        <graph />
+        Vesting Schedule
+        <graph-container
+          :tab="tab"
+          :address="address"
+          :start="start"
+          :end="end"
+          :cliff="cliff"
+          :total="total"
+          :released="released"
+          :vested="vested"
+          :decimals="decimals"
+          :beneficiary="beneficiary"
+          :owner="owner"
+          :revocable="revocable"
+          :revoked="revoked"
+          :releasable="releasable"
+        />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
-import store from '@/store/index.js';
+import { mapState } from "vuex";
+import store from "@/store/index.js";
 
-import Graph from '@/components/Graph.vue';
-import UserInfo from '@/containers/UserInfoContainer.vue';
+import UserInfo from "@/containers/UserInfoContainer.vue";
+import GraphContainer from "@/containers/GraphContainer.vue";
+import { createWeb3Contract } from "@/helpers/Contract";
+import { getConfig } from "../../config.js";
+import TokenABI from "@/contracts/abi/TON.json";
+import VestingTokenABI from "@/contracts/abi/VestingToken.json";
 
-import { createWeb3Contract } from '@/helpers/Contract';
-import { getConfig } from '../../config.js';
-import TokenABI from '@/contracts/abi/TON.json';
-import VestingTokenABI from '@/contracts/abi/VestingToken.json';
-
-import { createCurrency } from '@makerdao/currency';
-const _TON = createCurrency('TON');
+import { createCurrency } from "@makerdao/currency";
+const _TON = createCurrency("TON");
 
 export default {
   components: {
-    graph: Graph,
-    'user-info-container': UserInfo,
+    "graph-container": GraphContainer,
+    "user-info-container": UserInfo
   },
   Computed: {
     ...mapState([
-      'web3',
-      'user',
-      'marketingTon',
-      'strategicTon',
-      'seedTon',
-      'privateTon',
+      "web3",
+      "user",
+      "marketingTon",
+      "strategicTon",
+      "seedTon",
+      "privateTon"
     ]),
-    async tokenList () {
+    async tokenList() {
       return await this.tokens.map(token => {
         const network = getConfig().rinkeby.contractAddress[token];
         this.address = network.vesting;
@@ -89,7 +104,7 @@ export default {
           return token;
         }
       });
-    },
+    }
   },
   // async created () {
   //   this.poll();
@@ -97,32 +112,33 @@ export default {
   // beforeDestroy () {
   //   clearInterval(this.polling);
   // },
-  data () {
+  data() {
     return {
-      totalBalance: '',
-      tokens: ['SeedTON', 'PrivateTON', 'MarketingTON', 'StrategicTON'],
-      tab: '',
-      address: '0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7',
-      activeTab: '',
+      totalBalance: "",
+      tokens: ["SeedTON", "PrivateTON", "MarketingTON", "StrategicTON"],
+      tab: "",
+      address: "0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7",
+      activeTab: "",
       SeedTON: true,
       PrivateTON: true,
       MarketingTON: true,
       StrategicTON: true,
-      start: '',
-      end: '',
-      cliff: '',
-      total: '',
-      released: '',
-      vested: '',
-      beneficiary: '',
-      owner: '',
-      revocable: '',
-      revoked: '',
-      releasable: '',
+      start: "",
+      end: "",
+      cliff: "",
+      total: "",
+      released: "",
+      vested: "",
+      decimals: "",
+      beneficiary: "",
+      owner: "",
+      revocable: "",
+      revoked: "",
+      releasable: ""
     };
   },
   methods: {
-    async changeTab (tab) {
+    async changeTab(tab) {
       this.activeTab = tab;
       this.tab = tab;
       const network = getConfig().rinkeby.contractAddress[tab];
@@ -141,18 +157,24 @@ export default {
       const endDate = Number(startDate) + Number(duration);
       const cliffDate = await tokenVesting.methods.cliff().call();
 
-      const released = await tokenVesting.methods.released(store.state.user).call();
+      const released = await tokenVesting.methods
+        .released(store.state.user)
+        .call();
 
-      const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
+      const releasableAmount = await tokenVesting.methods
+        .releasableAmount(store.state.user)
+        .call();
       // const totalAmount = Number(releasableAmount) + Number(released);
-      const totalAmount = await tokenVesting.methods.balanceOf(this.user).call();
+      const totalAmount = await tokenVesting.methods
+        .balanceOf(this.user)
+        .call();
 
-      this.start = new Date(Number(startDate)*1000);
-      this.end = new Date(endDate*1000);
-      this.cliff = new Date(Number(cliffDate)*1000);
-      this.released = _TON(released, 'wei');
-      this.total = _TON(totalAmount, 'wei');
-      this.releasable = _TON(releasableAmount, 'wei');
+      this.start = new Date(Number(startDate) * 1000);
+      this.end = new Date(endDate * 1000);
+      this.cliff = new Date(Number(cliffDate) * 1000);
+      this.released = _TON(released, "wei");
+      this.total = _TON(totalAmount, "wei");
+      this.releasable = _TON(releasableAmount, "wei");
       // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
       this.beneficiary = store.state.user;
       // this.owner = await tokenVesting.methods.owner().call()
@@ -165,7 +187,7 @@ export default {
       // console.log(this.released)
       // console.log(this.total)
       // console.log(this.releasable)
-    },
+    }
     // poll () {
     //   this.polling = setInterval(() => {
     //     if (this.$store.state.signIn) {
@@ -173,7 +195,7 @@ export default {
     //     }
     //   }, 13000); // 13s
     // },
-  },
+  }
 };
 </script>
 
@@ -233,6 +255,8 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+  flex-direction: column;
+  margin-top: 50px;
 }
 button {
   width: 100px;
