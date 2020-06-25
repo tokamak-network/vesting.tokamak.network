@@ -1,9 +1,9 @@
 <template>
   <div class="introduction-container">
-    <img class="introduction-image" src="@/assets/Images/Intro.png" />
+    <img class="introduction-image" src="@/assets/Images/Intro.png">
     <div class="introduction-title">
       Turing Complete
-      <br />
+      <br>
       Plasma Chain Building Protocol
     </div>
     <div class="introduction-content">

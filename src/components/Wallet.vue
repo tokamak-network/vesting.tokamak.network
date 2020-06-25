@@ -9,7 +9,7 @@
       src="@/assets/Images/Metamask.jpg"
       width="25"
       height="23"
-    />
+    >
     <div class="wallet-title">
       {{ title }}
     </div>

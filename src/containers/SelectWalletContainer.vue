@@ -1,28 +1,28 @@
 <template>
-  <div class='select-wallet-container'>
-    <div class='wallet-header-title'>
+  <div class="select-wallet-container">
+    <div class="wallet-header-title">
       Login
     </div>
-    <div class='wallet-container'>
+    <div class="wallet-container">
       <wallet
         :title="'MetaMask'"
         :image="'Metamask.jpg'"
-        :connect='useMetamask'
+        :connect="useMetamask"
       />
     </div>
   </div>
 </template>
 
 <script>
-import Web3 from 'web3'
+import Web3 from 'web3';
 // import { getConfig } from '../../config.js'
 // import { setProvider } from '@/helpers/Contract';
 
-import Wallet from '@/components/Wallet.vue'
+import Wallet from '@/components/Wallet.vue';
 
 export default {
   components: {
-    wallet: Wallet
+    wallet: Wallet,
   },
   // computed: {
   //   ...mapState(['user'])
@@ -30,48 +30,48 @@ export default {
   methods: {
     async useMetamask () {
       try {
-        const web3 = await this.metamask()
-        await this.$store.dispatch('signIn', web3)
+        const web3 = await this.metamask();
+        await this.$store.dispatch('signIn', web3);
 
         window.ethereum.on('chainIdChanged', () => {
-          this.$store.dispatch('logout')
+          this.$store.dispatch('logout');
           this.$router
             .replace({
               path: '/',
-              query: { network: this.$route.query.network }
-            })
-        })
+              query: { network: this.$route.query.network },
+            });
+        });
         window.ethereum.on('accountsChanged', account => {
           if (this.user.toLowerCase() !== account[0].toLowerCase()) {
-            this.$store.dispatch('logout')
+            this.$store.dispatch('logout');
             this.$router
               .replace({
                 path: '/',
-                query: { network: this.$route.query.network }
-              })
+                query: { network: this.$route.query.network },
+              });
           }
-        })
+        });
       } catch (e) {
-        alert(e.message)
+        alert(e.message);
       }
     },
     async metamask () {
-      let provider
+      let provider;
       if (typeof window.ethereum !== 'undefined') {
         try {
-          await window.ethereum.enable()
-          provider = window.ethereum
+          await window.ethereum.enable();
+          provider = window.ethereum;
         } catch (e) {
           if (e.stack.includes('Error: User denied account authorization')) {
-            throw new Error('User denied account authorization')
+            throw new Error('User denied account authorization');
           } else {
-            throw new Error(e.message)
+            throw new Error(e.message);
           }
         }
       } else if (window.web3) {
-        provider = window.web3.currentProvider
+        provider = window.web3.currentProvider;
       } else {
-        throw new Error('No web3 provider detected')
+        throw new Error('No web3 provider detected');
       }
 
       // if (provider.networkVersion !== getConfig().network) {
@@ -82,10 +82,10 @@ export default {
       //   )
       // }
 
-      return new Web3(provider)
-    }
-  }
-}
+      return new Web3(provider);
+    },
+  },
+};
 </script>
 
 <style scoped>

@@ -16,7 +16,7 @@
           src="@/assets/Images/Mail.png"
           width="14;"
           height="10;"
-        />
+        >
       </div>
       <div class="footer-channel-container">
         <a
@@ -29,7 +29,7 @@
             src="@/assets/Images/community/medium.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://www.linkedin.com/company/onther-tech/"
@@ -41,7 +41,7 @@
             src="@/assets/Images/community/linkedin.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://twitter.com/tokamak_network/"
@@ -53,7 +53,7 @@
             src="@/assets/Images/community/twitter.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://www.youtube.com/channel/UCF6vtIKF_0QQVRG983czVEQ/"
@@ -65,7 +65,7 @@
             src="@/assets/Images/community/youtube.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://www.facebook.com/OntherInc/"
@@ -77,7 +77,7 @@
             src="@/assets/Images/community/facebook.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://github.com/Onther-Tech/"
@@ -89,7 +89,7 @@
             src="@/assets/Images/community/github.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://discord.gg/8wSpJKz"
@@ -101,19 +101,14 @@
             src="@/assets/Images/community/discord.png"
             width="28x;"
             height="28px;"
-          />
+          >
         </a>
         <a
           href="https://t.me/tokamak_network/"
           target="_blank"
           rel="noopener noreferrer"
         >
-          <img
-            class="footer-channel-image filter-grey"
-            src="@/assets/Images/community/telegram.png"
-            width="28x;"
-            height="28px;"
-          />
+          <img class="footer-channel-image filter-grey" src="@/assets/Images/community/telegram.png" width="28x;" height="28px;">
         </a>
       </div>
     </div>

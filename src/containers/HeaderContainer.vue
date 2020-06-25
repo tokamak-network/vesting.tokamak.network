@@ -12,16 +12,14 @@
           target="_blank"
           rel="noopener noreferrer"
           href="#"
-          >What is vesting?</a
-        >
+        >What is vesting?</a>
         <a
           class="header-link"
           target="_blank"
           rel="noopener noreferrer"
           href="#"
           style="margin-left: 48px; margin-right: 36px;"
-          >Vesting User Guide</a
-        >
+        >Vesting User Guide</a>
       </div>
     </div>
   </div>
@@ -31,7 +29,7 @@
 // import { mapState } from 'vuex'
 // import GuideDropDown from '@/components/GuideDropDown.vue';
 
-export default {}
+export default {};
 </script>
 
 <style scoped>

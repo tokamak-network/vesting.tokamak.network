@@ -1,6 +1,6 @@
 <template>
-  <div class='graph'>
-    <graph :chartdata='this.chartData()' :options='this.chartOptions()' />
+  <div class="graph">
+    <graph :chartdata="chartData()" :options="chartOptions()" />
   </div>
 </template>
 <script>
@@ -11,7 +11,7 @@ import moment from 'moment';
 
 export default {
   components: {
-    graph: Graph
+    graph: Graph,
     // empty: Empty,
     // revoked: Revoked
   },
@@ -29,16 +29,16 @@ export default {
     'owner',
     'revocable',
     'revoked',
-    'releasable'
+    'releasable',
   ],
   methods: {
     chartData () {
       return {
         datasets: [
           this.fromBaseDataset({
-            data: this.getPoints()
-          })
-        ]
+            data: this.getPoints(),
+          }),
+        ],
       };
     },
     getPoints () {
@@ -65,7 +65,7 @@ export default {
     getDataPointAt (date) {
       return {
         x: this.formatDate(date),
-        y: this.getAmountAt(date)
+        y: this.getAmountAt(date),
       };
     },
     formatDate (date) {
@@ -93,23 +93,23 @@ export default {
               type: 'time',
               time: {
                 format: 'MM/DD/YYYY HH:mm',
-                tooltipFormat: 'll HH:mm'
+                tooltipFormat: 'll HH:mm',
               },
               scaleLabel: {
                 display: true,
-                labelString: 'Date'
-              }
-            }
+                labelString: 'Date',
+              },
+            },
           ],
           yAxes: [
             {
               scaleLabel: {
                 display: true,
-                labelString: this.tab || ''
-              }
-            }
-          ]
-        }
+                labelString: this.tab || '',
+              },
+            },
+          ],
+        },
       };
     },
     fromBaseDataset (opts) {
@@ -127,9 +127,9 @@ export default {
         pointHoverBorderWidth: 2,
         pointRadius: 5,
         pointHitRadius: 10,
-        ...opts
+        ...opts,
       };
-    }
+    },
   },
 };
 </script>

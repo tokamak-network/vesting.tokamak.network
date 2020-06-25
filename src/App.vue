@@ -53,7 +53,7 @@ export default {
       this.$router.replace({
         path: '/',
         query: { network: this.$route.query.network },
-      })
+      });
     }
     this.$store.watch(
       (_, getters) => getters.initialState,
@@ -62,7 +62,7 @@ export default {
           this.$router.replace({
             path: '/',
             query: { network: this.$route.query.network },
-          })
+          });
         }
       },
     );

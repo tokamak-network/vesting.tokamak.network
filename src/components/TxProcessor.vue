@@ -20,20 +20,20 @@
 </template>
 
 <script>
-import { getConfig } from '../../config.js'
+import { getConfig } from '../../config.js';
 
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 export default {
   computed: {
     ...mapState([
-      'pendingTransactions'
+      'pendingTransactions',
     ]),
     href () {
-      return transactionHash => getConfig().prefixTransactionHash + transactionHash
-    }
-  }
-}
+      return transactionHash => getConfig().prefixTransactionHash + transactionHash;
+    },
+  },
+};
 </script>
 
 <style scoped>
