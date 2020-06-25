@@ -9,7 +9,6 @@
       >
         {{ token }}
       </button>
-      <div>{{ tokenList }}</div>
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
