@@ -64,7 +64,7 @@ export default {
     graph: Graph,
     "user-info-container": UserInfo
   },
-  asyncComputed: {
+  computed: {
     ...mapState(["web3", "user"]),
     // tokenList() {
     //   return this.tokens.filter(token => {
@@ -74,7 +74,7 @@ export default {
     //   });
     // }
     async tokenList() {
-      return this.tokens.map(token => {
+      return await this.tokens.map(token => {
         const network = getConfig().contractAddress[token];
         this.address = network.token;
         const tokenAddress = this.address;
