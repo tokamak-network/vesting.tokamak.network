@@ -1,31 +1,20 @@
 <template>
   <div class="main-layout">
     <div class="button-container">
-      <token-button
-        v-if="SeedTON"
-        :label="'Seed'"
-        @op-clicked="changeTab('SeedTON')"
-      />
-      <token-button
-        v-if="PrivateTON"
-        :label="'Private'"
-        @op-clicked="changeTab('PrivateTON')"
-      />
-      <token-button
-        v-if="MarketingTON"
-        :label="'Marketing'"
-        @op-clicked="changeTab('MarketingTON')"
-      />
-      <token-button
-        v-if="StrategicTON"
-        :label="'Strategic'"
-        @op-clicked="changeTab('StrategicTON')"
-      />
+      <button
+        v-for="token in tokenList"
+        @click="changeTab(token)"
+        :key="token"
+        :class="{ 'tab-clicked': activeTab === token }"
+      >
+        {{ token }}
+      </button>
+      <div>{{ tokenList }}</div>
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
         <img
-          src="@/assets/Images/TokamakNetworkLogo.png"
+          src="@/assets/images/TokamakNetworkLogo.png"
           height="43px"
           width="180px"
         />
@@ -36,21 +25,21 @@
     <div class="table-container">
       <div class="table-info">
         <div>
-          <user-info-container 
-            :tab='tab' 
-            :address='address' 
-            :start='start' 
-            :end='end' 
-            :cliff='cliff' 
-            :total='total' 
-            :released='released' 
-            :vested='vested'
-            :decimals='decimals' 
-            :beneficiary='beneficiary' 
-            :owner='owner' 
-            :revocable='revocable' 
-            :revoked='revoked'
-            />
+          <user-info-container
+            :tab="tab"
+            :address="address"
+            :start="start"
+            :end="end"
+            :cliff="cliff"
+            :total="total"
+            :released="released"
+            :vested="vested"
+            :decimals="decimals"
+            :beneficiary="beneficiary"
+            :owner="owner"
+            :revocable="revocable"
+            :revoked="revoked"
+          />
         </div>
       </div>
       <div class="table-graph">
@@ -60,95 +49,118 @@
   </div>
 </template>
 <script>
-import { mapState } from 'vuex'
+import { mapState } from "vuex";
 
-import TokenButton from '@/components/TokenButton.vue'
-import Graph from '@/components/Graph.vue'
-import UserInfo from '@/containers/UserInfoContainer.vue'
+import Graph from "@/components/Graph.vue";
+import UserInfo from "@/containers/UserInfoContainer.vue";
 
-import { createWeb3Contract } from '@/helpers/Contract';
-import { getConfig } from '../../config.js'
-import TokenABI from '@/contracts/abi/TON.json';
-import VestingTokenABI from '@/contracts/abi/VestingToken.json';
-import store from '@/store/index.js';
+import { createWeb3Contract } from "@/helpers/Contract";
+import { getConfig } from "../../config.js";
+import TokenABI from "@/contracts/abi/TON.json";
+import VestingTokenABI from "@/contracts/abi/VestingToken.json";
+import store from "@/store/index.js";
 
 export default {
   components: {
-    'token-button': TokenButton,
     graph: Graph,
-    'user-info-container': UserInfo,
+    "user-info-container": UserInfo
   },
-  computed: {
-    ...mapState([
-      'web3',
-      'user'
-    ]),
+  asyncComputed: {
+    ...mapState(["web3", "user"]),
+    // tokenList() {
+    //   return this.tokens.filter(token => {
+    //     if (token.includes("TON")) {
+    //       return token;
+    //     }
+    //   });
+    // }
+    async tokenList() {
+      return this.tokens.map(token => {
+        const network = getConfig().contractAddress[token];
+        this.address = network.token;
+        const tokenAddress = this.address;
+        const tokenContract = createWeb3Contract(TokenABI, tokenAddress);
+        const balance = tokenContract.methods
+          .balanceOf(store.state.user)
+          .call();
+        if (balance !== 0) {
+          return token;
+        }
+      });
+    }
+
+    // async created () {
+    //   this.poll();
+    // },
+    // beforeDestroy () {
+    //   clearInterval(this.polling);
+    // },
   },
-  // async created () {
-  //   this.poll();
-  // },
-  // beforeDestroy () {
-  //   clearInterval(this.polling);
-  // },
-  data () {
+  data() {
     return {
-      tab: 'SeedTON',
       SeedTON: true,
       PrivateTON: true,
       MarketingTON: false,
       StrategicTON: true,
-      address: '0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7',
-      totalBalance: '',
+      totalBalance: "",
+      tokens: ["SeedTON", "PrivateTON", "MarketingTON", "StrategicTON"],
+      tab: "",
+      address: "0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7",
+      activeTab: "",
 
-      start: '',
-      end: '',
-      cliff: '',
-      total: '',
-      released: '',
-      vested: '',
-      decimals: '',
-      beneficiary: '',
-      owner: '',
-      revocable: '',
-      revoked: '',
-      name: '',
-      symbol: '',
-      releasable: '',
-    }
+      start: "",
+      end: "",
+      cliff: "",
+      total: "",
+      released: "",
+      vested: "",
+      decimals: "",
+      beneficiary: "",
+      owner: "",
+      revocable: "",
+      revoked: "",
+      name: "",
+      symbol: "",
+      releasable: ""
+    };
   },
   methods: {
-    async changeTab (tab) {
-      this.tab = tab
-      const network = getConfig().contractAddress[tab]
-      this.address = network.token
-      const tokenAddress = this.address
-      const tokenContract = createWeb3Contract(TokenABI, tokenAddress)
+    async changeTab(tab) {
+      this.activeTab = tab;
+      this.tab = tab;
+      const network = getConfig().contractAddress[tab];
+      this.address = network.token;
+      const tokenAddress = this.address;
+      const tokenContract = createWeb3Contract(TokenABI, tokenAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
 
       const startDate = await tokenVesting.methods.start().call();
       const duration = await tokenVesting.methods.duration().call();
-      const endDate = startDate.plus(duration)
+      const endDate = startDate.plus(duration);
 
-      const balance = await tokenContract.methods.balanceOf(store.state.user).call();
-      const releasedAmount = await tokenVesting.released(tokenContract) // check token
-      console.log(balance)
-      this.totalBalance = balance
+      const balance = await tokenContract.methods
+        .balanceOf(store.state.user)
+        .call();
+      const releasedAmount = await tokenVesting.released(tokenContract); // check token
+      console.log(balance);
+      this.totalBalance = balance;
 
-      this.start = startDate
-      this.end = endDate
-      this.cliff = await tokenVesting.methods.cliff().call()
-      this.total = balance
-      this.released = releasedAmount
-      this.vested = await tokenVesting.methods.vestedAmount(tokenContract).call()
-      this.decimals = await tokenContract.methods.decimals().call()
-      this.beneficiary = await tokenVesting.methods.beneficiary().call(),
-      this.owner = await tokenVesting.methods.owner().call()
-      this.revocable = await tokenVesting.methods.revocable().call()
-      this.revoked = await tokenVesting.methods.revoked(tokenContract).call()
-      this.name = await tokenContract.methods.name().call()
-      this.symbol = await tokenContract.methods.symbol().call()
-      
-    },
+      this.start = startDate;
+      this.end = endDate;
+      this.cliff = await tokenVesting.methods.cliff().call();
+      this.total = balance;
+      this.released = releasedAmount;
+      this.vested = await tokenVesting.methods
+        .vestedAmount(tokenContract)
+        .call();
+      this.decimals = await tokenContract.methods.decimals().call();
+      (this.beneficiary = await tokenVesting.methods.beneficiary().call()),
+        (this.owner = await tokenVesting.methods.owner().call());
+      this.revocable = await tokenVesting.methods.revocable().call();
+      this.revoked = await tokenVesting.methods.revoked(tokenContract).call();
+      this.name = await tokenContract.methods.name().call();
+      this.symbol = await tokenContract.methods.symbol().call();
+    }
     // poll () {
     //   this.polling = setInterval(() => {
     //     if (this.$store.state.signIn) {
@@ -157,7 +169,7 @@ export default {
     //   }, 13000); // 13s
     // },
   }
-}
+};
 </script>
 
 <style>
@@ -216,5 +228,28 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+button {
+  width: 100px;
+  height: 30px;
+  padding-top: 2px;
+  font-family: Roboto;
+  font-weight: normal;
+  font-stretch: normal;
+  font-style: normal;
+  letter-spacing: normal;
+  font-size: 11px;
+  color: #161819;
+}
+.button:hover {
+  cursor: pointer;
+  background-color: #ecf1f3;
+}
+.disable:hover {
+  cursor: not-allowed;
+}
+.tab-clicked {
+  background-color: #1e4e85;
+  color: #ffffff;
 }
 </style>
