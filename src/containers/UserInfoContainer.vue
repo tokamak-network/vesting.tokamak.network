@@ -67,13 +67,6 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <div
-      class="button"
-      :class="{ 'disable': disable }"
-      @click="click"
-    >
-      Release
-    </div>
   </div>
 </template>
 
@@ -110,6 +103,10 @@ export default {
     async swap (vestingAddress) {
       const address = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, address);
+
+      if (this.releasable === 0) {
+        return alert('Releasable amount is 0.');
+      }
 
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,

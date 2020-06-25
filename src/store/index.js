@@ -181,7 +181,7 @@ export default new Vuex.Store({
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
       const privateTon = createWeb3Contract(VestingTokenABI, privateAddress);
-
+      console.log(privateTon);
       // context.commit('SET_MARKETING_TON', marketingTon);
       // context.commit('SET_STRATEGIC_TON', strategicTon);
       // context.commit('SET_SEED_TON', seedTon);
