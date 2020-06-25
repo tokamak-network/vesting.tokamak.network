@@ -55,6 +55,7 @@
     <text-viewer :title="'Releasable'"
                  :content="releasable"
                  :with-divider="false"
+                 :href="href"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
@@ -66,32 +67,77 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
+    <div
+      class="button"
+      :class="{ 'disable': disable }"
+      @click="click"
+    >
+      Release
+    </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-// import SwapperABI from '@/contracts/abi/Swapper.json';
-// import { getConfig } from '../../config.js';
+import SwapperABI from '@/contracts/abi/Swapper.json';
+import { getConfig } from '../../config.js';
+import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
+// import TextViewerSwapper from '@/components/TextViewerSwap.vue';
 
 
 export default {
   components: {
     'text-viewer': TextViewer,
+    // 'text-viewer-swapper': TextViewerSwapper,
   },
   props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'owner', 'revocable', 'revoked', 'releasable'],
-  
   computed : {
     ...mapState([
       'web3',
-      'user'
+      'user',
     ]),
     ...mapGetters([
-      'vestingInfo'
+      'vestingInfo',
     ]),
   },
-}
+  methods: {
+    async click (vestingAddress) {
+      if (!this.disable) {
+        await this.swap(vestingAddress);
+      }
+    },
+    async swap (vestingAddress) {
+      const address = getConfig().rinkeby.contractAddress.Swapper;
+      const swapper = createWeb3Contract(SwapperABI, address);
+
+      await swapper.methods.swap(vestingAddress).send({
+        from: this.user,
+      }).on('receipt', (receipt) => {
+        if (receipt.status) {
+          this.$notify({
+            group: 'confirmed',
+            title: 'Transaction is confirmed',
+            type: 'success',
+            duration: 10000,
+          });
+        } else {
+          this.$notify({
+            group: 'reverted',
+            title: 'Transaction is reverted',
+            type: 'error',
+            duration: 10000,
+          });
+        }
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      });
+    },
+  }
+};
+
 </script>
 
 <style scoped>
@@ -157,5 +203,17 @@ export default {
 
 .button-commit:hover {
   cursor: pointer;
+}
+.button {
+  width: 100%;
+  height: 100%;
+}
+
+.button:hover {
+  cursor: pointer;
+}
+
+.disable:hover {
+  cursor: not-allowed;
 }
 </style>

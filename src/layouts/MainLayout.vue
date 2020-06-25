@@ -58,6 +58,7 @@ import { createWeb3Contract } from '@/helpers/Contract';
 import { getConfig } from '../../config.js';
 import TokenABI from '@/contracts/abi/TON.json';
 import VestingTokenABI from '@/contracts/abi/VestingToken.json';
+import Swapper from '@/contracts/abi/Swapper.json';
 
 import { createCurrency } from '@makerdao/currency';
 const _TON = createCurrency('TON');
@@ -83,7 +84,7 @@ export default {
         const tokenAddress = this.address;
         const tokenContract = createWeb3Contract(VestingTokenABI, tokenAddress);
         const balance = tokenContract.methods
-          .balanceOf(store.state.user)
+          .releasableAmount(store.state.user)
           .call();
         if (balance !== 0) {
           return token;
@@ -92,7 +93,7 @@ export default {
     },
   },
   // async created () {
-  //   this.poll();
+  //   this.tokenList();
   // },
   // beforeDestroy () {
   //   clearInterval(this.polling);
@@ -126,16 +127,11 @@ export default {
       this.activeTab = tab;
       this.tab = tab;
       const network = getConfig().rinkeby.contractAddress[tab];
-      // console.log(network)
+
       this.address = network.vesting;
-      // console.log(network.vesting);
-      // const tokenAddress = this.address
-      // const tokenContract = createWeb3Contract(TokenABI, tokenAddress)
+
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
       // const tokenVesting = this.marketingTon;
-      console.log(store.state);
-      console.log(this.marketingTon);
-      // console.log(tokenVestinga);
       const startDate = await tokenVesting.methods.start().call();
       const duration = await tokenVesting.methods.duration().call();
       const endDate = Number(startDate) + Number(duration);
@@ -144,8 +140,9 @@ export default {
       const released = await tokenVesting.methods.released(store.state.user).call();
 
       const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
-      // const totalAmount = Number(releasableAmount) + Number(released);
-      const totalAmount = await tokenVesting.methods.balanceOf(this.user).call();
+      const totalAmount = Number(releasableAmount) + Number(released);
+      // const balance = await tokenVesting.methods.balanceOf(this.user).call();
+      // console.log(balance);
 
       this.start = new Date(Number(startDate)*1000);
       this.end = new Date(endDate*1000);
