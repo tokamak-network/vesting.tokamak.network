@@ -32,10 +32,15 @@ const initialState = {
 
   // contract of tokens
   TON: {},
-  SeedTON: {},
-  PrivateTON: {},
-  MarketingTON: {},
-  StrategicTON: {},
+  seedTON: {},
+  privateTON: {},
+  marketingTON: {},
+  strategicTON: {},
+
+  seedBalance: '',
+  privateBalance: '',
+  marketingBalance: '',
+  strategicBalance: '',
 
 
   Benificiary: {},
@@ -76,14 +81,17 @@ export default new Vuex.Store({
     SET_TON_BALANCE: (state, balance) => {
       state.tonBalance = balance;
     },
-    SET_MARKETING_TON_BALANCE: (state, balance) => {
-      state.marketingTonBalance = balance;
+    SET_MARKETING_BALANCE: (state, balance) => {
+      state.marketingBalance = balance;
     },
-    SET_STRATEGIC_TON_BALANCE: (state, balance) => {
-      state.strategicTonBalance = balance;
+    SET_SEED_BALANCE: (state, balance) => {
+      state.seedBalance = balance;
     },
-    SET_PRIVATE_TON_BALANCE: (state, balance) => {
-      state.privateTonBalance = balance;
+    SET_STRATEGIC_BALANCE: (state, balance) => {
+      state.strategicBalance = balance;
+    },
+    SET_PRIVATE_BALANCE: (state, balance) => {
+      state.privateBalance = balance;
     },
     SET_TRANSACTIONS: (state, transactions) => {
       state.transactions = transactions;
@@ -108,16 +116,16 @@ export default new Vuex.Store({
       }
     },
     SET_MARKETING_TON: (state, marketingTon) => {
-      state.marketingTon = marketingTon;
+      state.marketingTON = marketingTon;
     },
     SET_STRATEGIC_TON: (state, strategicTon) => {
-      state.strategicTon = strategicTon;
+      state.strategicTON = strategicTon;
     },
     SET_SEED_TON: (state, seedTon) => {
-      state.seedTon = seedTon;
+      state.seedTON = seedTon;
     },
     SET_PRIVATE_TON: (state, privateTon) => {
-      state.privateTon = privateTon;
+      state.privateTON = privateTon;
     },
     ADD_PENDING_TRANSACTION: (state, newPendingTransaction) => {
       if (!state.pendingTransactions.find(pendingTransaction => pendingTransaction.transactionHash === newPendingTransaction.transactionHash)) {
@@ -182,61 +190,72 @@ export default new Vuex.Store({
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
       const privateTon = createWeb3Contract(VestingTokenABI, privateAddress);
       console.log(privateTon);
-      // context.commit('SET_MARKETING_TON', marketingTon);
-      // context.commit('SET_STRATEGIC_TON', strategicTon);
-      // context.commit('SET_SEED_TON', seedTon);
-      // context.commit('SET_PRIVATE_TON', privateTon);
+      context.commit('SET_MARKETING_TON', marketingTon);
+      context.commit('SET_STRATEGIC_TON', strategicTon);
+      context.commit('SET_SEED_TON', seedTon);
+      context.commit('SET_PRIVATE_TON', privateTon);
     },
     async setMarketing (context) {
       const user = context.state.user;
-      const network = getConfig().rinkeby.contractAddreess;
-      const address = network.MarketingTON.vesting;
-      const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-      const marketingTon = [];
 
-      const startDate = await tokenVesting.methods.start().call();
-      const duration = await tokenVesting.methods.duration().call();
-      const endDate = Number(startDate) + Number(duration);
-      const cliffDate = await tokenVesting.methods.cliff().call();
+      // const marketings = context.state.marketings;
+      // const marketingTons = await Promise.all(
+      //   marketings.map(async marketingTon => {
+      //     const network = getConfig().rinkeby.contractAddreess;
+      //     const address = network.MarketingTON.vesting;
+      //     const tokenVesting = createWeb3Contract(VestingTokenABI, address);
 
-      const released = await tokenVesting.methods.released(context.state.user).call();
+      //     const startDate = await tokenVesting.methods.start().call();
+      //     const duration = await tokenVesting.methods.duration().call();
+      //     const endDate = Number(startDate) + Number(duration);
+      //     const cliffDate = await tokenVesting.methods.cliff().call();
 
-      const releasableAmount = await tokenVesting.methods.releasableAmount(context.state.user).call();
-      const totalAmount = Number(releasableAmount) + Number(released);
+      //     const released = await tokenVesting.methods.released(context.state.user).call();
 
-      marketingTon.start = new Date(Number(startDate)*1000);
-      marketingTon.end = new Date(endDate*1000);
-      marketingTon.cliff = new Date(Number(cliffDate)*1000);
-      marketingTon.released = _TON(released, 'wei');
-      marketingTon.total = _TON(totalAmount, 'wei');
-      marketingTon.releasable = _TON(releasableAmount, 'wei');
-      // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
-      marketingTon.beneficiary = context.state.user;
+      //     const releasableAmount = await tokenVesting.methods.releasableAmount(context.state.user).call();
+      //     const totalAmount = Number(releasableAmount) + Number(released);
 
-      context.commit('SET_MARKETING_TON', marketingTon);
+      //     marketingTon.start = new Date(Number(startDate)*1000);
+      //     marketingTon.end = new Date(endDate*1000);
+      //     marketingTon.cliff = new Date(Number(cliffDate)*1000);
+      //     marketingTon.released = _TON(released, 'wei');
+      //     marketingTon.total = _TON(totalAmount, 'wei');
+      //     marketingTon.releasable = _TON(releasableAmount, 'wei');
+      //     // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
+      //     marketingTon.beneficiary = context.state.user;
+
+      //     return marketingTon;
+      // })
+      // );
+      // context.commit('SET_MARKETING_TON', marketingTons);
     },
-    // async setBalance (context){
-    //   // const web3 = context.state.web3;
-    //   const user = context.state.user;
+    async setBalance (context){
+      // const web3 = context.state.web3;
+      const user = context.state.user;
 
-    //   const TON = context.state.TON;
-    //   const privateTON = context.state.PrivateTON;
-    //   const marketingTON = context.state.MarketingTON;
-    //   const seedTON = context.state.SeedTON;
-    //   const strategicTON = context.state.StrategicTON;
+      // const TON = context.state.TON;
+      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
+      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
+      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
+      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
 
-    //   const tonBalance = await TON.methods.balanceOf(user).call();
-    //   const privateTonBalance = await privateTON.methods.balanceOf(user).call();
-    //   const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
-    //   const seedTonBalance = await seedTON.methods.balanceOf(user).call();
-    //   const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
+      const marketingTON = createWeb3Contract(VestingTokenABI, marketingAddress);
+      const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
+      const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
+      const privateTON = createWeb3Contract(VestingTokenABI, privateAddress);
 
-    //   context.commit('SET_TON_BALANCE', _TON.wei(tonBalance.toString()));
-    //   context.commit('SET_PRIVATE_TON_BALANCE', _TON.wei(privateTonBalance.toString()));
-    //   context.commit('SET_MARKETING_TON_BALANCE', _TON.wei(marketingTonBalance.toString()));
-    //   context.commit('SET_SEED_TON_BALANCE', _TON.wei(seedTonBalance.toString()));
-    //   context.commit('SET_STRATEGIC_TON_BALANCE', _TON.wei(strategicTonBalance.toString()));
-    // },
+      // const tonBalance = await TON.methods.balanceOf(user).call();
+      const privateTonBalance = await privateTON.methods.balanceOf(user).call();
+      const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
+      const seedTonBalance = await seedTON.methods.balanceOf(user).call();
+      const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
+
+      // context.commit('SET_TON_BALANCE', _TON.wei(tonBalance.toString()));
+      context.commit('SET_PRIVATE_BALANCE', privateTonBalance);
+      context.commit('SET_MARKETING_BALANCE', marketingTonBalance);
+      context.commit('SET_SEED_BALANCE', seedTonBalance);
+      context.commit('SET_STRATEGIC_BALANCE', strategicTonBalance);
+    },
     async setTransactionsAndPendingTransactions (context, transactions) {
       context.commit('SET_TRANSACTIONS', transactions);
 

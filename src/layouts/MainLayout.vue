@@ -86,28 +86,32 @@ export default {
     ...mapState([
       'web3',
       'user',
-      'marketingTon',
-      'strategicTon',
-      'seedTon',
-      'privateTon'
+      'marketingTON',
+      'strategicTON',
+      'seedTON',
+      'privateTON',
+      'marketingBalance',
+      'seedBalance',
+      'strategicBalance',
+      'privateBalance'
     ]),
-    async tokenList () {
-      return await this.tokens.map(token => {
-        const network = getConfig().rinkeby.contractAddress[token];
-        this.address = network.vesting;
-        const tokenAddress = this.address;
-        const tokenContract = createWeb3Contract(VestingTokenABI, tokenAddress);
-        const balance = tokenContract.methods
-          .releasableAmount(store.state.user)
-          .call();
-        if (balance !== 0) {
-          return token;
-        }
-      });
-    }
+    // async tokenList () {
+    //   return await this.tokens.map(token => {
+    //     const network = getConfig().rinkeby.contractAddress[token];
+    //     this.address = network.vesting;
+    //     const tokenAddress = this.address;
+    //     const tokenContract = createWeb3Contract(VestingTokenABI, tokenAddress);
+    //     const balance = tokenContract.methods
+    //       .releasableAmount(store.state.user)
+    //       .call();
+    //     if (balance !== 0) {
+    //       return token;
+    //     }
+    //   });
+    // }
   },
   async created () {
-    // this.tokenList();
+    this.tokenList();
     this.getMarketing();
   },
   // beforeDestroy () {
@@ -116,28 +120,15 @@ export default {
   data () {
     return {
       totalBalance: '',
-      tokens: ['SeedTON', 'PrivateTON', 'MarketingTON', 'StrategicTON'],
+      tokens: [],
       tab: '',
-      address: '0x8Ae43F11DDd3fac5bbD84ab0BA795E1e51b78df7',
+      address: '',
       activeTab: '',
       SeedTON: true,
       PrivateTON: true,
       MarketingTON: true,
       StrategicTON: true,
-      marketing: {
-        start: '',
-        end: '',
-        cliff: '',
-        total: '',
-        released: '',
-        vested: '',
-        decimals: '',
-        beneficiary: '',
-        owner: '',
-        revocable: '',
-        revoked: '',
-        releasable: ''
-      },
+
       private: {},
       strategic: {},
       seed: {},
@@ -156,6 +147,22 @@ export default {
     };
   },
   methods: {
+    async tokenList () {
+      if (store.state.seedBalance !== String(0)) {
+        this.tokens.push('SeedTON');
+      }
+      if (store.state.privateBalance !== String(0)) {
+        this.tokens.push('PrivateTON');
+      }
+      if (store.state.marketingBalance !== String(0)) {
+        this.tokens.push('MarketingTON');
+      }
+      if (store.state.strategicBalance !== String(0)) {
+        this.tokens.push('StrategicTON');
+      }
+      console.log(this.tokens);
+      this.tab = await this.changeTab(this.tokens[0]);
+    },
     async changeTab (tab) {
       this.activeTab = tab;
       this.tab = tab;
@@ -164,8 +171,8 @@ export default {
       this.address = network.vesting;
 
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
-      const Vesting = store.state.marketingTon;
-      console.log(Vesting);
+      // const tokenVesting = store.state.marketingTON;
+      console.log(store.state.marketingTON);
       const startDate = await tokenVesting.methods.start().call();
       const duration = await tokenVesting.methods.duration().call();
       const endDate = Number(startDate) + Number(duration);
@@ -186,6 +193,8 @@ export default {
       this.releasable = _TON(releasableAmount, 'wei');
       // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
       this.beneficiary = store.state.user;
+      console.log('hi');
+      console.log(this.total);
 
       // this.revocable = await tokenVesting.methods.revocable().call()
       // this.revoked = await tokenVesting.methods.revoked(store.state.user).call()
@@ -194,8 +203,8 @@ export default {
       const network = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
 
       const tokenVesting = createWeb3Contract(VestingTokenABI, network);
-      const Vesting = store.state.marketingTon;
-      console.log(Vesting);
+      const Vesting = store.state.marketingTON;
+      // console.log(Vesting);
       const startDate = await tokenVesting.methods.start().call();
       const duration = await tokenVesting.methods.duration().call();
       const endDate = Number(startDate) + Number(duration);
@@ -207,7 +216,7 @@ export default {
 
       const balance = await tokenVesting.methods.balanceOf(store.state.user).call();
       const totalAmount = Number(balance) + Number(released);
-      console.log(balance);
+
       this.marketing.start = new Date(Number(startDate) * 1000);
       this.marketing.end = new Date(endDate * 1000);
       this.marketing.cliff = new Date(Number(cliffDate) * 1000);
@@ -216,7 +225,7 @@ export default {
       this.marketing.releasable = _TON(releasableAmount, 'wei');
       // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
       this.marketing.beneficiary = store.state.user;
-      console.log(this.marketig);
+      // console.log(this.marketig);
     },
     // poll () {
     //   this.polling = setInterval(() => {
