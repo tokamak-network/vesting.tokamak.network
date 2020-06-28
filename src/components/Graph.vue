@@ -1,21 +1,21 @@
 <script>
-import { Line } from 'vue-chartjs';
+import { Line, mixins } from 'vue-chartjs';
 import moment from 'moment';
+const { reactiveProp } = mixins;
 
 export default {
   extends: Line,
+  mixins: [reactiveProp],
   props: {
-    chartdata: {
-      type: Function,
-      default: null,
+    chartData: {
+      type: Object,
     },
     options: {
-      type: Function,
-      default: null,
+      type: Object,
     },
   },
-  mounted () {
-    this.renderChart(this.chartdata, this.options);
+  async mounted () {
+    this.renderChart(this.chartData, this.options);
   },
 };
 </script>

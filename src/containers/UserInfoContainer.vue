@@ -144,6 +144,7 @@ export default {
   border-radius: 6px;
   border: solid 1px #ced6d9;
   background-color: #ffffff;
+  height: 350px;
 }
 
 .name-container {
@@ -153,6 +154,7 @@ export default {
 }
 .title {
   text-align: center;
+  margin-top: 10px;
 }
 
 .row {

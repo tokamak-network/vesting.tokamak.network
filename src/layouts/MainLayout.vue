@@ -17,7 +17,7 @@
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ address }}</div>
     </div>
-    <div class="table-container">
+    <div class="vesting-table-container">
       <div class="table-info">
         <div>
           <user-info-container
@@ -38,22 +38,13 @@
         </div>
       </div>
       <div class="table-graph">
-        Vesting Schedule
         <graph-container
           :tab="tab"
-          :address="address"
-          :start="start"
-          :end="end"
-          :cliff="cliff"
-          :total="total"
-          :released="released"
-          :vested="vested"
-          :decimals="decimals"
-          :beneficiary="beneficiary"
-          :owner="owner"
-          :revocable="revocable"
-          :revoked="revoked"
-          :releasable="releasable"
+          :start="graphStart"
+          :end="graphEnd"
+          :cliff="graphCliff"
+          :total="graphTotal"
+          :decimals="graphDecimals"
         />
       </div>
     </div>
@@ -119,12 +110,17 @@ export default {
       total: '',
       released: '',
       vested: '',
-      decimals: '',
       beneficiary: '',
       owner: '',
       revocable: '',
       revoked: '',
       releasable: '',
+      graphStart:'',
+      graphEnd:'',
+      graphCliff:'',
+      graphTotal:'',
+      graphDecimals: '',
+
     };
   },
   async created () {
@@ -145,7 +141,6 @@ export default {
       if (store.state.strategicBalance !== String(0)) {
         this.tokens.push('StrategicTON');
       }
-      console.log(this.tokens);
       this.tab = await this.changeTab(this.tokens[0]);
     },
     async changeTab (tab) {
@@ -157,19 +152,21 @@ export default {
 
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
       // const tokenVesting = store.state.marketingTON;
-      console.log(store.state.marketingTON);
+      // console.log(store.state.marketingTON);
       const startDate = await tokenVesting.methods.start().call();
+      this.graphStart = startDate;
       const duration = await tokenVesting.methods.duration().call();
       const endDate = Number(startDate) + Number(duration);
+      this.graphEnd = endDate;
       const cliffDate = await tokenVesting.methods.cliff().call();
-
+      this.graphCliff = cliffDate;
       const released = await tokenVesting.methods.released(store.state.user).call();
       const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
       const vestedAmount = Number(released) + Number(releasableAmount);
 
       const balance = await tokenVesting.methods.balanceOf(store.state.user).call();
       const totalAmount = Number(balance) + Number(released);
-
+      this.graphDecimals = await tokenVesting.methods.decimals().call();
       this.start = new Date(Number(startDate) * 1000);
       this.end = new Date(endDate * 1000);
       this.cliff = new Date(Number(cliffDate) * 1000);
@@ -177,28 +174,29 @@ export default {
       if (tab === 'SeedTON') {
         this.released = _STON(released, 'wei');
         this.total = _STON(totalAmount, 'wei');
+        this.graphTotal = _STON(totalAmount);
         this.releasable = _STON(releasableAmount, 'wei');
         this.vested = _STON(vestedAmount, 'wei');
       } else if (tab === 'PrivateTON') {
         this.released = _PTON(released, 'wei');
         this.total = _PTON(totalAmount, 'wei');
+        this.graphTotal = _STON(totalAmount);
         this.releasable = _PTON(releasableAmount, 'wei');
         this.vested = _PTON(vestedAmount, 'wei');
       } else if (tab === 'MarketingTON') {
         this.released = _MTON(released, 'wei');
         this.total = _MTON(totalAmount, 'wei');
+        this.graphTotal = _STON(totalAmount);
         this.releasable = _MTON(releasableAmount, 'wei');
         this.vested = _MTON(vestedAmount, 'wei');
       } else if (tab === 'StrategicTON') {
         this.released = _STON(released, 'wei');
         this.total = _STON(totalAmount, 'wei');
+        this.graphTotal = _STON(totalAmount);
         this.releasable = _STON(releasableAmount, 'wei');
         this.vested = _STON(vestedAmount, 'wei');
       }
       this.beneficiary = store.state.user;
-      console.log('hi');
-      console.log(this.total);
-
       // this.revocable = await tokenVesting.methods.revocable().call()
       // this.revoked = await tokenVesting.methods.revoked(store.state.user).call()
     },
@@ -255,13 +253,15 @@ export default {
   margin-bottom: 10px;
 }
 
-.table-container {
-  margin-top: 30px;
+.vesting-table-container {
+  margin-top: 15px;
   display: flex;
   flex-direction: row;
   height: 100%;
   min-width: 720px;
   max-width: 960px;
+  min-height: 350px;
+  max-height: 350px;
 }
 .vesting-address-container {
   margin-bottom: 10px;
@@ -298,7 +298,6 @@ export default {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 50px;
 }
 button {
   width: 100px;

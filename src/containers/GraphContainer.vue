@@ -1,6 +1,7 @@
 <template>
   <div class="graph">
-    <graph :chartdata="chartData()" :options="chartOptions()" />
+    Vesting Schedule for {{ tab }}
+    <graph :width="300" :height="300" :chartData="chartData()" :options="chartOptions()" />
   </div>
 </template>
 <script>
@@ -16,20 +17,12 @@ export default {
     // revoked: Revoked
   },
   props: [
-    'address',
     'tab',
     'start',
     'end',
     'cliff',
     'total',
-    'released',
-    'vested',
     'decimals',
-    'beneficiary',
-    'owner',
-    'revocable',
-    'revoked',
-    'releasable',
   ],
   methods: {
     chartData () {
@@ -59,7 +52,7 @@ export default {
       }
 
       points.push(this.getDataPointAt(end));
-
+      // console.log(points);
       return points;
     },
     getDataPointAt (date) {
@@ -77,23 +70,32 @@ export default {
       const end = this.end;
       const decimals = this.decimals;
       const slope = (date - start) / (end - start);
-
-      return this.displayAmount(total, decimals) * slope;
+      return this.displayAmount(total) * slope;
     },
-    displayAmount (amount, decimals) {
-      amount = amount / 10 ** decimals;
-      return Math.round(amount * 10000) / 10000;
+    displayAmount (amount) {
+      const displayAmount = parseFloat(amount) / (Math.pow(10, this.decimals));
+      return Math.round(displayAmount * 10000) / 10000;
     },
     chartOptions () {
       return {
-        legend: { display: true },
+        legend: { display: false },
+        responsive:true,
+        maintainAspectRatio: false,
+        height: 300,
+        responsiveAnimationDuration: 0,
+        animation: {
+          duration: 0,
+        },
         scales: {
           xAxes: [
             {
               type: 'time',
+              ticks: {
+                sampleSize: 10,
+                maxTicksLimit: 7,
+              },
               time: {
                 format: 'MM/DD/YYYY HH:mm',
-                tooltipFormat: 'll HH:mm',
               },
               scaleLabel: {
                 display: true,
@@ -105,8 +107,9 @@ export default {
             {
               scaleLabel: {
                 display: true,
-                labelString: this.tab || '',
+                labelString: 'Amount',
               },
+              stacked: true,
             },
           ],
         },
@@ -133,4 +136,15 @@ export default {
   },
 };
 </script>
-<style></style>
+<style>
+.graph{
+  display: flex;
+  padding: 15px;
+  text-align: center;
+  flex-direction: column;
+  border-radius: 6px;
+  border: solid 1px #ced6d9;
+  background-color: #ffffff;
+  height: 330px;
+  width: 450px;
+}</style>
