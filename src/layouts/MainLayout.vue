@@ -314,7 +314,7 @@ button {
   background: #fff;
   color: #c4c4c4;
   border-radius: 7px;
-  border: 1px solid transparent; 
+  border: 1px solid transparent;
   font: 13px/1.5 "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
 }
 button:hover {
