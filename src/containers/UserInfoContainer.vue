@@ -52,13 +52,13 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Releasable'"
-                 :content="releasable"
-                 :with-divider="false"
-                 :href="href"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
+    <text-viewer-swapper :title="'Releasable'"
+                         :content="releasable"
+                         :with-divider="false"
+                         :tooltip="'Introduction to the operator'"
+                         :tooltipWidth="'180px'"
+                         :tooltipMarginTop="'-9px'"
+                         :href="href"
     />
     <text-viewer :title="'Revocable'"
                  :content="revocable"
@@ -67,6 +67,9 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
+    <div class="button-container">
+      <button @click="swap(address)">release</button>
+    </div>
   </div>
 </template>
 
@@ -76,15 +79,15 @@ import SwapperABI from '@/contracts/abi/Swapper.json';
 import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
-// import TextViewerSwapper from '@/components/TextViewerSwap.vue';
+import TextViewerSwapper from '@/components/TextViewerSwap.vue';
 
 
 export default {
   components: {
     'text-viewer': TextViewer,
-    // 'text-viewer-swapper': TextViewerSwapper,
+    'text-viewer-swapper': TextViewerSwapper,
   },
-  props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'owner', 'revocable', 'revoked', 'releasable'],
+  props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'revocable', 'revoked', 'releasable'],
   computed : {
     ...mapState([
       'web3',
@@ -95,14 +98,14 @@ export default {
     ]),
   },
   methods: {
-    async click (vestingAddress) {
-      if (!this.disable) {
-        await this.swap(vestingAddress);
-      }
-    },
+    // async click (vestingAddress) {
+    //   if (!this.disable) {
+    //     await this.swap(vestingAddress);
+    //   }
+    // },
     async swap (vestingAddress) {
-      const address = getConfig().rinkeby.contractAddress.Swapper;
-      const swapper = createWeb3Contract(SwapperABI, address);
+      const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
+      const swapper = createWeb3Contract(SwapperABI, contractAddress);
 
       if (this.releasable === 0) {
         return alert('Releasable amount is 0.');
@@ -145,6 +148,10 @@ export default {
   border: solid 1px #ced6d9;
   background-color: #ffffff;
   height: 350px;
+}
+
+.button-container {
+  margin-bottom: 10px;
 }
 
 .name-container {

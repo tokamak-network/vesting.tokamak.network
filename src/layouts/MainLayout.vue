@@ -64,8 +64,9 @@ import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import { createCurrency } from '@makerdao/currency';
 const _TON = createCurrency('TON');
 const _MTON = createCurrency('MTON');
-const _STON = createCurrency('STON');
+const _SeedTON = createCurrency('SeedTON');
 const _PTON = createCurrency('PTON');
+const _StrategicTON = createCurrency('StrategicTON');
 
 export default {
   components: {
@@ -125,7 +126,7 @@ export default {
   },
   async created () {
     this.tokenList();
-    this.getMarketing();
+    // this.getMarketing();
   },
   methods: {
     async tokenList () {
@@ -172,62 +173,62 @@ export default {
       this.cliff = new Date(Number(cliffDate) * 1000);
 
       if (tab === 'SeedTON') {
-        this.released = _STON(released, 'wei');
-        this.total = _STON(totalAmount, 'wei');
-        this.graphTotal = _STON(totalAmount);
-        this.releasable = _STON(releasableAmount, 'wei');
-        this.vested = _STON(vestedAmount, 'wei');
+        this.released = _SeedTON(released, 'wei');
+        this.total = _SeedTON(totalAmount, 'wei');
+        this.graphTotal = _SeedTON(totalAmount);
+        this.releasable = _SeedTON(releasableAmount, 'wei');
+        this.vested = _SeedTON(vestedAmount, 'wei');
       } else if (tab === 'PrivateTON') {
         this.released = _PTON(released, 'wei');
         this.total = _PTON(totalAmount, 'wei');
-        this.graphTotal = _STON(totalAmount);
+        this.graphTotal = _PTON(totalAmount);
         this.releasable = _PTON(releasableAmount, 'wei');
         this.vested = _PTON(vestedAmount, 'wei');
       } else if (tab === 'MarketingTON') {
         this.released = _MTON(released, 'wei');
         this.total = _MTON(totalAmount, 'wei');
-        this.graphTotal = _STON(totalAmount);
+        this.graphTotal = _MTON(totalAmount);
         this.releasable = _MTON(releasableAmount, 'wei');
         this.vested = _MTON(vestedAmount, 'wei');
       } else if (tab === 'StrategicTON') {
-        this.released = _STON(released, 'wei');
-        this.total = _STON(totalAmount, 'wei');
-        this.graphTotal = _STON(totalAmount);
-        this.releasable = _STON(releasableAmount, 'wei');
-        this.vested = _STON(vestedAmount, 'wei');
+        this.released = _StrategicTON(released, 'wei');
+        this.total = _StrategicTON(totalAmount, 'wei');
+        this.graphTotal = _StrategicTON(totalAmount);
+        this.releasable = _StrategicTON(releasableAmount, 'wei');
+        this.vested = _StrategicTON(vestedAmount, 'wei');
       }
       this.beneficiary = store.state.user;
       // this.revocable = await tokenVesting.methods.revocable().call()
       // this.revoked = await tokenVesting.methods.revoked(store.state.user).call()
     },
-    async getMarketing () {
-      const network = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
+    // async getMarketing () {
+    //   const network = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
 
-      const tokenVesting = createWeb3Contract(VestingTokenABI, network);
-      const Vesting = store.state.marketingTON;
-      // console.log(Vesting);
-      const startDate = await tokenVesting.methods.start().call();
-      const duration = await tokenVesting.methods.duration().call();
-      const endDate = Number(startDate) + Number(duration);
-      const cliffDate = await tokenVesting.methods.cliff().call();
+    //   const tokenVesting = createWeb3Contract(VestingTokenABI, network);
+    //   const Vesting = store.state.marketingTON;
+    //   // console.log(Vesting);
+    //   const startDate = await tokenVesting.methods.start().call();
+    //   const duration = await tokenVesting.methods.duration().call();
+    //   const endDate = Number(startDate) + Number(duration);
+    //   const cliffDate = await tokenVesting.methods.cliff().call();
 
-      const released = await tokenVesting.methods.released(store.state.user).call();
+    //   const released = await tokenVesting.methods.released(store.state.user).call();
 
-      const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
+    //   const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
 
-      const balance = await tokenVesting.methods.balanceOf(store.state.user).call();
-      const totalAmount = Number(balance) + Number(released);
+    //   const balance = await tokenVesting.methods.balanceOf(store.state.user).call();
+    //   const totalAmount = Number(balance) + Number(released);
 
-      this.marketing.start = new Date(Number(startDate) * 1000);
-      this.marketing.end = new Date(endDate * 1000);
-      this.marketing.cliff = new Date(Number(cliffDate) * 1000);
-      this.marketing.released = _TON(released, 'wei');
-      this.marketing.total = _TON(totalAmount, 'wei');
-      this.marketing.releasable = _TON(releasableAmount, 'wei');
-      // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
-      this.marketing.beneficiary = store.state.user;
-      // console.log(this.marketig);
-    },
+    //   this.marketing.start = new Date(Number(startDate) * 1000);
+    //   this.marketing.end = new Date(endDate * 1000);
+    //   this.marketing.cliff = new Date(Number(cliffDate) * 1000);
+    //   this.marketing.released = _TON(released, 'wei');
+    //   this.marketing.total = _TON(totalAmount, 'wei');
+    //   this.marketing.releasable = _TON(releasableAmount, 'wei');
+    //   // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
+    //   this.marketing.beneficiary = store.state.user;
+    //   // console.log(this.marketig);
+    // },
     // poll () {
     //   this.polling = setInterval(() => {
     //     if (this.$store.state.signIn) {

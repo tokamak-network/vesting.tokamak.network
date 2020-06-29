@@ -83,6 +83,9 @@ export default {
   display: flex;
   flex-direction: row-reverse;
 }
+a {
+  text-align: center;
+}
 
 .divider {
   height: 0;
