@@ -252,6 +252,10 @@ export default {
 
 .button-container {
   margin-bottom: 10px;
+  width: max-content;
+  background: #fff;
+  border-radius: 7px;
+  border: 1px solid #ced6d9;
 }
 
 .vesting-table-container {
@@ -288,7 +292,7 @@ export default {
 }
 
 .table-info {
-  width: 50%;
+  margin-right: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -301,26 +305,30 @@ export default {
   flex-direction: column;
 }
 button {
-  width: 100px;
+  width: 120px;
   height: 30px;
   padding-top: 2px;
   font-family: Roboto;
-  font-weight: normal;
-  font-stretch: normal;
-  font-style: normal;
-  letter-spacing: normal;
+  font-weight: bold;
   font-size: 11px;
-  color: #161819;
+  background: #fff;
+  color: #c4c4c4;
+  border-radius: 7px;
+  border: 1px solid transparent; 
+  font: 13px/1.5 "Helvetica Neue", Arial, "Liberation Sans", FreeSans, sans-serif;
 }
-.button:hover {
+button:hover {
   cursor: pointer;
-  background-color: #ecf1f3;
+  background-color: #f7f8f9;
+}
+button:focus {
+  outline: none;
 }
 .disable:hover {
   cursor: not-allowed;
 }
 .tab-clicked {
-  background-color: #1e4e85;
-  color: #ffffff;
+  background: #f7f8f9;
+  color: #000;
 }
 </style>
