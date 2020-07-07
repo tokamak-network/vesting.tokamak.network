@@ -1,23 +1,39 @@
 <template>
-  <div class="text-viewer">
+  <div class="text-viewer-link">
     <hr class="divider" :style="[withDivider ? {} : {'visibility': 'hidden'}]">
     <div class="row">
       <div class="title">{{ title }}</div>
       <div v-if="tooltip !== ''" class="tooltip">
         <span class="tooltiptext" :style="`margin-left: 10px; margin-top: ${tooltipMarginTop}; width: ${tooltipWidth};`">{{ tooltip }}</span>
       </div>
-      <div class="content" :style="[title === 'Description' ? { 'width': '168px' } : {}]">{{ content }}</div>
+      <div class="content">
+        <a
+          class="link"
+          target="_blank"
+          rel="noopener noreferrer"
+          :href="href"
+        >{{ content }}</a>
+      </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getConfig } from '../../config.js';
+
 export default {
   props: {
     title: {
       type: String,
     },
     content: {
+    },
+    type: {
+      // transactionHash or address
+    },
+    withDivider: {
+      type: Boolean,
+      default: false,
     },
     tooltip: {
       type: String,
@@ -31,20 +47,17 @@ export default {
       type: String,
       default: '-17px',
     },
-    withDivider: {
-      type: Boolean,
-      default: false,
+  },
+  computed: {
+    href () {
+      return getConfig().rinkeby.prefixAddress + this.content;
     },
   },
 };
 </script>
 
 <style scoped>
-img {
-  margin-bottom: 3px;
-}
-
-.text-viewer {
+.text-viewer-link {
   margin-bottom: 6px;
 }
 
@@ -63,14 +76,15 @@ img {
   font-style: normal;
   letter-spacing: normal;
   color: #161819;
-  min-width: 100px;
+  display: flex;
+  align-items: center;
 }
 
 .content {
   display: inline-block;
   flex: 1;
-  text-align: center;
-  padding-right: 16px;
+  text-align: right;
+  padding-right: 36px;
   font-family: Roboto;
   font-size: 10px;
   font-weight: 300;
@@ -79,6 +93,14 @@ img {
   letter-spacing: normal;
   color: #161819;
   word-break: break-word;
+}
+
+.link {
+  display: inline;
+  text-align: right;
+  align-items: center;
+  text-decoration: underline;
+  color: black;
   min-width: 300px;
 }
 
@@ -92,11 +114,6 @@ img {
 
 .hidden {
   visibility: hidden;
-}
-
-.tooltip {
-  position: relative;
-  display: inline-block;
 }
 
 /* Tooltip text */

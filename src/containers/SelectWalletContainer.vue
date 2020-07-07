@@ -15,40 +15,40 @@
 
 <script>
 import Web3 from 'web3';
-// import { getConfig } from '../../config.js'
-// import { setProvider } from '@/helpers/Contract';
-
+import { getConfig } from '../../config.js';
+import { setProvider } from '@/helpers/Contract';
+import { mapState } from 'vuex';
 import Wallet from '@/components/Wallet.vue';
 
 export default {
   components: {
     wallet: Wallet,
   },
-  // computed: {
-  //   ...mapState(['user'])
-  // },
+  computed: {
+    ...mapState(['user']),
+  },
   methods: {
     async useMetamask () {
       try {
         const web3 = await this.metamask();
         await this.$store.dispatch('signIn', web3);
 
-        window.ethereum.on('chainIdChanged', () => {
+        window.ethereum.on('chainIdChanged', (chainId) => {
           this.$store.dispatch('logout');
           this.$router
             .replace({
               path: '/',
               query: { network: this.$route.query.network },
-            });
+            }).catch(err => {});
         });
-        window.ethereum.on('accountsChanged', account => {
+        window.ethereum.on('accountsChanged', (account) => {
           if (this.user.toLowerCase() !== account[0].toLowerCase()) {
             this.$store.dispatch('logout');
-            this.$router
-              .replace({
-                path: '/',
-                query: { network: this.$route.query.network },
-              });
+            this.$router.replace({
+              path: '/',
+              query: { network: this.$route.query.network },
+            }).catch(err => {
+            });
           }
         });
       } catch (e) {
@@ -79,7 +79,7 @@ export default {
       //     `Please connect to the '${this.$options.filters.nameOfNetwork(
       //       getConfig().network
       //     )}' network`
-      //   )
+      //   );
       // }
 
       return new Web3(provider);

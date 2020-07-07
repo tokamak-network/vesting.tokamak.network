@@ -3,8 +3,9 @@
     <div class="title">
       Vesting Details for {{ tab }}
     </div>
-    <text-viewer :title="'Beneficiary'"
+    <text-viewr-link :title="'Beneficiary'"
                  :content="user"
+                 :type="'address'"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
@@ -66,8 +67,8 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <div class="button-container">
-      <button v-if="releasable !== '0'" @click="swap(address)">release</button>
+    <div v-show="parseFloat(releasable) !== 0" class="release-button-container">
+      <button @click="swap(address)" class="button-release">release</button>
     </div>
   </div>
 </template>
@@ -78,10 +79,12 @@ import SwapperABI from '@/contracts/abi/Swapper.json';
 import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
+import TextViewerLink from '@/components/TextViewerLink.vue';
 
 export default {
   components: {
     'text-viewer': TextViewer,
+    'text-viewr-link': TextViewerLink,
     // 'text-viewer-swapper': TextViewerSwapper,
   },
   props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'revocable', 'revoked', 'releasable'],
@@ -103,8 +106,7 @@ export default {
     async swap (vestingAddress) {
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
-      console.log(this.releasable);
-      if (this.releasable === 0) {
+      if (parseFloat(this.releasable) === 0) {
         return alert('Releasable amount is 0.');
       }
 
@@ -147,10 +149,14 @@ export default {
   height: 350px;
 }
 
-.button-container {
-  margin-bottom: 10px;
-  float: 70%;
-  margin-left: 16px;
+.release-button-container {
+  /* margin-bottom: 10px;
+ margin-left: 16px; */
+ display: flex;
+ justify-content: center;
+ /* width: 100%; */
+ display: flex;
+ justify-self: center;
 }
 
 .name-container {
@@ -159,8 +165,8 @@ export default {
   margin-left: 16px;
 }
 .title {
-  text-align: center;
   margin-top: 10px;
+  text-align: center;
 }
 
 .row {
@@ -183,16 +189,14 @@ export default {
   word-break: break-all;
 }
 
-.button {
-  color: #ffffff;
-  background-color: #35496b;
-  border: 1px solid #35496b;
+.button-release {
+  color: #000000;
   text-align: center;
   font-size: 14px;
-  border-radius: 4px;
-  height: 22px;
-  width: 40px;
+  height: 25px;
   margin-left: 16px;
+  border-radius: 7px;
+  border: 1px solid #ced6d9;
 }
 
 .button-commit {

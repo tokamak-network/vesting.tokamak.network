@@ -148,7 +148,6 @@ export default {
       this.activeTab = tab;
       this.tab = tab;
       const network = getConfig().rinkeby.contractAddress[tab];
-
       this.address = network.vesting;
 
       const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
@@ -164,7 +163,6 @@ export default {
       const released = await tokenVesting.methods.released(store.state.user).call();
       const releasableAmount = await tokenVesting.methods.releasableAmount(store.state.user).call();
       const vestedAmount = Number(released) + Number(releasableAmount);
-
       const balance = await tokenVesting.methods.balanceOf(store.state.user).call();
       const totalAmount = Number(balance) + Number(released);
       this.graphDecimals = await tokenVesting.methods.decimals().call();

@@ -60,7 +60,7 @@ const getInitialState = () => initialState;
 export default new Vuex.Store({
   state: cloneDeep(initialState),
   mutations: {
-    SET_INITAL_STATE: (state) => {
+    SET_INITIAL_STATE: (state) => {
       const initialState = getInitialState();
       Object.keys(initialState).forEach(key => {
         state[key] = initialState[key];
