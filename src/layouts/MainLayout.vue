@@ -15,26 +15,43 @@
         <img src="@/assets/Images/TokamakNetworkLogo.png" height="43px" width="180px">
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
-      <div class="vesting-address-details">{{ this.$store.state.address }}</div>
+      <!-- <div>{{tokenInformation}}</div> -->
+      <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
     <div class="vesting-table-container">
       <div class="table-info">
         <div>
           <user-info-container
-            :tab="tab"
+            :tab="activeTab"
+            :start="tokenInformation['startDate']"
+            :end="tokenInformation['endDate']"
+            :cliff="tokenInformation['cliffDate']"
+            :total="tokenInformation['total']"
+            :released="tokenInformation['released']"
+            :vested="tokenInformation['vested']"
+            :revocable="''"
+            :revoked="''"
+            :releasable="tokenInformation['releasable']"
+            :address="tokenInformation['address']"
+
           />
         </div>
       </div>
       <div class="table-graph">
         <graph-container
           :tab="tab"
+          :start="tokenInformation['startDate']"
+          :end="tokenInformation['endDate']"
+          :cliff="tokenInformation['cliffDate']"
+          :total="tokenInformation['graphTotal']"
+          :decimals="tokenInformation['graphDecimals']"
         />
       </div>
     </div>
   </div>
 </template>
 <script>
-import { mapState } from 'vuex';
+import { mapState, mapGetters} from 'vuex';
 import store from '@/store/index.js';
 import UserInfo from '@/containers/UserInfoContainer.vue';
 import GraphContainer from '@/containers/GraphContainer.vue';
@@ -44,30 +61,48 @@ export default {
     'graph-container': GraphContainer,
     'user-info-container': UserInfo,
   },
-  Computed: {
+  computed:{
     ...mapState([
       'web3',
       'user',
       'tokenList',
-      'tokenInfo',
-
     ]),
+     ...mapGetters([
+      'tokenInfoByTab',
+    ]),
+    tokenInformation () {
+      return this.tokenInfoByTab(this.activeTab);
+    },
   },
   data () {
     return {
       tab: '',
+      operator:{},
       activeTab: this.$store.state.tokenList[0],
+      address: '',
     };
   },
-  async created () {
-    this.tab = await this.changeTab(this.$store.state.tokenList[0]);
+   beforeCreate () {
+    //  console.log(tokenInfoByTab('seedton'));
+    //  this.address =tokenInformation['address'];
+
+    
+      // this.activeTab = this.$store.state.tokenList[0];
+      // this.tab = this.$store.state.tokenList[0];
+    //   this.tab = tabz;
+    //  this.operator =this.tokenInfoByTab(tabz);
+    
   },
   methods: {
-   
     async changeTab (tab) {
       this.activeTab = tab;
       this.tab = tab;
-      this.$store.dispatch('setTokenInfo', tab);
+     
+
+// console.log(this.tokenInformation.endDate);
+// this.$store.dispatch('setTokenInfo', tab);
+       
+      
     },
   },
 };

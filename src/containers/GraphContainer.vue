@@ -7,8 +7,6 @@
 <script>
 import Graph from '@/components/Graph.vue';
 import moment from 'moment';
-import { mapState, mapGetters } from 'vuex';
-import store from '@/store/index.js';
 // import Empty from '@/components/Empty.vue';
 // import Revoke from '@/components/Revoke.vue';
 
@@ -20,12 +18,12 @@ export default {
   },
   props: [
     'tab',
+    'start',
+    'end',
+    'cliff',
+    'total',
+    'decimals',
   ],
-  Computed: {
-    ...mapState([
-      'tokenInfo',
-    ]),
-  },
   methods: {
     chartData () {
       return {
@@ -37,9 +35,9 @@ export default {
       };
     },
     getPoints () {
-      const start = store.state.tokenInfo.startDate;
-      const cliff = store.state.tokenInfo.cliffDate;
-      const end = store.state.tokenInfo.endDate;
+      const start = this.start;
+      const cliff = this.cliff;
+      const end = this.end;
       const now = new Date() / 1000;
       const points = [this.getDataPointAt(start)];
       if (cliff < now) {
@@ -67,16 +65,15 @@ export default {
       return moment(date * 1000).format('MM/DD/YYYY HH:mm');
     },
     getAmountAt (date) {
-      const total = store.state.tokenInfo.graphTotal;
-      const start = store.state.tokenInfo.startDate;
-      const end = store.state.tokenInfo.endDate;
-      const decimals = store.state.tokenInfo.graphDecimals;
+      const total = this.total;
+      const start = this.start;
+      const end = this.end;
+      const decimals = this.decimals;
       const slope = (date - start) / (end - start);
-      
       return this.displayAmount(total) * slope;
     },
     displayAmount (amount) {
-      const displayAmount = parseFloat(amount) / (Math.pow(10, store.state.tokenInfo.graphDecimals));
+      const displayAmount = parseFloat(amount) / (Math.pow(10, this.decimals));
       return Math.round(displayAmount * 10000) / 10000;
     },
     chartOptions () {

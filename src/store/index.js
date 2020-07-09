@@ -15,6 +15,7 @@ import TokenABI from '@/contracts/abi/TON.json';
 
 import { getConfig } from '../../config.js';
 import { createCurrency } from '@makerdao/currency';
+import { clone } from 'numeral';
 const _TON = createCurrency('TON');
 const _MTON = createCurrency('MTON');
 const _SeedTON = createCurrency('SeedTON');
@@ -45,7 +46,7 @@ const initialState = {
   privateBalance:  _PTON('0'),
   marketingBalance: _MTON('0'),
   strategicBalance: _StrategicTON('0'),
-  tokenInfo:{},
+  tokenInfo:[],
 
   Benificiary: {},
   tokenList:[],
@@ -166,11 +167,15 @@ export default new Vuex.Store({
 
       await Promise.all([
         context.dispatch('set', web3),
+        // context.dispatch('setTokenInfo')
+        // context.dispatch('setTokenInfo')
       ]);
       await new Promise(resolve => setTimeout(resolve, 1000)); // https://github.com/Onther-Tech/dashboard.tokamak.network/issues/81
+      await context.dispatch('setTokenInfo')
       context.commit('SIGN_IN');
       context.commit('IS_LOADING', false);
-     
+      
+      
       // router.replace({ path: 'dashboard', query: { network: router.app.$route.query.network } }).catch(err => {});
     },
     async set (context, web3) {
@@ -182,6 +187,7 @@ export default new Vuex.Store({
       await Promise.all([
         context.dispatch('checkPendingTransactions'),
         context.dispatch('setBalance'),
+       
      
       ]);
     },
@@ -279,59 +285,118 @@ export default new Vuex.Store({
       context.commit('SET_TOKEN_LIST', list);
 
     },
-    async setTokenInfo (context,tab){
-      const info = {}
-      const user = context.state.user;  
-      const network = getConfig().rinkeby.contractAddress[tab];
-      const address = network.vesting;
-      info.address = address;
-      const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
-      const startDate = await tokenVesting.methods.start().call();
-      info.startDate = startDate;
-      const duration = await tokenVesting.methods.duration().call();
-      
-      const endDate = Number(startDate) + Number(duration);
-      info.endDate = endDate;
-      const cliffDate = await tokenVesting.methods.cliff().call();
-      info.cliffDate = cliffDate;
-      const releasedAmount = await tokenVesting.methods.released(user).call();
-      const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
-      const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
-      const balance = await tokenVesting.methods.balanceOf(user).call();
-      const totalAmount = Number(balance) + Number(releasedAmount);
-      const graphDecimals = await tokenVesting.methods.decimals().call();
-      info.graphDecimals = graphDecimals;
-      if (tab === 'SeedTON') {
-       info.total = _SeedTON(totalAmount, 'wei');
-       info.released = _SeedTON(releasedAmount, 'wei');
-       info.releasable = _SeedTON(releasableAmount, 'wei');
-       info.vested = _SeedTON(vestedAmount, 'wei');
-       info.graphTotal = _SeedTON(totalAmount);
-        
-      }
-       else if (tab === 'PrivateTON') {
-        info.total = _PTON(totalAmount, 'wei');
-        info.released = _PTON(releasedAmount, 'wei');
-        info.releasable = _PTON(releasableAmount, 'wei');
-        info.vested = _PTON(vestedAmount, 'wei');
-        info.graphTotal = _PTON(totalAmount);
-      } 
-      else if (tab === 'MarketingTON') {
-        info.total = _MTON(totalAmount, 'wei');
-        info.released = _MTON(releasedAmount, 'wei');
-        info.releasable = _MTON(releasableAmount, 'wei');
-        info.vested = _MTON(vestedAmount, 'wei');
-        info.graphTotal = _MTON(totalAmount);
-      } 
-      else if (tab === 'StrategicTON') {
-        info.total = _StrategicTON(totalAmount, 'wei');
-        info.released = _StrategicTON(releasedAmount, 'wei');
-        info.releasable = _StrategicTON(releasableAmount, 'wei');
-        info.vested = _StrategicTON(vestedAmount, 'wei');
-        info.graphTotal = _StrategicTON(totalAmount);
-      }
+    async setTokenInfo (context){
+     
+      const user = context.state.user; 
+      const tokenList = context.state.tokenList; 
 
-         context.commit('SET_TOKEN_INFO',info);
+      const tokenInfo = await Promise.all(
+        tokenList.map(async token =>{
+          const info = {};
+          const network = getConfig().rinkeby.contractAddress[token];
+          const address = network.vesting;
+          info.tab = token;
+          info.address = address;
+          const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
+          const startDate = await tokenVesting.methods.start().call();
+          info.startDate = startDate;
+          const duration = await tokenVesting.methods.duration().call();
+          const endDate = Number(startDate) + Number(duration);
+          info.endDate = endDate;
+          const cliffDate = await tokenVesting.methods.cliff().call();
+          info.cliffDate = cliffDate;
+          const releasedAmount = await tokenVesting.methods.released(user).call();
+          const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
+          const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
+          const balance = await tokenVesting.methods.balanceOf(user).call();
+          const totalAmount = Number(balance) + Number(releasedAmount);
+          const graphDecimals = await tokenVesting.methods.decimals().call();
+          info.graphDecimals = graphDecimals;
+          if (token === 'SeedTON') {
+            info.total = _SeedTON(totalAmount, 'wei');
+            info.released = _SeedTON(releasedAmount, 'wei');
+            info.releasable = _SeedTON(releasableAmount, 'wei');
+            info.vested = _SeedTON(vestedAmount, 'wei');
+            info.graphTotal = _SeedTON(totalAmount);
+             
+           }
+            else if (token === 'PrivateTON') {
+              info.total = _PTON(totalAmount, 'wei');
+              info.released = _PTON(releasedAmount, 'wei');
+              info.releasable = _PTON(releasableAmount, 'wei');
+              info.vested = _PTON(vestedAmount, 'wei');
+              info.graphTotal = _PTON(totalAmount);
+           } 
+           else if (token === 'MarketingTON') {
+            info.total = _MTON(totalAmount, 'wei');
+            info.released = _MTON(releasedAmount, 'wei');
+            info.releasable = _MTON(releasableAmount, 'wei');
+            info.vested = _MTON(vestedAmount, 'wei');
+            info.graphTotal = _MTON(totalAmount);
+           } 
+           else if (token === 'StrategicTON') {
+            info.total = _StrategicTON(totalAmount, 'wei');
+            info.released = _StrategicTON(releasedAmount, 'wei');
+            info.releasable = _StrategicTON(releasableAmount, 'wei');
+            info.vested = _StrategicTON(vestedAmount, 'wei');
+            info.graphTotal = _StrategicTON(totalAmount);
+           }
+    
+           return info;
+        })
+      )
+      context.commit('SET_TOKEN_INFO',tokenInfo);
+
+      // const network = getConfig().rinkeby.contractAddress[tab];
+      // const address = network.vesting;
+      // info.address = address;
+      // const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
+      // const startDate = await tokenVesting.methods.start().call();
+      // info.startDate = startDate;
+      // const duration = await tokenVesting.methods.duration().call();
+      
+      // const endDate = Number(startDate) + Number(duration);
+      // info.endDate = endDate;
+      // const cliffDate = await tokenVesting.methods.cliff().call();
+      // info.cliffDate = cliffDate;
+      // const releasedAmount = await tokenVesting.methods.released(user).call();
+      // const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
+      // const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
+      // const balance = await tokenVesting.methods.balanceOf(user).call();
+      // const totalAmount = Number(balance) + Number(releasedAmount);
+      // const graphDecimals = await tokenVesting.methods.decimals().call();
+      // info.graphDecimals = graphDecimals;
+      // if (tab === 'SeedTON') {
+      //  info.total = _SeedTON(totalAmount, 'wei');
+      //  info.released = _SeedTON(releasedAmount, 'wei');
+      //  info.releasable = _SeedTON(releasableAmount, 'wei');
+      //  info.vested = _SeedTON(vestedAmount, 'wei');
+      //  info.graphTotal = _SeedTON(totalAmount);
+        
+      // }
+      //  else if (tab === 'PrivateTON') {
+      //   info.total = _PTON(totalAmount, 'wei');
+      //   info.released = _PTON(releasedAmount, 'wei');
+      //   info.releasable = _PTON(releasableAmount, 'wei');
+      //   info.vested = _PTON(vestedAmount, 'wei');
+      //   info.graphTotal = _PTON(totalAmount);
+      // } 
+      // else if (tab === 'MarketingTON') {
+      //   info.total = _MTON(totalAmount, 'wei');
+      //   info.released = _MTON(releasedAmount, 'wei');
+      //   info.releasable = _MTON(releasableAmount, 'wei');
+      //   info.vested = _MTON(vestedAmount, 'wei');
+      //   info.graphTotal = _MTON(totalAmount);
+      // } 
+      // else if (tab === 'StrategicTON') {
+      //   info.total = _StrategicTON(totalAmount, 'wei');
+      //   info.released = _StrategicTON(releasedAmount, 'wei');
+      //   info.releasable = _StrategicTON(releasableAmount, 'wei');
+      //   info.vested = _StrategicTON(vestedAmount, 'wei');
+      //   info.graphTotal = _StrategicTON(totalAmount);
+      // }
+
+         
       // const revocable = await tokenVesting.methods.revocable().call()
       //  const revoked = await tokenVesting.methods.revoked(store.state.user).call()    
     }, 
@@ -460,6 +525,9 @@ export default new Vuex.Store({
   getters: {
     initialState: (state) => {
       return isEqual(state, initialState);
+    },
+    tokenInfoByTab:(state) =>(tab) =>{
+      return cloneDeep(state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase()));
     },
   },
 });
