@@ -16,6 +16,10 @@ import TokenABI from '@/contracts/abi/TON.json';
 import { getConfig } from '../../config.js';
 import { createCurrency } from '@makerdao/currency';
 const _TON = createCurrency('TON');
+const _MTON = createCurrency('MTON');
+const _SeedTON = createCurrency('SeedTON');
+const _PTON = createCurrency('PTON');
+const _StrategicTON = createCurrency('StrategicTON');
 
 const initialState = {
   loading: false,
@@ -37,21 +41,16 @@ const initialState = {
   marketingTON: {},
   strategicTON: {},
 
-  seedBalance: '',
-  privateBalance: '',
-  marketingBalance: '',
-  strategicBalance: '',
-
+  seedBalance: _SeedTON('0'),
+  privateBalance:  _PTON('0'),
+  marketingBalance: _MTON('0'),
+  strategicBalance: _StrategicTON('0'),
+  tokenInfo:{},
 
   Benificiary: {},
-
-  // operator
+  tokenList:[],
   operators: [],
-
-  // user transaction history
   history: [],
-
-  // not yet committed
 
 };
 
@@ -127,6 +126,14 @@ export default new Vuex.Store({
     SET_PRIVATE_TON: (state, privateTon) => {
       state.privateTON = privateTon;
     },
+    SET_TOKEN_LIST: (state, tokenList) =>{
+      state.tokenList = tokenList;
+    },
+
+    SET_TOKEN_INFO:(state,tokenInfo)=>{
+      state.tokenInfo = tokenInfo;
+    },
+
     ADD_PENDING_TRANSACTION: (state, newPendingTransaction) => {
       if (!state.pendingTransactions.find(pendingTransaction => pendingTransaction.transactionHash === newPendingTransaction.transactionHash)) {
         state.pendingTransactions.push(newPendingTransaction);
@@ -163,6 +170,7 @@ export default new Vuex.Store({
       await new Promise(resolve => setTimeout(resolve, 1000)); // https://github.com/Onther-Tech/dashboard.tokamak.network/issues/81
       context.commit('SIGN_IN');
       context.commit('IS_LOADING', false);
+     
       // router.replace({ path: 'dashboard', query: { network: router.app.$route.query.network } }).catch(err => {});
     },
     async set (context, web3) {
@@ -174,13 +182,15 @@ export default new Vuex.Store({
       await Promise.all([
         context.dispatch('checkPendingTransactions'),
         context.dispatch('setBalance'),
+     
       ]);
     },
-    async setTokens (context, tokens) {
+    async setTokens (context) {
       const user = context.state.user;
-
       // const network = getConfig().rinkeby.contractAddress;
       const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
+      
+      
       const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
       const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
       const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
@@ -189,7 +199,8 @@ export default new Vuex.Store({
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
       const privateTon = createWeb3Contract(VestingTokenABI, privateAddress);
-      console.log(privateTon);
+      
+      
       context.commit('SET_MARKETING_TON', marketingTon);
       context.commit('SET_STRATEGIC_TON', strategicTon);
       context.commit('SET_SEED_TON', seedTon);
@@ -230,10 +241,10 @@ export default new Vuex.Store({
       // context.commit('SET_MARKETING_TON', marketingTons);
     },
     async setBalance (context){
-      // const web3 = context.state.web3;
+    
       const user = context.state.user;
-
-      // const TON = context.state.TON;
+      const list = [];
+  
       const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
       const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
       const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
@@ -243,19 +254,87 @@ export default new Vuex.Store({
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
       const privateTON = createWeb3Contract(VestingTokenABI, privateAddress);
-
-      // const tonBalance = await TON.methods.balanceOf(user).call();
       const privateTonBalance = await privateTON.methods.balanceOf(user).call();
       const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
       const seedTonBalance = await seedTON.methods.balanceOf(user).call();
       const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
-
-      // context.commit('SET_TON_BALANCE', _TON.wei(tonBalance.toString()));
+     
       context.commit('SET_PRIVATE_BALANCE', privateTonBalance);
       context.commit('SET_MARKETING_BALANCE', marketingTonBalance);
       context.commit('SET_SEED_BALANCE', seedTonBalance);
       context.commit('SET_STRATEGIC_BALANCE', strategicTonBalance);
+      
+      if (seedTonBalance !== String(0)){
+        list.push('SeedTON');
+      }
+      if (privateTonBalance !== String(0)){
+        list.push('PrivateTON');
+      }
+      if (marketingTonBalance !== String(0)){
+        list.push('MarketingTON');
+      }
+      if (strategicTonBalance !== String(0)){
+        list.push('StrategicTON');
+      }
+      context.commit('SET_TOKEN_LIST', list);
+
     },
+    async setTokenInfo (context,tab){
+      const info = {}
+      const user = context.state.user;  
+      const network = getConfig().rinkeby.contractAddress[tab];
+      const address = network.vesting;
+      info.address = address;
+      const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
+      const startDate = await tokenVesting.methods.start().call();
+      info.startDate = startDate;
+      const duration = await tokenVesting.methods.duration().call();
+      
+      const endDate = Number(startDate) + Number(duration);
+      info.endDate = endDate;
+      const cliffDate = await tokenVesting.methods.cliff().call();
+      info.cliffDate = cliffDate;
+      const releasedAmount = await tokenVesting.methods.released(user).call();
+      const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
+      const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
+      const balance = await tokenVesting.methods.balanceOf(user).call();
+      const totalAmount = Number(balance) + Number(releasedAmount);
+      const graphDecimals = await tokenVesting.methods.decimals().call();
+      info.graphDecimals = graphDecimals;
+      if (tab === 'SeedTON') {
+       info.total = _SeedTON(totalAmount, 'wei');
+       info.released = _SeedTON(releasedAmount, 'wei');
+       info.releasable = _SeedTON(releasableAmount, 'wei');
+       info.vested = _SeedTON(vestedAmount, 'wei');
+       info.graphTotal = _SeedTON(totalAmount);
+        
+      }
+       else if (tab === 'PrivateTON') {
+        info.total = _PTON(totalAmount, 'wei');
+        info.released = _PTON(releasedAmount, 'wei');
+        info.releasable = _PTON(releasableAmount, 'wei');
+        info.vested = _PTON(vestedAmount, 'wei');
+        info.graphTotal = _PTON(totalAmount);
+      } 
+      else if (tab === 'MarketingTON') {
+        info.total = _MTON(totalAmount, 'wei');
+        info.released = _MTON(releasedAmount, 'wei');
+        info.releasable = _MTON(releasableAmount, 'wei');
+        info.vested = _MTON(vestedAmount, 'wei');
+        info.graphTotal = _MTON(totalAmount);
+      } 
+      else if (tab === 'StrategicTON') {
+        info.total = _StrategicTON(totalAmount, 'wei');
+        info.released = _StrategicTON(releasedAmount, 'wei');
+        info.releasable = _StrategicTON(releasableAmount, 'wei');
+        info.vested = _StrategicTON(vestedAmount, 'wei');
+        info.graphTotal = _StrategicTON(totalAmount);
+      }
+
+         context.commit('SET_TOKEN_INFO',info);
+      // const revocable = await tokenVesting.methods.revocable().call()
+      //  const revoked = await tokenVesting.methods.revoked(store.state.user).call()    
+    }, 
     async setTransactionsAndPendingTransactions (context, transactions) {
       context.commit('SET_TRANSACTIONS', transactions);
 
@@ -375,6 +454,8 @@ export default new Vuex.Store({
       );
       context.commit('SET_USERS', usersVesting);
     },
+   
+
   },
   getters: {
     initialState: (state) => {

@@ -12,69 +12,70 @@
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Start date'"
-                 :content="start"
+                 :content="new Date(Number(tokenInfo.startDate) * 1000)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Cliff'"
-                 :content="cliff"
+                 :content="new Date(Number(tokenInfo.cliffDate) * 1000)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'End date'"
-                 :content="end"
+                 :content="new Date(Number(tokenInfo.endDate) * 1000)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Total vesting'"
-                 :content="total"
+                 :content="tokenInfo.total"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Already vested'"
-                 :content="vested"
+                 :content="tokenInfo.vested"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Already relased'"
-                 :content="released"
+                 :content="tokenInfo.released"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Releasable'"
-                 :content="releasable"
+                 :content="tokenInfo.releasable"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Revocable'"
-                 :content="revocable"
+                 :content="tokenInfo.revocable"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <div v-show="parseFloat(releasable) !== 0" class="release-button-container">
-      <button @click="swap(address)" class="button-release">release</button>
+    <div v-show="parseFloat(tokenInfo.releasable) !== 0" class="release-button-container">
+      <button class="button-release" @click="swap(tokenInfo.address)">release</button>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
+import store from '@/store/index.js';
 import SwapperABI from '@/contracts/abi/Swapper.json';
 import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
@@ -87,16 +88,23 @@ export default {
     'text-viewr-link': TextViewerLink,
     // 'text-viewer-swapper': TextViewerSwapper,
   },
-  props: ['address', 'tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'beneficiary', 'revocable', 'revoked', 'releasable'],
+  props: ['tab'],
   computed : {
     ...mapState([
       'web3',
       'user',
+      'tokenInfo',
     ]),
     ...mapGetters([
       'vestingInfo',
     ]),
   },
+   data (){
+    return {
+      revocable:'',
+    }
+  },
+  
   methods: {
     // async click (vestingAddress) {
     //   if (!this.disable) {
@@ -106,7 +114,7 @@ export default {
     async swap (vestingAddress) {
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
-      if (parseFloat(this.releasable) === 0) {
+      if (parseFloat(this.$store.state.tokenInfo.releasable) === 0) {
         return alert('Releasable amount is 0.');
       }
 
@@ -150,11 +158,8 @@ export default {
 }
 
 .release-button-container {
-  /* margin-bottom: 10px;
- margin-left: 16px; */
  display: flex;
  justify-content: center;
- /* width: 100%; */
  display: flex;
  justify-self: center;
 }
