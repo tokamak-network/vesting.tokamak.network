@@ -4,12 +4,12 @@
       Vesting Details for {{ tab }}
     </div>
     <text-viewr-link :title="'Beneficiary'"
-                 :content="user"
-                 :type="'address'"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
+                     :content="user"
+                     :type="'address'"
+                     :with-divider="false"
+                     :tooltip="'Introduction to the operator'"
+                     :tooltipWidth="'180px'"
+                     :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Start date'"
                  :content="new Date(Number(start) * 1000)"
@@ -87,7 +87,7 @@ export default {
     'text-viewr-link': TextViewerLink,
     // 'text-viewer-swapper': TextViewerSwapper,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable','address'],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address'],
   computed : {
     ...mapState([
       'web3',

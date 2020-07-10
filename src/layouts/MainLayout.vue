@@ -33,7 +33,6 @@
             :revoked="''"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
-
           />
         </div>
       </div>
@@ -51,7 +50,7 @@
   </div>
 </template>
 <script>
-import { mapState, mapGetters} from 'vuex';
+import { mapState, mapGetters } from 'vuex';
 import store from '@/store/index.js';
 import UserInfo from '@/containers/UserInfoContainer.vue';
 import GraphContainer from '@/containers/GraphContainer.vue';
@@ -61,19 +60,6 @@ export default {
     'graph-container': GraphContainer,
     'user-info-container': UserInfo,
   },
-  computed:{
-    ...mapState([
-      'web3',
-      'user',
-      'tokenList',
-    ]),
-     ...mapGetters([
-      'tokenInfoByTab',
-    ]),
-    tokenInformation () {
-      return this.tokenInfoByTab(this.activeTab);
-    },
-  },
   data () {
     return {
       tab: '',
@@ -82,27 +68,23 @@ export default {
       address: '',
     };
   },
-   beforeCreate () {
-    //  console.log(tokenInfoByTab('seedton'));
-    //  this.address =tokenInformation['address'];
-
-    
-      // this.activeTab = this.$store.state.tokenList[0];
-      // this.tab = this.$store.state.tokenList[0];
-    //   this.tab = tabz;
-    //  this.operator =this.tokenInfoByTab(tabz);
-    
+  computed:{
+    ...mapState([
+      'web3',
+      'user',
+      'tokenList',
+    ]),
+    ...mapGetters([
+      'tokenInfoByTab',
+    ]),
+    tokenInformation () {
+      return this.tokenInfoByTab(this.activeTab);
+    },
   },
   methods: {
     async changeTab (tab) {
       this.activeTab = tab;
       this.tab = tab;
-     
-
-// console.log(this.tokenInformation.endDate);
-// this.$store.dispatch('setTokenInfo', tab);
-       
-      
     },
   },
 };
