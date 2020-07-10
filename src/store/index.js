@@ -461,6 +461,8 @@ export default new Vuex.Store({
         const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
         return tok.releasable;
       }
+      const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+      return tok.releasable;
     },
   },
 });
