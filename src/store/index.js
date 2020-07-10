@@ -456,5 +456,11 @@ export default new Vuex.Store({
     tokenInfoByTab:(state) =>(tab) =>{
       return cloneDeep(state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase()));
     },
+    balanceByToken:(state) =>(tab, confirmed) =>{
+      if (confirmed){
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+        return tok.releasable;
+      }
+    },
   },
 });

@@ -38,7 +38,7 @@
       </div>
       <div class="table-graph">
         <graph-container
-          :tab="tab"
+          :tab="activeTab"
           :start="tokenInformation['startDate']"
           :end="tokenInformation['endDate']"
           :cliff="tokenInformation['cliffDate']"

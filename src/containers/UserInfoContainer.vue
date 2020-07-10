@@ -67,8 +67,16 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <div v-show="parseFloat(releasable) !== 0" class="release-button-container">
-      <button class="button-release" @click="swap(address)">release</button>
+    <notifications group="confirmed"
+                   position="bottom right"
+                   :speed="500"
+    />
+    <notifications group="reverted"
+                   position="bottom right"
+                   :speed="500"
+    />
+    <div v-show="parseFloat(tokenBalance) !== 0" class="release-button-container">
+      <button class="button-release" @click="swap(address)">Release</button>
     </div>
   </div>
 </template>
@@ -80,6 +88,7 @@ import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
+import store from '@/store/index.js';
 
 export default {
   components: {
@@ -88,14 +97,22 @@ export default {
     // 'text-viewer-swapper': TextViewerSwapper,
   },
   props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address'],
+  data () {
+    return {
+      confirmed:false,
+    };
+  },
   computed : {
     ...mapState([
       'web3',
       'user',
     ]),
     ...mapGetters([
-      'vestingInfo',
+      'balanceByToken',
     ]),
+    tokenBalance () {
+      return this.balanceByToken(this.tab, this.confirmed);
+    },
   },
   methods: {
     // async click (vestingAddress) {
@@ -106,26 +123,25 @@ export default {
     async swap (vestingAddress) {
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
-      if (parseFloat(this.releasable) === 0) {
-        return alert('Releasable amount is 0.');
-      }
 
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
       }).on('receipt', (receipt) => {
         if (receipt.status) {
+          this.confirmed = true;
+          this.$store.dispatch('setTokenInfo');
           this.$notify({
             group: 'confirmed',
             title: 'Transaction is confirmed',
             type: 'success',
-            duration: 10000,
+            duration: 5000,
           });
         } else {
           this.$notify({
             group: 'reverted',
             title: 'Transaction is reverted',
             type: 'error',
-            duration: 10000,
+            duration: 5000,
           });
         }
         this.$router.replace({
@@ -225,4 +241,5 @@ export default {
 .disable:hover {
   cursor: not-allowed;
 }
+
 </style>
