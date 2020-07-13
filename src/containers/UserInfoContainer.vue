@@ -3,7 +3,7 @@
     <div class="title">
       Vesting Details for {{ tab }}
     </div>
-    <text-viewr-link :title="'Beneficiary'"
+    <text-viewer-link :title="'Beneficiary'"
                      :content="user"
                      :type="'address'"
                      :with-divider="false"
@@ -53,8 +53,9 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Releasable'"
+    <text-viewer-rate :title="'Releasable'"
                  :content="releasable"
+                 :rate="rate"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
@@ -88,15 +89,17 @@ import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
+import TextViewerRate from '@/components/TextViewerRate.vue';
 import store from '@/store/index.js';
 
 export default {
   components: {
     'text-viewer': TextViewer,
-    'text-viewr-link': TextViewerLink,
+    'text-viewer-link': TextViewerLink,
+    'text-viewer-rate':TextViewerRate,
     // 'text-viewer-swapper': TextViewerSwapper,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address'],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address', 'rate'],
   data () {
     return {
       confirmed:false,
@@ -123,7 +126,6 @@ export default {
     async swap (vestingAddress) {
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
-
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
       }).on('receipt', (receipt) => {

@@ -52,7 +52,6 @@ export default {
       }
 
       points.push(this.getDataPointAt(end));
-      // console.log(points);
       return points;
     },
     getDataPointAt (date) {

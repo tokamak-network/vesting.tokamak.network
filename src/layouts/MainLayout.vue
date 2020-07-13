@@ -1,5 +1,5 @@
 <template>
-  <div class="main-layout">
+  <div v-if="(this.tokenInformation !== undefined)" class="main-layout">
     <div class="button-container">
       <button
         v-for="token in this.$store.state.tokenList"
@@ -15,7 +15,6 @@
         <img src="@/assets/Images/TokamakNetworkLogo.png" height="43px" width="180px">
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
-      <!-- <div>{{tokenInformation}}</div> -->
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
     <div class="vesting-table-container">
@@ -33,6 +32,7 @@
             :revoked="''"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
+            :rate="tokenInformation['rate']"
           />
         </div>
       </div>
@@ -80,6 +80,16 @@ export default {
     tokenInformation () {
       return this.tokenInfoByTab(this.activeTab);
     },
+  },
+  beforeCreate (){
+    if (this.$store.state.tokenList.length ===0){
+      alert('you do not have tokens');
+      this.$store.dispatch('logout');
+      this.$router.replace({
+        path: '/',
+        query: { network: this.$route.query.network },
+      }).catch(err => {});
+    }
   },
   methods: {
     async changeTab (tab) {

@@ -9,7 +9,7 @@ import { createWeb3Contract } from '@/helpers/Contract';
 // import { BN } from 'web3-utils'
 import { setPendingTransactions, getPendingTransactions } from '@/helpers/localStorage';
 
-// import SwapperABI from '@/contracts/abi/Swapper.json'
+import SwapperABI from '@/contracts/abi/Swapper.json'
 import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import TokenABI from '@/contracts/abi/TON.json';
 
@@ -197,6 +197,7 @@ export default new Vuex.Store({
       const marketingTon = createWeb3Contract(VestingTokenABI, marketingAddress);
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
+
       const privateTon = createWeb3Contract(VestingTokenABI, privateAddress);
       context.commit('SET_MARKETING_TON', marketingTon);
       context.commit('SET_STRATEGIC_TON', strategicTon);
@@ -252,6 +253,7 @@ export default new Vuex.Store({
       const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
       const seedTonBalance = await seedTON.methods.balanceOf(user).call();
       const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
+      
       context.commit('SET_PRIVATE_BALANCE', privateTonBalance);
       context.commit('SET_MARKETING_BALANCE', marketingTonBalance);
       context.commit('SET_SEED_BALANCE', seedTonBalance);
@@ -279,6 +281,8 @@ export default new Vuex.Store({
           const info = {};
           const network = getConfig().rinkeby.contractAddress[token];
           const address = network.vesting;
+          const swapperAddress = getConfig().rinkeby.contractAddress.Swapper;
+          const swapper = createWeb3Contract(SwapperABI, swapperAddress);
           info.tab = token;
           info.address = address;
           const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
@@ -295,6 +299,8 @@ export default new Vuex.Store({
           const balance = await tokenVesting.methods.balanceOf(user).call();
           const totalAmount = Number(balance) + Number(releasedAmount);
           const graphDecimals = await tokenVesting.methods.decimals().call();
+          const rate = await swapper.methods.rate(address).call();
+          info.rate = rate;
           info.graphDecimals = graphDecimals;
           if (token === 'SeedTON') {
             info.total = _SeedTON(totalAmount, 'wei');
@@ -458,7 +464,7 @@ export default new Vuex.Store({
     },
     balanceByToken:(state) =>(tab, confirmed) =>{
       if (confirmed){
-        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());        
         return tok.releasable;
       }
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
