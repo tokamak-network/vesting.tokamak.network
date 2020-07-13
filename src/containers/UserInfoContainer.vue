@@ -129,7 +129,20 @@ export default {
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
       }).on('receipt', (receipt) => {
-        if (receipt.status) {
+        if (!receipt.status) {
+          this.$notify({
+            group: 'reverted',
+            title: 'Transaction is reverted',
+            type: 'error',
+            duration: 5000,
+          });
+        } 
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if(confirmationNumber === 0){
           this.confirmed = true;
           this.$store.dispatch('setTokenInfo');
           this.$notify({
@@ -138,19 +151,8 @@ export default {
             type: 'success',
             duration: 5000,
           });
-        } else {
-          this.$notify({
-            group: 'reverted',
-            title: 'Transaction is reverted',
-            type: 'error',
-            duration: 5000,
-          });
-        }
-        this.$router.replace({
-          path: this.from.path,
-          query: { network: this.$route.query.network },
-        }).catch(err => {});
-      });
+        }     
+});
     },
   },
 };
