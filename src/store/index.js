@@ -247,7 +247,7 @@ export default new Vuex.Store({
       const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
       const marketingTON = createWeb3Contract(VestingTokenABI, marketingAddress);
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
-      const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
+      const seedTON = createWeb3Contract(VestingTokenABI, seedAddress); 
       const privateTON = createWeb3Contract(VestingTokenABI, privateAddress);
       const privateTonBalance = await privateTON.methods.balanceOf(user).call();
       const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();

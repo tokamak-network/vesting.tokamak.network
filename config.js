@@ -31,23 +31,23 @@ const config = {
     'prefixAddress': 'https://rinkeby.etherscan.io/address/',
     'network': '4',
     'contractAddress': {
-      'TON': '0xE21cd01Eef5fa0347301b7F9299c6dba5A990519',
-      'Swapper': '0x0B54E043c847a900f7bA8a945AAe95C26E9998E2',
+      'TON': '0xC071266D52ff62358D99B5c6F4E3eF4586663bd6',
+      'Swapper': '0xADec2ec317038bd6AC401952eB3326C2DAE9C68d',
       'StrategicTON': {
         'token': '',
-        'vesting': '0xe7416e9286188AC82E8bc0987fFc639D95437Eb9',
+        'vesting': '0x260321d061b32F8884C21b474F67Dd6AB446a453',
       },
       'PrivateTON': {
         'token': '',
-        'vesting': '0xBc7bE5d4E4fFa69AFC560C02F1C62213d7401013',
+        'vesting': '0x0c888d1D12B7879beB40686fec238b2f8B4dc750',
       },
       'SeedTON': {
         'token': '',
-        'vesting': '0xB291b498127Bcc4DA5521F942e4a3960c3Cf09Fd',
+        'vesting': '0x51165989EF817D9E38b529Fa61b55Ab5A31AC8f3',
       },
       'MarketingTON': {
         'token': '',
-        'vesting': '0x90b976D0e896d7A71ab41014b916126966118d5f',
+        'vesting': '0x84F4d6bc7Ff15b1b05867077aaB7e8Af8FaC3fe0',
       },
     },
   },

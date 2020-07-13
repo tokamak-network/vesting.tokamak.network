@@ -12,21 +12,21 @@
                      :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Start date'"
-                 :content="new Date(Number(start) * 1000)"
+                 :content="formatDate(start)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Cliff'"
-                 :content="new Date(Number(cliff) * 1000)"
+                 :content="formatDate(cliff)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'End date'"
-                 :content="new Date(Number(end) * 1000)"
+                 :content="formatDate(end)"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
@@ -91,13 +91,13 @@ import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
 import TextViewerRate from '@/components/TextViewerRate.vue';
 import store from '@/store/index.js';
+import moment from 'moment';
 
 export default {
   components: {
     'text-viewer': TextViewer,
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
-    // 'text-viewer-swapper': TextViewerSwapper,
   },
   props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address', 'rate'],
   data () {
@@ -118,11 +118,13 @@ export default {
     },
   },
   methods: {
-    // async click (vestingAddress) {
-    //   if (!this.disable) {
-    //     await this.swap(vestingAddress);
-    //   }
-    // },
+    formatDate (date) {
+      const moments = require('moment-timezone');
+      const zone_name =  moments.tz.guess();
+      const timezone = moments.tz(zone_name).zoneAbbr();
+      const dateFormatted = moment(date * 1000).format('MM/DD/YYYY HH:mm:ss ') + (timezone);
+      return dateFormatted;
+    },
     async swap (vestingAddress) {
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
