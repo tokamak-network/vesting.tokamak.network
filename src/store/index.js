@@ -9,7 +9,7 @@ import { createWeb3Contract } from '@/helpers/Contract';
 // import { BN } from 'web3-utils'
 import { setPendingTransactions, getPendingTransactions } from '@/helpers/localStorage';
 
-import SwapperABI from '@/contracts/abi/Swapper.json'
+import SwapperABI from '@/contracts/abi/Swapper.json';
 import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import TokenABI from '@/contracts/abi/TON.json';
 
@@ -46,6 +46,7 @@ const initialState = {
   privateBalance:  _PTON('0'),
   marketingBalance: _MTON('0'),
   strategicBalance: _StrategicTON('0'),
+  tonBalance: _TON('0'),
   tokenInfo:[],
 
   Benificiary: {},
@@ -126,6 +127,9 @@ export default new Vuex.Store({
     },
     SET_PRIVATE_TON: (state, privateTon) => {
       state.privateTON = privateTon;
+    },
+    SET_TON: (state, ton) =>{
+      state.TON = ton;
     },
     SET_TOKEN_LIST: (state, tokenList) =>{
       state.tokenList = tokenList;
@@ -241,23 +245,27 @@ export default new Vuex.Store({
     async setBalance (context){
       const user = context.state.user;
       const list = [];
+      const tonAddress = getConfig().rinkeby.contractAddress.TON;
+      const ton = createWeb3Contract(TokenABI, tonAddress);
       const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
       const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
       const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
       const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
       const marketingTON = createWeb3Contract(VestingTokenABI, marketingAddress);
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
-      const seedTON = createWeb3Contract(VestingTokenABI, seedAddress); 
+      const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
       const privateTON = createWeb3Contract(VestingTokenABI, privateAddress);
+      const tonBalance = await ton.methods.balanceOf(user).call();
+      const tonBalanceFormatted = _TON(tonBalance, 'wei');
       const privateTonBalance = await privateTON.methods.balanceOf(user).call();
       const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
       const seedTonBalance = await seedTON.methods.balanceOf(user).call();
       const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
-      
       context.commit('SET_PRIVATE_BALANCE', privateTonBalance);
       context.commit('SET_MARKETING_BALANCE', marketingTonBalance);
       context.commit('SET_SEED_BALANCE', seedTonBalance);
       context.commit('SET_STRATEGIC_BALANCE', strategicTonBalance);
+      context.commit('SET_TON_BALANCE', tonBalanceFormatted);
       if (seedTonBalance !== String(0)){
         list.push('SeedTON');
       }
@@ -297,7 +305,7 @@ export default new Vuex.Store({
           const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
           const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
           const balance = await tokenVesting.methods.balanceOf(user).call();
-          const totalAmount = Number(balance) + Number(releasedAmount);
+          const totalAmount = Number(balance);
           const graphDecimals = await tokenVesting.methods.decimals().call();
           const rate = await swapper.methods.rate(address).call();
           info.rate = rate;
@@ -464,11 +472,19 @@ export default new Vuex.Store({
     },
     balanceByToken:(state) =>(tab, confirmed) =>{
       if (confirmed){
-        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());        
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
         return tok.releasable;
       }
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
       return tok.releasable;
+    },
+    updateBalances:(state)=>(confirmed) =>{
+      if (confirmed){
+        return state.tonBalance;
+      }
+      else {
+        return state.tonBalance;
+      }
     },
   },
 });

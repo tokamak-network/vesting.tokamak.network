@@ -12,7 +12,8 @@
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
-        <img src="@/assets/Images/TokamakNetworkLogo.png" height="43px" width="180px">
+         <div class="vesting-address-intro">Ton Balance:</div>
+      <div class="vesting-address-details">{{ updateTonBalance }}</div>
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
@@ -33,6 +34,7 @@
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
+            @releaseClicked="clickRelease"
           />
         </div>
       </div>
@@ -66,6 +68,9 @@ export default {
       operator:{},
       activeTab: this.$store.state.tokenList[0],
       address: '',
+      confirmed:{
+        type:Boolean,
+      },
     };
   },
   computed:{
@@ -73,13 +78,18 @@ export default {
       'web3',
       'user',
       'tokenList',
+      'tonBalance',
     ]),
     ...mapGetters([
       'tokenInfoByTab',
+      'updateBalances',
     ]),
     tokenInformation () {
       return this.tokenInfoByTab(this.activeTab);
     },
+    updateTonBalance (){
+      return this.updateBalances(this.confirmed);
+    }
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
@@ -96,6 +106,9 @@ export default {
       this.activeTab = tab;
       this.tab = tab;
     },
+    clickRelease (confirmed){
+      this.confirmed=confirmed;
+    }
   },
 };
 </script>
@@ -140,6 +153,8 @@ export default {
   border-right: solid 1px #99ddff;
   padding-top: 5px;
   padding-right: 20px;
+  display: flex;
+  justify-content: flex-start;
 }
 .vesting-address-intro {
   padding-left: 20px;

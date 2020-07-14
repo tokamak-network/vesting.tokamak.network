@@ -120,8 +120,8 @@ export default {
   methods: {
     formatDate (date) {
       const moments = require('moment-timezone');
-      const zone_name =  moments.tz.guess();
-      const timezone = moments.tz(zone_name).zoneAbbr();
+      const zoneName =  moments.tz.guess();
+      const timezone = moments.tz(zoneName).zoneAbbr();
       const dateFormatted = moment(date * 1000).format('MM/DD/YYYY HH:mm:ss ') + (timezone);
       return dateFormatted;
     },
@@ -138,14 +138,16 @@ export default {
             type: 'error',
             duration: 5000,
           });
-        } 
+        }
         this.$router.replace({
           path: this.from.path,
           query: { network: this.$route.query.network },
         }).catch(err => {});
       }).on('confirmation', (confirmationNumber, receipt) =>{
         if(confirmationNumber === 0){
-          this.confirmed = true;
+          this.confirmed = !this.confirmed;
+          this.$store.dispatch('setBalance');
+          this.$emit('releaseClicked', this.confirmed);
           this.$store.dispatch('setTokenInfo');
           this.$notify({
             group: 'confirmed',
@@ -153,8 +155,8 @@ export default {
             type: 'success',
             duration: 5000,
           });
-        }     
-});
+        }
+      });
     },
   },
 };
