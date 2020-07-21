@@ -36,44 +36,66 @@ export default {
     },
     getPoints () {
       const start = this.start;
+      const total = this.displayAmount(this.total);
       const cliff = this.cliff;
       const end = this.end;
       const now = new Date() / 1000;
-      const points = [this.getDataPointAt(start)];
-      if (cliff < now) {
-        points.push(this.getDataPointAt(cliff));
+      const points = [];
+      if (this.tab === 'SeedTON'){
+        const end = new Date('2021-01-09T18:06:22')/1000;
+        points.push({ x:this.formatDate(start), y:total * 0.01 });
+        points.push({ x:this.formatDate(Number(start)+(2592000)), y:total * 0.01 });
+        let i = 1;
+        for (i; i<6; i++){
+          points.push({ x:this.formatDate(Number(start)+(2592000*i)), y:total * (0.01 +(0.165*i)) });
+          points.push({ x:this.formatDate(Number(start)+(2592000*(i+1))), y:total * (0.01 +(0.165*i)) });
+        }
+        points.push({ x:this.formatDate(end), y:total });
+        return points;
       }
-      if (start < now && now < end) {
-        points.push(this.getDataPointAt(now));
+      if (this.tab === 'PrivateTON'){
+        const end = new Date('2021-05-09T18:06:22')/1000;
+        points.push({ x:this.formatDate(start), y:total * 0.05 });
+        points.push({ x:this.formatDate(Number(start)+(2592000)), y:total * 0.05 });
+        let i = 1;
+        for (i; i<10; i++){
+          points.push({ x:this.formatDate(Number(start)+(2592000*i)), y:total * (0.05 +(0.095*i)) });
+          points.push({ x:this.formatDate(Number(start)+(2592000*(i+1))), y:total * (0.05 +(0.095*i)) });
+        }
+        points.push({ x:this.formatDate(end), y:total });
+        return points;
       }
-
-      if (cliff > now) {
-        points.push(this.getDataPointAt(cliff));
+      if (this.tab === 'MarketingTON'){
+        const end = new Date('2021-04-09T18:06:22')/1000;
+        points.push({ x:this.formatDate(start), y:total * 0.1 });
+        points.push({ x:this.formatDate(Number(start)+(2592000)), y:total * 0.1 });
+        let i = 1;
+        for (i; i<9; i++){
+          points.push({ x:this.formatDate(Number(start)+(2592000*i)), y:total * (0.1 +(0.1*i)) });
+          points.push({ x:this.formatDate(Number(start)+(2592000*(i+1))), y:total * (0.1 +(0.1*i)) });
+        }
+        points.push({ x:this.formatDate(end), y:total });
+        return points;
       }
-
-      points.push(this.getDataPointAt(end));
-      return points;
-    },
-    getDataPointAt (date) {
-      return {
-        x: this.formatDate(date),
-        y: this.getAmountAt(date),
-      };
+      if (this.tab === 'StrategicTON'){
+        const end = new Date('2021-05-09T18:06:22')/1000;
+        points.push({ x:this.formatDate(start), y:total * 0.09 });
+        points.push({ x:this.formatDate(Number(start)+(2592000)), y:total * 0.09 });
+        let i = 1;
+        for (i; i<10; i++){
+          points.push({ x:this.formatDate(Number(start)+(2592000*i)), y:total * (0.09 +(0.091*i)) });
+          points.push({ x:this.formatDate(Number(start)+(2592000*(i+1))), y:total * (0.09 +(0.091*i)) });
+        }
+        points.push({ x:this.formatDate(end), y:total });
+        return points;
+      }
     },
     formatDate (date) {
       return moment(date * 1000).format('MM/DD/YYYY HH:mm');
     },
-    getAmountAt (date) {
-      const total = this.total;
-      const start = this.start;
-      const end = this.end;
-      const decimals = this.decimals;
-      const slope = (date - start) / (end - start);
-      return this.displayAmount(total) * slope;
-    },
     displayAmount (amount) {
-      const displayAmount = parseFloat(amount) / (Math.pow(10, this.decimals));
-      return Math.round(displayAmount * 10000) / 10000;
+      const displayAmounts = parseFloat(amount) / (Math.pow(10, this.decimals));
+      return Math.round(displayAmounts * 10000) / 10000;
     },
     chartOptions () {
       return {
@@ -89,12 +111,14 @@ export default {
           xAxes: [
             {
               type: 'time',
-              ticks: {
-                sampleSize: 10,
-                maxTicksLimit: 7,
-              },
-              time: {
+              time:{
+                unit:'day',
+                stepSize:'30',
                 format: 'MM/DD/YYYY HH:mm',
+              },
+              ticks: {
+                maxTicksLimit: 12,
+                beginAtZero: false,
               },
               scaleLabel: {
                 display: true,
@@ -116,19 +140,19 @@ export default {
     },
     fromBaseDataset (opts) {
       return {
-        lineTension: 0.1,
+        lineTension: 0,
         backgroundColor: 'rgba(92,182,228,0.4)',
         borderColor: 'rgba(92,182,228,1)',
         borderJoinStyle: 'miter',
         pointBorderColor: 'rgba(92,182,228,1)',
         pointBackgroundColor: 'rgba(92,182,228,1)',
         pointBorderWidth: 1,
-        pointHoverRadius: 5,
+        pointHoverRadius: 1,
         pointHoverBackgroundColor: 'rgba(92,182,228,1)',
         pointHoverBorderColor: 'rgba(220,220,220,1)',
-        pointHoverBorderWidth: 2,
-        pointRadius: 5,
-        pointHitRadius: 10,
+        pointHoverBorderWidth: 1,
+        pointRadius: 3,
+        pointHitRadius: 3,
         ...opts,
       };
     },
