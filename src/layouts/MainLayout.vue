@@ -46,6 +46,7 @@
           :cliff="tokenInformation['cliffDate']"
           :total="tokenInformation['graphTotal']"
           :decimals="tokenInformation['graphDecimals']"
+          :rate="tokenInformation['rate']"
         />
       </div>
     </div>
