@@ -2,6 +2,7 @@
   <div class="header-container">
     <div class="header">
       <div class="header-title-container">
+        <img src="@/assets/Images/Tokamak_transparent.png" height="35px" width="35px">
         <div class="header-title" target="_self" rel="noopener noreferrer">
           Tokamak Network Vesting Dashboard
         </div>
@@ -50,11 +51,13 @@ export default {};
 
 .header-title-container {
   flex: 1;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
 
 .header-title {
-  margin-top: 7px;
-  padding-left: 16px;
+  padding-left: 10px;
   font-size: 20px;
   text-decoration: none;
   font-weight: bold;

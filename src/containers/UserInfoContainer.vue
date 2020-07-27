@@ -4,12 +4,12 @@
       Vesting Details for {{ tab }}
     </div>
     <text-viewer-link :title="'Beneficiary'"
-                     :content="user"
-                     :type="'address'"
-                     :with-divider="false"
-                     :tooltip="'Introduction to the operator'"
-                     :tooltipWidth="'180px'"
-                     :tooltipMarginTop="'-9px'"
+                      :content="user"
+                      :type="'address'"
+                      :with-divider="false"
+                      :tooltip="'Introduction to the operator'"
+                      :tooltipWidth="'180px'"
+                      :tooltipMarginTop="'-9px'"
     />
     <text-viewer :title="'Start date'"
                  :content="formatDate(start)"
@@ -54,15 +54,15 @@
                  :tooltipMarginTop="'-9px'"
     />
     <text-viewer-rate :title="'Releasable'"
-                 :content="releasable"
-                 :rate="rate"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
+                      :content="releasable"
+                      :rate="rate"
+                      :with-divider="false"
+                      :tooltip="'Introduction to the operator'"
+                      :tooltipWidth="'180px'"
+                      :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Revocable'"
-                 :content="revocable"
+    <text-viewer :title="'Deposited'"
+                 :content="deposited"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
@@ -77,7 +77,7 @@
                    :speed="500"
     />
     <div v-show="parseFloat(tokenBalance) !== 0" class="release-button-container">
-      <button class="button-release" @click="swap(address)">Release</button>
+      <button class="button-release" @click="present?swap(address):deposit(address)">{{ present? 'Swap':'Deposit' }}</button>
     </div>
   </div>
 </template>
@@ -99,7 +99,7 @@ export default {
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'revocable', 'revoked', 'releasable', 'address', 'rate'],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'present'],
   data () {
     return {
       confirmed:false,
@@ -126,6 +126,7 @@ export default {
       return dateFormatted;
     },
     async swap (vestingAddress) {
+      console.log('swap', vestingAddress);
       const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
       await swapper.methods.swap(vestingAddress).send({
@@ -157,6 +158,9 @@ export default {
           });
         }
       });
+    },
+    deposit ( vestingAddress ){
+      console.log('deposite', vestingAddress);
     },
   },
 };

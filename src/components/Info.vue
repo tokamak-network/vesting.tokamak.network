@@ -5,9 +5,9 @@
 <script>
 export default {
   props: {
-    tab: { type: String, default: '' }
-  }
-}
+    tab: { type: String, default: '' },
+  },
+};
 </script>
 
 <style></style>

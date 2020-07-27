@@ -1,5 +1,5 @@
 <template>
-  <div v-if="(this.tokenInformation !== undefined)" class="main-layout">
+  <div v-if="tokenInformation !== undefined" class="main-layout">
     <div class="button-container">
       <button
         v-for="token in this.$store.state.tokenList"
@@ -12,14 +12,14 @@
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
-         <div class="vesting-address-intro">Ton Balance:</div>
-      <div class="vesting-address-details">{{ updateTonBalance }}</div>
+        <div class="vesting-address-intro">Ton Balance:</div>
+        <div class="vesting-address-details">{{ updateTonBalance }}</div>
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
-    <div class="vesting-table-container">
-      <div class="table-info">
+    <div v-if="activeTab !== 'MarketingTON'" class="vesting-table-container">
+      <div :class="present ? 'table-info-with-graph':'table-info-without-graph'">
         <div>
           <user-info-container
             :tab="activeTab"
@@ -29,16 +29,16 @@
             :total="tokenInformation['total']"
             :released="tokenInformation['released']"
             :vested="tokenInformation['vested']"
-            :revocable="''"
-            :revoked="''"
+            :deposited="''"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
+            :present="present"
             @releaseClicked="clickRelease"
           />
         </div>
       </div>
-      <div class="table-graph">
+      <div v-show="present" class="table-graph">
         <graph-container
           :tab="activeTab"
           :start="tokenInformation['startDate']"
@@ -49,6 +49,10 @@
           :rate="tokenInformation['rate']"
         />
       </div>
+    </div>
+    <div v-else class="mton">
+      <div>Releasable TON: {{ tokenInformation.rate*Math.round(parseFloat(tokenInformation['releasable']) * 10) / 10 }}</div>
+      <button class="release-button">Swap</button>
     </div>
   </div>
 </template>
@@ -72,6 +76,7 @@ export default {
       confirmed:{
         type:Boolean,
       },
+      present:true,
     };
   },
   computed:{
@@ -90,7 +95,7 @@ export default {
     },
     updateTonBalance (){
       return this.updateBalances(this.confirmed);
-    }
+    },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
@@ -109,7 +114,7 @@ export default {
     },
     clickRelease (confirmed){
       this.confirmed=confirmed;
-    }
+    },
   },
 };
 </script>
@@ -136,6 +141,7 @@ export default {
   margin-top: 15px;
   display: flex;
   flex-direction: row;
+  justify-content: center;
   height: 100%;
   min-width: 720px;
   max-width: 960px;
@@ -167,12 +173,19 @@ export default {
   color: #003366;
 }
 
-.table-info {
+.table-info-with-graph {
+  margin-right: 20px;
+  display: flex;
+  align-items: center;
+}
+
+.table-info-without-graph {
   margin-right: 20px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .table-graph {
   width: 50%;
   display: flex;
@@ -206,5 +219,21 @@ button:focus {
 .tab-clicked {
   background: #f7f8f9;
   color: #000;
+}
+.mton{
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-top: 75px;
+}
+.release-button{
+   color: #000000;
+  text-align: center;
+  font-size: 14px;
+  height: 25px;
+  margin: 16px;
+  border-radius: 7px;
+  border: 1px solid #ced6d9;
 }
 </style>

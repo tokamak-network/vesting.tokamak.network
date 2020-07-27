@@ -16,13 +16,6 @@ export default {
     // empty: Empty,
     // revoked: Revoked
   },
-  created () {
-     pointBackgroundColors:[]
-  },
-   data () {
-    return {
-     
-    }},
   props: [
     'tab',
     'start',
@@ -32,6 +25,13 @@ export default {
     'decimals',
     'rate',
   ],
+  data () {
+    return {
+
+    };},
+  created () {
+    [];
+  },
   methods: {
     chartData () {
       return {
@@ -48,7 +48,7 @@ export default {
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
       const cliff = this.cliff;
       // const ends = this.end;
-     
+
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
@@ -63,7 +63,7 @@ export default {
       }
       if (this.tab === 'MarketingTON'){
         const ends = new Date('2021-04-17T18:06:22')/1000;
-         this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
+        this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
         return points;
       }
       if (this.tab === 'StrategicTON'){
@@ -72,36 +72,36 @@ export default {
         return points;
       }
     },
-    setPoints (points, colors, starts, ends, totals, ratio1, ratio2, i){ 
-       const now = new Date() / 1000;
+    setPoints (points, colors, starts, ends, totals, ratio1, ratio2, i){
+      const now = new Date() / 1000;
       points.push({ x:this.formatDate(starts), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
       if (now >= starts && now < Number(starts)+(2592000)){
-        points.push({ x:this.formatDate(now), y:totals * ratio1});
+        points.push({ x:this.formatDate(now), y:totals * ratio1 });
         colors.push('rgba(255, 71, 99, 1)');
-        
+
       }
       points.push({ x:this.formatDate(Number(starts)+(2592000)), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
       let j = 1;
       for (j; j<i; j++){
-       points.push({ x:this.formatDate(Number(starts)+(2592000*j)), y:totals * (ratio1 +(ratio2*j)) });
-       colors.push('rgba(92,182,228,1)');
+        points.push({ x:this.formatDate(Number(starts)+(2592000*j)), y:totals * (ratio1 +(ratio2*j)) });
+        colors.push('rgba(92,182,228,1)');
         if (now >= Number(starts)+(2592000*j) && now < Number(starts)+(2592000*(j+1))){
           points.push({ x:this.formatDate(now), y:totals * (ratio1 +(ratio2*(j) )) });
           colors.push('rgba(255, 71, 99, 1)');
         }
-       points.push({ x:this.formatDate(Number(starts)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*j)) });
-       colors.push('rgba(92,182,228,1)');
-       if (now >= Number(starts)+(2592000*(j+1)) && now < Number(ends)){
-         points.push({ x:this.formatDate(now), y:totals });
-         colors.push('rgba(255, 71, 99, 1)');
-       }
+        points.push({ x:this.formatDate(Number(starts)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*j)) });
+        colors.push('rgba(92,182,228,1)');
+        if (now >= Number(starts)+(2592000*(j+1)) && now < Number(ends)){
+          points.push({ x:this.formatDate(now), y:totals });
+          colors.push('rgba(255, 71, 99, 1)');
+        }
       }
-       points.push({ x:this.formatDate(ends), y:totals });
-       colors.push('rgba(92,182,228,1)');
-       this.pointBackgroundColors = colors;
-      
+      points.push({ x:this.formatDate(ends), y:totals });
+      colors.push('rgba(92,182,228,1)');
+      this.pointBackgroundColors = colors;
+
     },
     formatDate (date) {
       return moment(date * 1000).format('MM/DD/YYYY HH:mm');

@@ -15,7 +15,7 @@ import TokenABI from '@/contracts/abi/TON.json';
 
 import { getConfig } from '../../config.js';
 import { createCurrency } from '@makerdao/currency';
-import { clone } from 'numeral';
+
 const _TON = createCurrency('TON');
 const _MTON = createCurrency('MTON');
 const _SeedTON = createCurrency('SeedTON');
@@ -272,11 +272,11 @@ export default new Vuex.Store({
       if (privateTonBalance !== String(0)){
         list.push('PrivateTON');
       }
-      if (marketingTonBalance !== String(0)){
-        list.push('MarketingTON');
-      }
       if (strategicTonBalance !== String(0)){
         list.push('StrategicTON');
+      }
+      if (marketingTonBalance !== String(0)){
+        list.push('MarketingTON');
       }
       context.commit('SET_TOKEN_LIST', list);
 
@@ -284,13 +284,13 @@ export default new Vuex.Store({
     async setTokenInfo (context){
       const user = context.state.user;
       const tokenList = context.state.tokenList;
+      const swapperAddress = getConfig().rinkeby.contractAddress.Swapper;
+      const swapper = createWeb3Contract(SwapperABI, swapperAddress);
       const tokenInfo = await Promise.all(
         tokenList.map(async token =>{
           const info = {};
           const network = getConfig().rinkeby.contractAddress[token];
           const address = network.vesting;
-          const swapperAddress = getConfig().rinkeby.contractAddress.Swapper;
-          const swapper = createWeb3Contract(SwapperABI, swapperAddress);
           info.tab = token;
           info.address = address;
           const tokenVesting = createWeb3Contract(VestingTokenABI, network.vesting);
