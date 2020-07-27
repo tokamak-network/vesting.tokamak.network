@@ -1,5 +1,5 @@
 [
-    {
+      {
         "inputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
@@ -623,4 +623,4 @@
         "stateMutability": "nonpayable",
         "type": "function"
       }
-]
+    ]

@@ -97,6 +97,9 @@ export default {
       return this.updateBalances(this.confirmed);
     },
   },
+  created (){
+    console.log(parseFloat(this.tokenInformation['releasable']));
+  },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
       alert('you do not have tokens');
