@@ -1,4 +1,5 @@
 {
+<<<<<<< HEAD
   "name": "vesting.tokamak.network",
   "version": "1.0.0",
   "description": "A vesting dashboard for TON",
@@ -89,4 +90,83 @@
     "last 2 versions",
     "not ie <= 8"
   ]
+=======
+  "name": "dashboard.tokamak.network",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "serve:production": "npm run build && npx serve -p 8000 dist",
+    "build": "vue-cli-service build",
+    "test": "jest",
+    "test:unit": "vue-cli-service test:unit",
+    "lint": "vue-cli-service lint",
+    "server": "node server/index.js"
+  },
+  "dependencies": {
+    "@ledgerhq/hw-app-eth": "^5.6.0",
+    "@ledgerhq/hw-transport-u2f": "^5.6.0",
+    "@makerdao/currency": "^0.9.7",
+    "axios": "^0.19.1",
+    "bignumber.js": "^9.0.0",
+    "body-parser": "^1.19.0",
+    "chart.js": "^2.9.3",
+    "config": "^3.3.1",
+    "core-js": "^3.4.4",
+    "eth-sig-util": "^2.5.2",
+    "ethereumjs-tx": "^2.1.2",
+    "express": "^4.17.1",
+    "lodash": "^4.17.15",
+    "lowdb": "^1.0.0",
+    "moment": "^2.27.0",
+    "moment-timezone": "^0.5.31",
+    "multer": "^1.4.2",
+    "ncp": "^2.0.0",
+    "node-cron": "^2.0.3",
+    "numeral": "^2.0.6",
+    "vue": "^2.6.10",
+    "vue-avatar-component": "^1.2.6",
+    "vue-chartjs": "^3.5.0",
+    "vue-notification": "^1.3.20",
+    "vue-router": "^3.1.3",
+    "vuex": "^3.1.2",
+    "web3": "^1.2.4",
+    "web3-eth-abi": "^1.2.6",
+    "web3-utils": "^1.2.6"
+  },
+  "devDependencies": {
+    "@vue/cli-plugin-babel": "^4.1.0",
+    "@vue/cli-plugin-eslint": "^4.1.0",
+    "@vue/cli-plugin-router": "^4.1.0",
+    "@vue/cli-plugin-unit-jest": "^4.1.0",
+    "@vue/cli-plugin-vuex": "^4.1.0",
+    "@vue/cli-service": "^4.4.6",
+    "@vue/test-utils": "^1.0.0-beta.29",
+    "babel-eslint": "^10.0.3",
+    "babel-jest": "^24.9.0",
+    "eslint": "^5.16.0",
+    "eslint-plugin-vue": "^5.0.0",
+    "jest": "^24.9.0",
+    "node-sass": "^4.12.0",
+    "sass-loader": "^8.0.0",
+    "serve": "^11.3.0",
+    "vue-jest": "^3.0.5",
+    "vue-template-compiler": "^2.6.10"
+  },
+  "jest": {
+    "moduleFileExtensions": [
+      "js",
+      "json",
+      "vue"
+    ],
+    "transform": {
+      "^.+\\.js$": "<rootDir>/node_modules/babel-jest",
+      ".*\\.(vue)$": "vue-jest"
+    },
+    "moduleNameMapper": {
+      "@(.*)$": "<rootDir>/src/$1",
+      "^vue$": "vue/dist/vue.common.js"
+    }
+  }
+>>>>>>> migrate
 }

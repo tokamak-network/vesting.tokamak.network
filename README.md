@@ -1,4 +1,5 @@
 # vesting.tokamak.network
+<<<<<<< HEAD
 
 > A vesting dashboard for TON
 
@@ -25,3 +26,28 @@ npm test
 ```
 
 For a detailed explanation on how things work, check out the [guide](http://vuejs-templates.github.io/webpack/) and [docs for vue-loader](http://vuejs.github.io/vue-loader).
+=======
+![img](https://github.com/Onther-Tech/vesting.tokamak.network/blob/migrate/example.png)
+## Project setup
+```
+npm install
+```
+
+### Compiles and hot-reloads for development
+```
+npm run serve
+```
+
+### Compiles and minifies for production
+```
+npm run build
+```
+
+### Lints and fixes files
+```
+npm run lint
+```
+
+### Customize configuration
+See [Configuration Reference](https://cli.vuejs.org/config/).
+>>>>>>> migrate
