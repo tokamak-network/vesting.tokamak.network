@@ -1,9 +1,5 @@
 <template>
   <div id="app">
-<<<<<<< HEAD
-    <img src="./assets/logo.png">
-    <router-view/>
-=======
     <header-container />
     <div class="body-container">
       <div v-if="!signIn">
@@ -16,26 +12,10 @@
       </div>
     </div>
     <footer-container />
->>>>>>> migrate
   </div>
 </template>
 
 <script>
-<<<<<<< HEAD
-export default {
-  name: 'App'
-}
-</script>
-
-<style>
-#app {
-  font-family: 'Avenir', Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-=======
 import { mapState, mapGetters } from 'vuex';
 
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
@@ -181,6 +161,5 @@ html, body {
   justify-content: center;
   align-items: center;
   height: 284px;
->>>>>>> migrate
 }
 </style>
