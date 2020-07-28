@@ -41,7 +41,7 @@ const config = {
       },
       'PrivateTON': {
         'token': '',
-        'vesting': '0xe34554f295097413D182ca04e9449e7DD6D7eA5C',
+        'vesting': '0xc4116Cc2d16d153736a0ddAd2C6FE1E4b33F7982',
       },
       'SeedTON': {
         'token': '',

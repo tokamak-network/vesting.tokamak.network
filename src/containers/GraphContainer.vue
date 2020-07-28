@@ -30,7 +30,7 @@ export default {
 
     };},
   created () {
-    [];
+    console.log('total', this.total);
   },
   methods: {
     chartData () {
@@ -43,7 +43,7 @@ export default {
       };
     },
     getPoints () {
-      const starts = this.start;
+      const starts = new Date('2020-07-17T18:06:22')/1000;
       const totalSourceTon = this.displayAmount(this.total);
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
       const cliff = this.cliff;

@@ -126,7 +126,6 @@ export default {
       return dateFormatted;
     },
     async swap (vestingAddress) {
-      console.log('swap', vestingAddress);
       const contractAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SwapperABI, contractAddress);
       await swapper.methods.swap(vestingAddress).send({
@@ -160,7 +159,6 @@ export default {
       });
     },
     deposit ( vestingAddress ){
-      console.log('deposite', vestingAddress);
     },
   },
 };

@@ -29,7 +29,7 @@
             :total="tokenInformation['total']"
             :released="tokenInformation['released']"
             :vested="tokenInformation['vested']"
-            :deposited="''"
+            :deposited="tokenInformation['totalDeposited']"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
@@ -96,9 +96,6 @@ export default {
     updateTonBalance (){
       return this.updateBalances(this.confirmed);
     },
-  },
-  created (){
-    console.log(parseFloat(this.tokenInformation['releasable']));
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
