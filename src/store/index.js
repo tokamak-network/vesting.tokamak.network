@@ -9,7 +9,7 @@ import { createWeb3Contract } from '@/helpers/Contract';
 // import { BN } from 'web3-utils'
 import { setPendingTransactions, getPendingTransactions } from '@/helpers/localStorage';
 
-import SwapperABI from '@/contracts/abi/Swapper.json';
+import SimpleSwapperABI from '@/contracts/abi/Swapper.json';
 import VestingSwapperABI from '@/contracts/abi/VestingSwapper.json';
 import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import TokenABI from '@/contracts/abi/TON.json';
@@ -455,24 +455,24 @@ export default new Vuex.Store({
           }
           else {
             const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-            const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
-            const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
-            const startDate = await swapper.methods.start(address).call();
+            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+            const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
+            const startDate = await tokenVesting.methods.start().call();
             info.startDate = startDate;
-            const duration = await swapper.methods.duration(address).call();
+            const duration = await tokenVesting.methods.duration().call();
             info.duration = duration;
             const endDate = Number(startDate) + Number(duration);
             info.endDate = endDate;
-            const cliffDate = await swapper.methods.cliff(address).call();
+            const cliffDate = await tokenVesting.methods.cliff().call();
             info.cliffDate = cliffDate;
-            const releasedAmount = await swapper.methods.released (address, user).call();
-            const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
+            const releasedAmount = await tokenVesting.methods.released (user).call();
+            const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
             const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
-            const totalDeposited = await swapper.methods.totalAmount(address, user).call();
-            const totalAmount = Number(totalDeposited);
+            // const totalDeposited = await tokenVesting.methods.totalAmount(user).call();
             const balance = await tokenVesting.methods.balanceOf(user).call();
+            const totalAmount = Number(balance);
             const graphDecimals = await tokenVesting.methods.decimals().call();
-            const rate = await swapper.methods.ratio(address).call();
+            const rate = await swapper.methods.rate(address).call();
             info.rate = rate;
             info.graphDecimals = graphDecimals;
             if (token === 'DaoTON') {

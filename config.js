@@ -31,21 +31,21 @@ const config = {
     'prefixAddress': 'https://rinkeby.etherscan.io/address/',
     'network': '4',
     'contractAddress': {
-      'TON':'0x8F5a66E14d0418a3abfb504e5EF9c9109A70a18a',
-      'VestingSwapper':'0xAF224f1AB65A7BBD1baD3f056Bd2cbFD97105dc8',
-      'StepSwapper':'0xE35a9aB959C2F8BC44BbBaDF101392561Fd7108B',
-      'TONVault':'0x022d841643746077f858E5B2154c4AE91Bb362E9',
+      'TON':'0x2DCC68539F2038251217b1d3B87D05E7DFB37661',
+      'VestingSwapper':'0x0083121623cA67D9C6B8C2EBbdb2A455dcC8D2B0',
+      'StepSwapper':'0x9271B1C544BfC743f67aAc17F23264BC723a4602',
+      'TONVault':'0x4bc17F6f4A4923E47B85AAEc83980d1C80e6F3b1',
       'StrategicTON': {
         'token': '',
-        'vesting': '0x3e322Fc1496faf350c630E954A745432Fb778D45',
+        'vesting': '0x3C26863237d257e161d98AF4fF0Ae626e4Ae1182',
       },
       'PrivateTON': {
         'token': '',
-        'vesting': '0xc4116Cc2d16d153736a0ddAd2C6FE1E4b33F7982',
+        'vesting': '0x08e00d692B5155B204C622838480B14C03C922e2',
       },
       'SeedTON': {
         'token': '',
-        'vesting': '0x7CA000300Ef74026EF25bA85B20a6f2EDC944786',
+        'vesting': '0x97f7347A63d1F4366C36178351A8cDb36d302dBe',
       },
       'MarketingTON': {
         'token': '',
@@ -53,23 +53,23 @@ const config = {
       },
       'DaoTON': {
         'token': '',
-        'vesting': '0xdf63Dc23fD46be8e2F5044008Aa16b44b1754C29',
+        'vesting': '0x347D7FEAe640c85a6Bc39123988C7e1CaAeDe44e',
       },
       'TeamTON': {
         'token': '',
-        'vesting': '0xcd4707CbD7D1C16441E268a0f7DFc83C8EECd1e4',
+        'vesting': '0x72e844349c2f898b2b45fa312dBB1161c0656B99',
       },
       'AdvisorTON': {
         'token': '',
-        'vesting': '0xC5730f3A5808F013B26899C0ebb9B81959AabCee',
+        'vesting': '0xB0Fc56bDbaF8099bdfA8A4305FCCC3D9BB6bDbdb',
       },
       'BusinessTON': {
         'token': '',
-        'vesting': '0x24072B47E1ee9f79eEC66865b05d9EB4aA926215',
+        'vesting': '0xE184c21AA7b18acD02B2f6aD8BEcb949aC3307B1',
       },
       'ReserveTON': {
         'token': '',
-        'vesting': '0xA91FF5B566f3EF4F878f1b4e317141f1d814Bb46',
+        'vesting': '0x98D82450C50F1dAF04B903d68404eBAB3991412a',
       },
     },
   },
