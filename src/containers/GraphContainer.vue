@@ -9,7 +9,6 @@ import Graph from '@/components/Graph.vue';
 import moment from 'moment';
 // import Empty from '@/components/Empty.vue';
 // import Revoke from '@/components/Revoke.vue';
-
 export default {
   components: {
     graph: Graph,
@@ -27,10 +26,9 @@ export default {
   ],
   data () {
     return {
-
     };},
   created () {
-    pointBackgroundColors:[]
+    [];
   },
   methods: {
     chartData () {
@@ -71,6 +69,30 @@ export default {
         this.setPoints(points, colors, starts, ends, totals, 0.09, 0.091, 10 );
         return points;
       }
+      if (this.tab === 'TeamTON'){
+        const starts = new Date('2021-01-21T18:06:22')/1000;
+        const ends = new Date('2023-12-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0278, 0.0278, 35 );
+        return points;
+      }
+      if (this.tab === 'AdvisorTON'){
+        const starts = new Date('2021-01-21T18:06:22')/1000;
+        const ends = new Date('2022-06-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0556, 0.0556, 17 );
+        return points;
+      }
+      if (this.tab === 'BusinessTON'){
+        const starts = new Date('2020-08-21T18:06:22')/1000;
+        const ends = new Date('2022-03-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.05, 0.05, 19 );
+        return points;
+      }
+      if (this.tab === 'ReserveTON'){
+        const starts = new Date('2021-07-21T18:06:22')/1000;
+        const ends = new Date('2023-12-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0333, 0.0333, 29 );
+        return points;
+      }
     },
     setPoints (points, colors, starts, ends, totals, ratio1, ratio2, i){
       const now = new Date() / 1000;
@@ -101,7 +123,6 @@ export default {
       points.push({ x:this.formatDate(ends), y:totals });
       colors.push('rgba(92,182,228,1)');
       this.pointBackgroundColors = colors;
-
     },
     formatDate (date) {
       return moment(date * 1000).format('MM/DD/YYYY HH:mm');
