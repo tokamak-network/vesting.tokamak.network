@@ -24,12 +24,6 @@ export default {
     'decimals',
     'rate',
   ],
-  data () {
-    return {
-    };},
-  created () {
-    [];
-  },
   methods: {
     chartData () {
       const points = this.getPoints();
@@ -49,7 +43,6 @@ export default {
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
       const cliff = this.cliff;
       // const ends = this.end;
-
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
@@ -107,7 +100,6 @@ export default {
       if (now >= starts && now < Number(starts)+(2592000)){
         points.push({ x:this.formatDate(now), y:totals * ratio1 });
         colors.push('rgba(255, 71, 99, 1)');
-
       }
       points.push({ x:this.formatDate(Number(starts)+(2592000)), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');

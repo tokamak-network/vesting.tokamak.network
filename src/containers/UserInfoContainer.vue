@@ -77,7 +77,7 @@
                    :speed="500"
     />
     <div v-show="parseFloat(tokenBalance) !== 0" class="release-button-container">
-      <button class="button-release" @click="present?swap(address):deposit(address)">{{ present? 'Swap':'Deposit' }}</button>
+      <button class="button-release" @click="parseFloat(deposited) !== 0?swap(address):deposit(address)">{{ parseFloat(deposited) !== 0? 'Swap':'Deposit' }}</button>
     </div>
   </div>
 </template>
@@ -99,7 +99,7 @@ export default {
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'present'],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate' ],
   data () {
     return {
       confirmed:false,

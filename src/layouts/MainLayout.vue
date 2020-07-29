@@ -18,8 +18,12 @@
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
+    <div v-if="activeTab === 'MarketingTON'" class="mton">
+      <div>Releasable TON: {{ tokenInformation.rate*Math.round(parseFloat(tokenInformation['releasable']) * 10) / 10 }}</div>
+      <button class="release-button">Swap</button>
+    </div>
     <div v-if="activeTab !== 'MarketingTON'" class="vesting-table-container">
-      <div :class="present ? 'table-info-with-graph':'table-info-without-graph'">
+      <div :class="parseFloat(tokenInformation.totalDeposited) !== 0 ? 'table-info-with-graph':'table-info-without-graph'">
         <div>
           <user-info-container
             :tab="activeTab"
@@ -33,26 +37,21 @@
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
-            :present="present"
             @releaseClicked="clickRelease"
           />
         </div>
       </div>
-      <div v-show="present" class="table-graph">
-        <graph-container
-          :tab="activeTab"
-          :start="tokenInformation['startDate']"
-          :end="tokenInformation['endDate']"
-          :cliff="tokenInformation['cliffDate']"
-          :total="tokenInformation['graphTotal']"
-          :decimals="tokenInformation['graphDecimals']"
-          :rate="tokenInformation['rate']"
+      <div v-show="parseFloat(tokenInformation.totalDeposited) !== 0" class="table-graph">
+        <graph-container :key="activeTab"
+                         :tab="activeTab"
+                         :start="tokenInformation['startDate']"
+                         :end="tokenInformation['endDate']"
+                         :cliff="tokenInformation['cliffDate']"
+                         :total="tokenInformation['graphTotal']"
+                         :decimals="tokenInformation['graphDecimals']"
+                         :rate="tokenInformation['rate']"
         />
       </div>
-    </div>
-    <div v-else class="mton">
-      <div>Releasable TON: {{ tokenInformation.rate*Math.round(parseFloat(tokenInformation['releasable']) * 10) / 10 }}</div>
-      <button class="release-button">Swap</button>
     </div>
   </div>
 </template>
@@ -95,14 +94,14 @@ export default {
     updateTonBalance (){
       return this.updateBalances(this.confirmed);
     },
-    present () {
-      if (parseFloat(this.tokenInformation.totalDeposited) !== 0){
-        return true;
-      }
-      else{
-        return false;
-      }
-    },
+    // present () {
+    //   if (parseFloat(this.tokenInformation.totalDeposited) !== 0){
+    //     return true;
+    //   }
+    //   else{
+    //     return false;
+    //   }
+    // },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
