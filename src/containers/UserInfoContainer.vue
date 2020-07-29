@@ -76,15 +76,18 @@
                    position="bottom right"
                    :speed="500"
     />
-    <div v-show="parseFloat(tokenBalance) !== 0" class="release-button-container">
-      <button class="button-release" @click="parseFloat(deposited) !== 0?swap(address):deposit(address)">{{ parseFloat(deposited) !== 0? 'Swap':'Deposit' }}</button>
+    <div v-show="showButton" class="release-button-container">
+      <button v-if="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="button-release" @click="parseFloat(tokenBalance) === 0?swapFirstTokens(address):deposit(address)">{{ parseFloat(tokenBalance) === 0? 'Swap':'Deposit' }}</button>
+      <button v-else class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import SwapperABI from '@/contracts/abi/Swapper.json';
+import SimpleSwapperABI from '@/contracts/abi/Swapper.json';
+import VestingSwapperABI from '@/contracts/abi/VestingSwapper.json';
+import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
@@ -116,6 +119,16 @@ export default {
     tokenBalance () {
       return this.balanceByToken(this.tab, this.confirmed);
     },
+    showButton () {
+      const releasable = parseFloat(this.tokenBalance);
+      const deposited = parseFloat(this.deposited);
+      if (releasable === 0 && deposited === 0){
+        return false;
+      }
+      else{
+        return true;
+      }
+    },
   },
   methods: {
     formatDate (date) {
@@ -125,20 +138,18 @@ export default {
       const dateFormatted = moment(date * 1000).format('MM/DD/YYYY HH:mm:ss ') + (timezone);
       return dateFormatted;
     },
-    async swap (vestingAddress) {
-      const contractAddress = getConfig().rinkeby.contractAddress.StepSwapper;
-      const swapper = createWeb3Contract(SwapperABI, contractAddress);
+    async swapFirstTokens (vestingAddress) {
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
-      }).on('receipt', (receipt) => {
-        if (!receipt.status) {
-          this.$notify({
-            group: 'reverted',
-            title: 'Transaction is reverted',
-            type: 'error',
-            duration: 5000,
-          });
-        }
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
         this.$router.replace({
           path: this.from.path,
           query: { network: this.$route.query.network },
@@ -158,7 +169,72 @@ export default {
         }
       });
     },
-    deposit ( vestingAddress ){
+    async deposit ( vestingAddress ){
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
+      const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
+      await tokenVesting.methods.approveAndCall(swapperAddress, this.releasable).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async swapperAddressecondTokens (vestingAddress){
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
+      await swapper.methods.swap(vestingAddress).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
     },
   },
 };

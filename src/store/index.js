@@ -390,8 +390,8 @@ export default new Vuex.Store({
           const address = network.vesting;
           info.tab = token;
           info.address = address;
-          if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
-            const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
+          if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON' || token === 'MarketingTON'){
+            const tokenVesting = createWeb3Contract(VestingTokenABI, address);
             const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
             const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
             const startDate = await swapper.methods.start(address).call();
@@ -436,25 +436,15 @@ export default new Vuex.Store({
               info.graphTotal = _StrategicTON(balance);
               info.total = _PTON(balance, 'wei');
             }
-          }
-          else if(token === 'MarketingTON'){
-            const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-            const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
-            const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
-            const releasedAmount = await swapper.methods.released(address, user).call();
-            const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
-            const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
-            const balance = await swapper.methods.totalAmount(address, user).call();
-            const rate = await swapper.methods.ratio(address).call();
-            info.rate = rate;
-            const totalAmount = Number(balance);
-            info.total = _MTON(totalAmount, 'wei');
-            info.released = _MTON(releasedAmount, 'wei');
-            info.releasable = _MTON(releasableAmount, 'wei');
-            info.vested = _MTON(vestedAmount, 'wei');
+            else if (token === 'MarketingTON') {
+              info.total = _MTON(totalAmount, 'wei');
+              info.released = _MTON(releasedAmount, 'wei');
+              info.releasable = _MTON(releasableAmount, 'wei');
+              info.vested = _MTON(vestedAmount, 'wei');
+            }
           }
           else {
-            const tokenVesting = createWeb3Contract(VestingTokenABI, address);
+            const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
             const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const startDate = await tokenVesting.methods.start().call();
@@ -521,49 +511,6 @@ export default new Vuex.Store({
       );
       context.commit('SET_TOKEN_INFO', tokenInfo);
     },
-
-    // const startDate = await tokenVesting.methods.start().call();
-
-    // const duration = await tokenVesting.methods.duration().call();
-
-    // const cliffDate = await tokenVesting.methods.cliff().call();
-
-    // const balance = await tokenVesting.methods.balanceOf(user).call();
-    // const totalAmount = Number(balance);
-    // const graphDecimals = await tokenVesting.methods.decimals().call();
-    // const rate = await swapper.methods.rate(address).call();
-    // info.rate = rate;
-    // info.graphDecimals = graphDecimals;
-    // if (token === 'SeedTON') {
-    //   info.total = _SeedTON(totalAmount, 'wei');
-    //   info.released = _SeedTON(releasedAmount, 'wei');
-    //   info.releasable = _SeedTON(releasableAmount, 'wei');
-    //   info.vested = _SeedTON(vestedAmount, 'wei');
-    //   info.graphTotal = _SeedTON(totalAmount);
-    // }
-    // else if (token === 'PrivateTON') {
-    //   info.total = _PTON(totalAmount, 'wei');
-    //   info.released = _PTON(releasedAmount, 'wei');
-    //   info.releasable = _PTON(releasableAmount, 'wei');
-    //   info.vested = _PTON(vestedAmount, 'wei');
-    //   info.graphTotal = _PTON(totalAmount);
-    // }
-    // else if (token === 'MarketingTON') {
-    //   info.total = _MTON(totalAmount, 'wei');
-    //   info.released = _MTON(releasedAmount, 'wei');
-    //   info.releasable = _MTON(releasableAmount, 'wei');
-    //   info.vested = _MTON(vestedAmount, 'wei');
-    //   info.graphTotal = _MTON(totalAmount);
-    // }
-    // else if (token === 'StrategicTON') {
-    //   info.total = _StrategicTON(totalAmount, 'wei');
-    //   info.released = _StrategicTON(releasedAmount, 'wei');
-    //   info.releasable = _StrategicTON(releasableAmount, 'wei');
-    //   info.vested = _StrategicTON(vestedAmount, 'wei');
-    //   info.graphTotal = _StrategicTON(totalAmount);
-    // }
-    // return info;
-
     async setTransactionsAndPendingTransactions (context, transactions) {
       context.commit('SET_TRANSACTIONS', transactions);
 

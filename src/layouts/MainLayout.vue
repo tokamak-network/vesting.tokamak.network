@@ -94,14 +94,6 @@ export default {
     updateTonBalance (){
       return this.updateBalances(this.confirmed);
     },
-    // present () {
-    //   if (parseFloat(this.tokenInformation.totalDeposited) !== 0){
-    //     return true;
-    //   }
-    //   else{
-    //     return false;
-    //   }
-    // },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
