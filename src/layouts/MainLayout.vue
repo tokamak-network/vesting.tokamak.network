@@ -76,7 +76,6 @@ export default {
       confirmed:{
         type:Boolean,
       },
-      present:true,
     };
   },
   computed:{
@@ -96,6 +95,8 @@ export default {
     updateTonBalance (){
       return this.updateBalances(this.confirmed);
     },
+  },
+  created (){
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){

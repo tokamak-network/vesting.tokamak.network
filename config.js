@@ -31,21 +31,21 @@ const config = {
     'prefixAddress': 'https://rinkeby.etherscan.io/address/',
     'network': '4',
     'contractAddress': {
-      'TON':'0x8F5a66E14d0418a3abfb504e5EF9c9109A70a18a',
-      'VestingSwapper':'0xAF224f1AB65A7BBD1baD3f056Bd2cbFD97105dc8',
-      'StepSwapper':'0xE35a9aB959C2F8BC44BbBaDF101392561Fd7108B',
-      'TONVault':'0x022d841643746077f858E5B2154c4AE91Bb362E9',
+      'TON':'0xBbCD419027794e6eF51d49b3ee5f59624dc9ACd6',
+      'VestingSwapper':'0x0083121623cA67D9C6B8C2EBbdb2A455dcC8D2B0',
+      'StepSwapper':'0x75ec01f4DBDe6C9F7f5C5156A181431b32987c76',
+      'TONVault':'0xC1406e60C333a93ffe7465A3c5B045068f19d208',
       'StrategicTON': {
         'token': '',
         'vesting': '0x3e322Fc1496faf350c630E954A745432Fb778D45',
       },
       'PrivateTON': {
         'token': '',
-        'vesting': '0xc4116Cc2d16d153736a0ddAd2C6FE1E4b33F7982',
+        'vesting': '0x27b992F0c8102B84Afde16C0a6c570E2822ADaAd',
       },
       'SeedTON': {
         'token': '',
-        'vesting': '0x7CA000300Ef74026EF25bA85B20a6f2EDC944786',
+        'vesting': '0xE24E82471bD0AC6E9Bf5E982FED5482d9762dE3c',
       },
       'MarketingTON': {
         'token': '',
@@ -53,23 +53,23 @@ const config = {
       },
       'DaoTON': {
         'token': '',
-        'vesting': '0xdf63Dc23fD46be8e2F5044008Aa16b44b1754C29',
+        'vesting': '0x7A2f2E6E7f1c3F20c670a8518f60D87A8F179143',
       },
       'TeamTON': {
         'token': '',
-        'vesting': '0xcd4707CbD7D1C16441E268a0f7DFc83C8EECd1e4',
+        'vesting': '0xa983340529f8cc75fEdC6dACf8339390E4E2C19B',
       },
       'AdvisorTON': {
         'token': '',
-        'vesting': '0xC5730f3A5808F013B26899C0ebb9B81959AabCee',
+        'vesting': '0xE3c0C4188DEC8335691f0c9a80a0AFB64cc89E81',
       },
       'BusinessTON': {
         'token': '',
-        'vesting': '0x24072B47E1ee9f79eEC66865b05d9EB4aA926215',
+        'vesting': '0x81D9cF120ADEAfbcc55a0197b7e19631B346535B',
       },
       'ReserveTON': {
         'token': '',
-        'vesting': '0xA91FF5B566f3EF4F878f1b4e317141f1d814Bb46',
+        'vesting': '0x774e2Cfd87ba9865a3d1a68650d01E17F6602878',
       },
     },
   },
