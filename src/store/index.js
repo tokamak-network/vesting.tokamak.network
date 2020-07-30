@@ -390,7 +390,7 @@ export default new Vuex.Store({
           const address = network.vesting;
           info.tab = token;
           info.address = address;
-          if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON' || token === 'MarketingTON'){
+          if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
             const tokenVesting = createWeb3Contract(VestingTokenABI, address);
             const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
             const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
@@ -436,12 +436,17 @@ export default new Vuex.Store({
               info.graphTotal = _StrategicTON(balance);
               info.total = _PTON(balance, 'wei');
             }
-            else if (token === 'MarketingTON') {
-              info.total = _MTON(totalAmount, 'wei');
-              info.released = _MTON(releasedAmount, 'wei');
-              info.releasable = _MTON(releasableAmount, 'wei');
-              info.vested = _MTON(vestedAmount, 'wei');
-            }
+          }
+          else if (token === 'MarketingTON') {
+            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+            const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
+            const marketingTon = createWeb3Contract(MtonABI, address);
+            const balance = await marketingTon.methods.balanceOf(user).call();
+            const totalBalance = Number(balance);
+            info.totalBalance =  _MTON(totalBalance, 'wei');
+            const approvedAmount = await marketingTon.methods.allowance(user, swapperAddress).call();
+            const totalApprovedAmount = Number(approvedAmount);
+            info.approvedAmount = _MTON(totalApprovedAmount, 'wei');
           }
           else {
             const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
@@ -462,7 +467,7 @@ export default new Vuex.Store({
             const balance = await tokenVesting.methods.balanceOf(user).call();
             const totalAmount = Number(balance);
             const graphDecimals = await tokenVesting.methods.decimals().call();
-            const rate = await swapper.methods.rate(address).call();
+            const rate = await swapper.methods.ratio(address).call();
             info.rate = rate;
             info.graphDecimals = graphDecimals;
             if (token === 'DaoTON') {
