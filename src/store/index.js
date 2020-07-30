@@ -462,7 +462,7 @@ export default new Vuex.Store({
             const balance = await tokenVesting.methods.balanceOf(user).call();
             const totalAmount = Number(balance);
             const graphDecimals = await tokenVesting.methods.decimals().call();
-            const rate = await swapper.methods.rate(address).call();
+            const rate = await swapper.methods.ratio(address).call();
             info.rate = rate;
             info.graphDecimals = graphDecimals;
             if (token === 'DaoTON') {
