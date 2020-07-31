@@ -31,24 +31,20 @@ const config = {
     'prefixAddress': 'https://rinkeby.etherscan.io/address/',
     'network': '4',
     'contractAddress': {
-      'TON': '0x85d142D04c1E889724e8f1294DCB7D7b2554fB87',
-      'Swapper': '0x8A4F4860eB9778007Ac0c253D6dFC5243C063242',
-      'StrategicTON': {
-        'token': '',
-        'vesting': '0x455c304198Fa6E524f80312dfC553Bb366CA687d',
-      },
-      'PrivateTON': {
-        'token': '',
-        'vesting': '0x98a0f8d969E1c9f7AeA7804E051139938Ace53D8',
-      },
-      'SeedTON': {
-        'token': '',
-        'vesting': '0xa938779d797EC2034E33F68471625FE79D81615e',
-      },
-      'MarketingTON': {
-        'token': '',
-        'vesting': '0x84019083657ddb2b3EE3002Ae873569D015B9692',
-      },
+      'TON':'0x7795db0bB6B0E5C57981BC68d3F1c128012E5200',
+      'VestingSwapper':'0x73A137302D950bF04Df6CaA1579b40250AD27C12',
+      'StepSwapper':'0x9D66FB17Aa2D5E76063D0aBaB2563E5508E1419a',
+      'TONVault':'0x78F7e40af489B87E47cEBa9d2Af73dc8Bc04D667',
+      'Burner': '0xd6e1cc7D36D5B126d3Fe328199243A017735a298',
+      'StrategicTON':'0x5eBCb8c61d35C1815B32F42f98Bc89220572141A',
+      'PrivateTON': '0x9d238606aD12dE4ACC5389e73be32E96BeFaEf1e',
+      'SeedTON': '0x0ecF8d58D3B3Ac3cca3765AF91acb3349E12110c',
+      'MarketingTON': '0x6CB5B73C8b5fAb8cF72A382E171A5e31C3F527cc',
+      'DaoTON': '0xaCd88d9F2DaD0934bDC6133c6173FFf69593920F',
+      'TeamTON': '0xeAcbADa430aEFFc9c1FcAd0153C538806EEa5B2f',
+      'AdvisorTON': '0xe2C82e2e6934F1ec23CC98eDA3DC767de96ac71D',
+      'BusinessTON': '0xd9d2Ea1fF133D9b3250067c812204EA8aF759598',
+      'ReserveTON': '0xbbe374d22C3AcB4aF80aB1c4e2bEB001E8b4c8Ae',
     },
   },
   'development': {

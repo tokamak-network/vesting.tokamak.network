@@ -18,13 +18,6 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Cliff'"
-                 :content="formatDate(cliff)"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
     <text-viewer :title="'End date'"
                  :content="formatDate(end)"
                  :with-divider="false"
@@ -32,28 +25,14 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Total vesting'"
-                 :content="total"
+    <text-viewer :title="'Releasable Tokens'"
+                 :content="releasable"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Already vested'"
-                 :content="vested"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
-    <text-viewer :title="'Already relased'"
-                 :content="released"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
-    <text-viewer-rate :title="'Releasable'"
+    <text-viewer-rate :title="'Releasable TON'"
                       :content="releasable"
                       :rate="rate"
                       :with-divider="false"
@@ -76,15 +55,20 @@
                    position="bottom right"
                    :speed="500"
     />
-    <div v-show="parseFloat(tokenBalance) !== 0" class="release-button-container">
-      <button class="button-release" @click="present?swap(address):deposit(address)">{{ present? 'Swap':'Deposit' }}</button>
+    <div v-show="showButtonForMainTon" class="release-button-container">
+      <button class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+    </div>
+    <div v-show="showButtonForOtherTon" class="release-button-container">
+      <button class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
 
 <script>
 import { mapState, mapGetters } from 'vuex';
-import SwapperABI from '@/contracts/abi/Swapper.json';
+import SimpleSwapperABI from '@/contracts/abi/Swapper.json';
+import VestingSwapperABI from '@/contracts/abi/VestingSwapper.json';
+import VestingTokenABI from '@/contracts/abi/VestingToken.json';
 import { getConfig } from '../../config.js';
 import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
@@ -99,7 +83,7 @@ export default {
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'present'],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
   data () {
     return {
       confirmed:false,
@@ -112,9 +96,45 @@ export default {
     ]),
     ...mapGetters([
       'balanceByToken',
+      'releasableByToken',
     ]),
     tokenBalance () {
       return this.balanceByToken(this.tab, this.confirmed);
+    },
+    tokenReleasable () {
+      return this.releasableByToken(this.tab, this.confirmed);
+    },
+    showButtonForMainTon () {
+      if(this.tab === 'SeedTON' || this.tab === 'PrivateTON' || this.tab === 'StrategicTON'){
+        const releasable = parseFloat(this.tokenReleasable);
+        const balance = parseFloat(this.tokenBalance);
+        if (releasable === 0 && balance === 0){
+          return false;
+        }
+        else if (releasable !==0 || balance !==0){
+          return true;
+        }
+        else{
+          return true;
+        }
+      }
+      else {
+        return false;
+      }
+    },
+    showButtonForOtherTon (){
+      if(this.tab === 'TeamTON' || this.tab === 'AdvisorTON' || this.tab === 'BusinessTON' || this.tab === 'ReserveTON' || this.tab === 'DaoTON'){
+        const releasable = parseFloat(this.tokenReleasable);
+        if (releasable !== 0 ) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return false;
+      }
     },
   },
   methods: {
@@ -125,21 +145,18 @@ export default {
       const dateFormatted = moment(date * 1000).format('MM/DD/YYYY HH:mm:ss ') + (timezone);
       return dateFormatted;
     },
-    async swap (vestingAddress) {
-      console.log('swap', vestingAddress);
-      const contractAddress = getConfig().rinkeby.contractAddress.Swapper;
-      const swapper = createWeb3Contract(SwapperABI, contractAddress);
+    async swapFirstTokens (vestingAddress) {
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
-      }).on('receipt', (receipt) => {
-        if (!receipt.status) {
-          this.$notify({
-            group: 'reverted',
-            title: 'Transaction is reverted',
-            type: 'error',
-            duration: 5000,
-          });
-        }
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
         this.$router.replace({
           path: this.from.path,
           query: { network: this.$route.query.network },
@@ -159,8 +176,72 @@ export default {
         }
       });
     },
-    deposit ( vestingAddress ){
-      console.log('deposite', vestingAddress);
+    async deposit ( vestingAddress ){
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
+      const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
+      await tokenVesting.methods.approveAndCall(swapperAddress, this.graphTotal, []).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async swapperAddressecondTokens (vestingAddress){
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
+      await swapper.methods.swap(vestingAddress).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
     },
   },
 };

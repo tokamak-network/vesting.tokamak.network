@@ -5,6 +5,11 @@
         "internalType": "contract ERC20Mintable",
         "name": "token",
         "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "mtonAddress",
+        "type": "address"
       }
     ],
     "payable": false,
@@ -30,6 +35,32 @@
       {
         "indexed": false,
         "internalType": "address",
+        "name": "bernerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "SetBurner",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "vaultAddress",
+        "type": "address"
+      }
+    ],
+    "name": "SetVault",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
         "name": "account",
         "type": "address"
       },
@@ -47,6 +78,25 @@
       }
     ],
     "name": "Swapped",
+    "type": "event"
+  },
+  {
+    "anonymous": false,
+    "inputs": [
+      {
+        "indexed": false,
+        "internalType": "address",
+        "name": "vestingToken",
+        "type": "address"
+      },
+      {
+        "indexed": false,
+        "internalType": "uint256",
+        "name": "tokenRatio",
+        "type": "uint256"
+      }
+    ],
+    "name": "UpdateRatio",
     "type": "event"
   },
   {
@@ -86,6 +136,21 @@
   {
     "constant": true,
     "inputs": [],
+    "name": "burner",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "constant": true,
+    "inputs": [],
     "name": "primary",
     "outputs": [
       {
@@ -107,7 +172,7 @@
         "type": "address"
       }
     ],
-    "name": "rate",
+    "name": "ratio",
     "outputs": [
       {
         "internalType": "uint256",
@@ -135,6 +200,21 @@
     "type": "function"
   },
   {
+    "constant": true,
+    "inputs": [],
+    "name": "vault",
+    "outputs": [
+      {
+        "internalType": "contract TONVault",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
     "constant": false,
     "inputs": [
       {
@@ -144,11 +224,11 @@
       },
       {
         "internalType": "uint256",
-        "name": "tokenRate",
+        "name": "tokenRatio",
         "type": "uint256"
       }
     ],
-    "name": "updateRate",
+    "name": "updateRatio",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
@@ -158,7 +238,22 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "contract VestingToken",
+        "internalType": "uint256",
+        "name": "_startTimestamp",
+        "type": "uint256"
+      }
+    ],
+    "name": "setStart",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address payable",
         "name": "vestingToken",
         "type": "address"
       }
@@ -176,10 +271,93 @@
     "type": "function"
   },
   {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      }
+    ],
+    "name": "proxyPayment",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": true,
+    "stateMutability": "payable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_from",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_to",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "onTransfer",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "_owner",
+        "type": "address"
+      },
+      {
+        "internalType": "address",
+        "name": "_spender",
+        "type": "address"
+      },
+      {
+        "internalType": "uint256",
+        "name": "_amount",
+        "type": "uint256"
+      }
+    ],
+    "name": "onApprove",
+    "outputs": [
+      {
+        "internalType": "bool",
+        "name": "",
+        "type": "bool"
+      }
+    ],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
     "constant": true,
     "inputs": [
       {
-        "internalType": "contract VestingToken",
+        "internalType": "address payable",
         "name": "vestingToken",
         "type": "address"
       },
@@ -205,7 +383,7 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "contract VestingToken",
+        "internalType": "contract VestingTokenStep",
         "name": "vestingToken",
         "type": "address"
       },
@@ -225,17 +403,27 @@
     "constant": false,
     "inputs": [
       {
-        "internalType": "address payable",
-        "name": "recipient",
+        "internalType": "contract TONVault",
+        "name": "vaultAddress",
         "type": "address"
-      },
-      {
-        "internalType": "uint256",
-        "name": "amount256",
-        "type": "uint256"
       }
     ],
-    "name": "withdraw",
+    "name": "setVault",
+    "outputs": [],
+    "payable": false,
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "constant": false,
+    "inputs": [
+      {
+        "internalType": "address",
+        "name": "bernerAddress",
+        "type": "address"
+      }
+    ],
+    "name": "setBurner",
     "outputs": [],
     "payable": false,
     "stateMutability": "nonpayable",
