@@ -6,7 +6,7 @@
       <div v-if="tooltip !== ''" class="tooltip">
         <span class="tooltiptext" :style="`margin-left: 10px; margin-top: ${tooltipMarginTop}; width: ${tooltipWidth};`">{{ tooltip }}</span>
       </div>
-      <div class="content" :style="[title === 'Description' ? { 'width': '84px' } : {}]">{{ content }} (burned), {{ rate*Math.round(parseFloat(content) * 10) / 10 }}TON (aquired)</div>
+      <div class="content" :style="[title === 'Description' ? { 'width': '84px' } : {}]">{{ rate*Math.round(parseFloat(content) * 100) / 100 }} TON</div>
     </div>
   </div>
 </template>

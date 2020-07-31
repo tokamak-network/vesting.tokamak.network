@@ -9,7 +9,6 @@ import Graph from '@/components/Graph.vue';
 import moment from 'moment';
 // import Empty from '@/components/Empty.vue';
 // import Revoke from '@/components/Revoke.vue';
-
 export default {
   components: {
     graph: Graph,
@@ -25,19 +24,15 @@ export default {
     'decimals',
     'rate',
   ],
-  data () {
-    return {
-
-    };},
-  created () {
-    [];
-  },
   methods: {
     chartData () {
+      const points = this.getPoints();
       return {
         datasets: [
           this.fromBaseDataset({
-            data: this.getPoints(),
+            data: points[0],
+            pointBorderColor: points[1],
+            pointBackgroundColor: points[1],
           }),
         ],
       };
@@ -48,28 +43,54 @@ export default {
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
       const cliff = this.cliff;
       // const ends = this.end;
-
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
         const ends = new Date('2021-01-17T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.01, 0.165, 6 );
-        return points;
+        return [points, colors];
       }
       if (this.tab === 'PrivateTON'){
         const ends = new Date('2021-05-09T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.05, 0.095, 10 );
-        return points;
+        return [points, colors];
       }
       if (this.tab === 'MarketingTON'){
         const ends = new Date('2021-04-17T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
-        return points;
+        return [points, colors];
       }
       if (this.tab === 'StrategicTON'){
         const ends = new Date('2021-05-17T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.09, 0.091, 10 );
-        return points;
+        return [points, colors];
+      }
+      if (this.tab === 'TeamTON'){
+        const starts = new Date('2021-01-21T18:06:22')/1000;
+        const ends = new Date('2023-12-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0278, 0.0278, 35 );
+        return [points, colors];
+      }
+      if (this.tab === 'AdvisorTON'){
+        const starts = new Date('2021-01-21T18:06:22')/1000;
+        const ends = new Date('2022-06-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0556, 0.0556, 17 );
+        return [points, colors];
+      }
+      if (this.tab === 'BusinessTON'){
+        const starts = new Date('2020-08-21T18:06:22')/1000;
+        const ends = new Date('2022-03-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.05, 0.05, 19 );
+        return [points, colors];
+      }
+      if (this.tab === 'ReserveTON'){
+        const starts = new Date('2021-07-21T18:06:22')/1000;
+        const ends = new Date('2023-12-21T18:06:22')/1000;
+        this.setPoints(points, colors, starts, ends, totals, 0.0333, 0.0333, 29 );
+        return [points, colors];
+      }
+      if (this.tab === 'DaoTON'){
+        return [points, colors];
       }
     },
     setPoints (points, colors, starts, ends, totals, ratio1, ratio2, i){
@@ -79,7 +100,6 @@ export default {
       if (now >= starts && now < Number(starts)+(2592000)){
         points.push({ x:this.formatDate(now), y:totals * ratio1 });
         colors.push('rgba(255, 71, 99, 1)');
-
       }
       points.push({ x:this.formatDate(Number(starts)+(2592000)), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
@@ -100,8 +120,7 @@ export default {
       }
       points.push({ x:this.formatDate(ends), y:totals });
       colors.push('rgba(92,182,228,1)');
-      this.pointBackgroundColors = colors;
-
+      // this.pointBackgroundColors = colors;
     },
     formatDate (date) {
       return moment(date * 1000).format('MM/DD/YYYY HH:mm');
@@ -162,8 +181,6 @@ export default {
         backgroundColor: 'rgba(92,182,228,0.4)',
         borderColor: 'rgba(92,182,228,1)',
         borderJoinStyle: 'miter',
-        pointBorderColor: this.pointBackgroundColors,
-        pointBackgroundColor: this.pointBackgroundColors,
         pointBorderWidth: 1,
         pointHoverRadius: 1,
         pointHoverBackgroundColor: 'rgba(92,182,228,1)',

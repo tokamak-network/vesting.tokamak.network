@@ -18,8 +18,20 @@
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
-    <div v-if="activeTab !== 'MarketingTON'" class="vesting-table-container">
-      <div :class="present ? 'table-info-with-graph':'table-info-without-graph'">
+    <div v-if="activeTab === 'MarketingTON'" class="mton">
+      <div>Swappable TON: {{ (parseFloat(tokenInformation['totalBalance']) * 10) / 10 }}</div>
+      <button class="release-button" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
+      <notifications group="confirmed"
+                     position="bottom right"
+                     :speed="500"
+      />
+      <notifications group="reverted"
+                     position="bottom right"
+                     :speed="500"
+      />
+    </div>
+    <div v-else class="vesting-table-container">
+      <div :class="parseFloat(tokenInformation.totalDeposited) !== 0 ? 'table-info-with-graph':'table-info-without-graph'">
         <div>
           <user-info-container
             :tab="activeTab"
@@ -29,30 +41,26 @@
             :total="tokenInformation['total']"
             :released="tokenInformation['released']"
             :vested="tokenInformation['vested']"
-            :deposited="''"
+            :deposited="tokenInformation['totalDeposited']"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
-            :present="present"
+            :graphTotal="tokenInformation['balanceUnformatted']"
             @releaseClicked="clickRelease"
           />
         </div>
       </div>
-      <div v-show="present" class="table-graph">
-        <graph-container
-          :tab="activeTab"
-          :start="tokenInformation['startDate']"
-          :end="tokenInformation['endDate']"
-          :cliff="tokenInformation['cliffDate']"
-          :total="tokenInformation['graphTotal']"
-          :decimals="tokenInformation['graphDecimals']"
-          :rate="tokenInformation['rate']"
+      <div v-if="parseFloat(tokenInformation.totalDeposited) !== 0" class="table-graph">
+        <graph-container :key="activeTab"
+                         :tab="activeTab"
+                         :start="tokenInformation['startDate']"
+                         :end="tokenInformation['endDate']"
+                         :cliff="tokenInformation['cliffDate']"
+                         :total="tokenInformation['graphTotal']"
+                         :decimals="tokenInformation['graphDecimals']"
+                         :rate="tokenInformation['rate']"
         />
       </div>
-    </div>
-    <div v-else class="mton">
-      <div>Releasable TON: {{ tokenInformation.rate*Math.round(parseFloat(tokenInformation['releasable']) * 10) / 10 }}</div>
-      <button class="release-button">Swap</button>
     </div>
   </div>
 </template>
@@ -61,6 +69,10 @@ import { mapState, mapGetters } from 'vuex';
 import store from '@/store/index.js';
 import UserInfo from '@/containers/UserInfoContainer.vue';
 import GraphContainer from '@/containers/GraphContainer.vue';
+import MtonABI from '@/contracts/abi/MTON.json';
+import SimpleSwapperABI from '@/contracts/abi/Swapper.json';
+import { createWeb3Contract } from '@/helpers/Contract';
+import { getConfig } from '../../config.js';
 
 export default {
   components: {
@@ -76,7 +88,6 @@ export default {
       confirmed:{
         type:Boolean,
       },
-      present:true,
     };
   },
   computed:{
@@ -114,6 +125,74 @@ export default {
     },
     clickRelease (confirmed){
       this.confirmed=confirmed;
+    },
+    async mtonApprove (){
+      const address = this.tokenInformation.address;
+      const totalBalance = this.tokenInformation.totalBalance;
+      const mton = createWeb3Contract(MtonABI, address);
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const balance = await mton.methods.balanceOf(this.user).call();
+      await mton.methods.approve(swapperAddress, balance).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if(confirmationNumber === 0){
+          this.confirmed = !this.confirmed;
+          this.$store.dispatch('setBalance');
+          this.clickRelease(!this.confirmed);
+          this.$store.dispatch('setTokenInfo');
+          this.$notify({
+            group: 'confirmed',
+            title: 'Transaction is confirmed',
+            type: 'success',
+            duration: 5000,
+          });
+        }
+      });
+    },
+    async mtonSwap (){
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
+      const vestingAddress = this.tokenInformation.address;
+      await swapper.methods.swap(vestingAddress).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
     },
   },
 };
