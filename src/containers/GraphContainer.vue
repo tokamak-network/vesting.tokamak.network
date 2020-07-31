@@ -46,7 +46,7 @@ export default {
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
-        const ends = new Date('2021-01-17T18:06:22')/1000;
+        const ends = new Date('2021-01-26T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.01, 0.165, 6 );
         return [points, colors];
       }
