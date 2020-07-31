@@ -403,10 +403,10 @@ export default new Vuex.Store({
             const cliffDate = await swapper.methods.cliff(address).call();
             info.cliffDate = cliffDate;
             const releasedAmount = await swapper.methods.released (address, user).call();
-            const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
-            const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
             const totalDeposited = await swapper.methods.totalAmount(address, user).call();
             const totalAmount = Number(totalDeposited);
+            const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
+            const vestedAmount = Number(releasedAmount) + Number(totalDeposited);
             const balance = await tokenVesting.methods.balanceOf(user).call();
             const graphDecimals = await tokenVesting.methods.decimals().call();
             const rate = await swapper.methods.ratio(address).call();
@@ -646,10 +646,10 @@ export default new Vuex.Store({
     balanceByToken:(state) =>(tab, confirmed) =>{
       if (confirmed){
         const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-        return tok.releasable;
+        return tok.totalDeposited;
       }
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-      return tok.releasable;
+      return tok.totalDeposited;
     },
     updateBalances:(state)=>(confirmed) =>{
       if (confirmed){

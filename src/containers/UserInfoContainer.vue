@@ -77,7 +77,7 @@
                    :speed="500"
     />
     <div v-show="showButton" class="release-button-container">
-      <button v-if="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="button-release" @click="parseFloat(tokenBalance) === 0?swapFirstTokens(address):deposit(address)">{{ parseFloat(tokenBalance) === 0? 'Swap':'Deposit' }}</button>
+      <button v-if="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="button-release" @click="parseFloat(tokenBalance) === 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) === 0? 'Swap':'Deposit' }}</button>
       <button v-else class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
@@ -173,7 +173,7 @@ export default {
       const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
-      await tokenVesting.methods.approveAndCall(swapperAddress, this.releasable).send({
+      await tokenVesting.methods.approveAndCall(swapperAddress, this.total).send({
         from: this.user,
       }).on('error', (error) => {
         this.$notify({
