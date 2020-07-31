@@ -244,15 +244,15 @@ export default new Vuex.Store({
     async setTokens (context) {
       const user = context.state.user;
       const network = getConfig().rinkeby.contractAddress;
-      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
-      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
-      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
-      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
-      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON.vesting;
-      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON.vesting;
-      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON.vesting;
-      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON.vesting;
-      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON.vesting;
+      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
+      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
+      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
+      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
+      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
+      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
       const marketingTon = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -274,37 +274,6 @@ export default new Vuex.Store({
     },
     async setMarketing (context) {
       const user = context.state.user;
-
-      // const marketings = context.state.marketings;
-      // const marketingTons = await Promise.all(
-      //   marketings.map(async marketingTon => {
-      //     const network = getConfig().rinkeby.contractAddreess;
-      //     const address = network.MarketingTON.vesting;
-      //     const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-
-      //     const startDate = await tokenVesting.methods.start().call();
-      //     const duration = await tokenVesting.methods.duration().call();
-      //     const endDate = Number(startDate) + Number(duration);
-      //     const cliffDate = await tokenVesting.methods.cliff().call();
-
-      //     const released = await tokenVesting.methods.released(context.state.user).call();
-
-      //     const releasableAmount = await tokenVesting.methods.releasableAmount(context.state.user).call();
-      //     const totalAmount = Number(releasableAmount) + Number(released);
-
-      //     marketingTon.start = new Date(Number(startDate)*1000);
-      //     marketingTon.end = new Date(endDate*1000);
-      //     marketingTon.cliff = new Date(Number(cliffDate)*1000);
-      //     marketingTon.released = _TON(released, 'wei');
-      //     marketingTon.total = _TON(totalAmount, 'wei');
-      //     marketingTon.releasable = _TON(releasableAmount, 'wei');
-      //     // this.vested = await tokenVesting.methods.vestedAmount(store.state.user).call()
-      //     marketingTon.beneficiary = context.state.user;
-
-      //     return marketingTon;
-      // })
-      // );
-      // context.commit('SET_MARKETING_TON', marketingTons);
     },
     async setBalance (context){
       const user = context.state.user;
@@ -313,15 +282,15 @@ export default new Vuex.Store({
       const ton = createWeb3Contract(TokenABI, tonAddress);
       const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
-      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
-      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
-      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
-      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON.vesting;
-      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON.vesting;
-      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON.vesting;
-      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON.vesting;
-      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON.vesting;
-      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON.vesting;
+      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
+      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
+      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
+      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
+      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
+      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
       const marketingTON = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -392,7 +361,7 @@ export default new Vuex.Store({
         tokenList.map(async token =>{
           const info = {};
           const network = getConfig().rinkeby.contractAddress[token];
-          const address = network.vesting;
+          const address = network;
           info.tab = token;
           info.address = address;
           if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
@@ -653,10 +622,18 @@ export default new Vuex.Store({
     balanceByToken:(state) =>(tab, confirmed) =>{
       if (confirmed){
         const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-        return tok.totalDeposited;
+        return tok.total;
       }
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-      return tok.totalDeposited;
+      return tok.total;
+    },
+    releasableByToken:(state) =>(tab, confirmed) =>{
+      if (confirmed){
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+        return tok.releasable;
+      }
+      const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+      return tok.releasable;
     },
     updateBalances:(state)=>(confirmed) =>{
       if (confirmed){

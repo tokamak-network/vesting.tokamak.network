@@ -18,13 +18,6 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Cliff'"
-                 :content="formatDate(cliff)"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
     <text-viewer :title="'End date'"
                  :content="formatDate(end)"
                  :with-divider="false"
@@ -32,28 +25,14 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Total vesting'"
-                 :content="total"
+    <text-viewer :title="'Releasable Tokens'"
+                 :content="releasable"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Already vested'"
-                 :content="vested"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
-    <text-viewer :title="'Already relased'"
-                 :content="released"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
-    />
-    <text-viewer-rate :title="'Releasable'"
+    <text-viewer-rate :title="'Releasable TON'"
                       :content="releasable"
                       :rate="rate"
                       :with-divider="false"
@@ -76,9 +55,11 @@
                    position="bottom right"
                    :speed="500"
     />
-    <div v-show="showButton" class="release-button-container">
-      <button v-if="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="button-release" @click="parseFloat(tokenBalance) === 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) === 0? 'Deposit':'Swap' }}</button>
-      <button v-else class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
+    <div v-show="showButtonForMainTon" class="release-button-container">
+      <button class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+    </div>
+    <div v-show="showButtonForOtherTon" class="release-button-container">
+      <button class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
@@ -115,18 +96,44 @@ export default {
     ]),
     ...mapGetters([
       'balanceByToken',
+      'releasableByToken',
     ]),
     tokenBalance () {
       return this.balanceByToken(this.tab, this.confirmed);
     },
-    showButton () {
-      const releasable = parseFloat(this.tokenBalance);
-      const deposited = parseFloat(this.total);
-      if (releasable === 0 && deposited === 0){
+    tokenReleasable () {
+      return this.releasableByToken(this.tab, this.confirmed);
+    },
+    showButtonForMainTon () {
+      if(this.tab === 'SeedTON' || this.tab === 'PrivateTON' || this.tab === 'StrategicTON'){
+        const releasable = parseFloat(this.tokenReleasable);
+        const balance = parseFloat(this.tokenBalance);
+        if (releasable === 0 && balance === 0){
+          return false;
+        }
+        else if (releasable !==0 || balance !==0){
+          return true;
+        }
+        else{
+          return true;
+        }
+      }
+      else {
         return false;
       }
-      else{
-        return true;
+    },
+    showButtonForOtherTon (){
+      if(this.tab === 'TeamTON' || this.tab === 'AdvisorTON' || this.tab === 'BusinessTON' || this.tab === 'ReserveTON' || this.tab === 'DaoTON'){
+        const releasable = parseFloat(this.tokenReleasable);
+        if (releasable !== 0 ) {
+          return true;
+        }
+        else {
+          return false;
+        }
+      }
+      else {
+        return false;
       }
     },
   },
