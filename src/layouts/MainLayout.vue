@@ -45,11 +45,12 @@
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
             :rate="tokenInformation['rate']"
+            :graphTotal="tokenInformation['balanceUnformatted']"
             @releaseClicked="clickRelease"
           />
         </div>
       </div>
-      <div v-show="parseFloat(tokenInformation.totalDeposited) !== 0" class="table-graph">
+      <div v-if="parseFloat(tokenInformation.totalDeposited) !== 0" class="table-graph">
         <graph-container :key="activeTab"
                          :tab="activeTab"
                          :start="tokenInformation['startDate']"

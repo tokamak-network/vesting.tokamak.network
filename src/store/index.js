@@ -311,6 +311,8 @@ export default new Vuex.Store({
       const list = [];
       const tonAddress = getConfig().rinkeby.contractAddress.TON;
       const ton = createWeb3Contract(TokenABI, tonAddress);
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON.vesting;
       const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON.vesting;
       const seedAddress = getConfig().rinkeby.contractAddress.SeedTON.vesting;
@@ -335,6 +337,9 @@ export default new Vuex.Store({
       const marketingTonBalance = await marketingTON.methods.balanceOf(user).call();
       const seedTonBalance = await seedTON.methods.balanceOf(user).call();
       const strategicTonBalance = await strategicTON.methods.balanceOf(user).call();
+      const privateDeposited = await swapper.methods.totalAmount(privateAddress, user).call();
+      const seedDeposited = await swapper.methods.totalAmount(seedAddress, user).call();
+      const strategicDeposited = await swapper.methods.totalAmount(strategicAddress, user).call();
       const advisorTonBalance = await advisorTON.methods.balanceOf(user).call();
       const teamTonBalance = await teamTON.methods.balanceOf(user).call();
       const daoTonBalance = await daoTON.methods.balanceOf(user).call();
@@ -350,13 +355,13 @@ export default new Vuex.Store({
       context.commit('SET_RESERVE_BALANCE', reserveTonBalance );
       context.commit('SET_DAO_BALANCE', daoTonBalance);
       context.commit('SET_TON_BALANCE', tonBalanceFormatted);
-      if (seedTonBalance !== String(0)){
+      if (seedTonBalance !== String(0) || seedDeposited !== String(0)){
         list.push('SeedTON');
       }
-      if (privateTonBalance !== String(0)){
+      if (privateTonBalance !== String(0) || privateDeposited !== String(0)){
         list.push('PrivateTON');
       }
-      if (strategicTonBalance !== String(0)){
+      if (strategicTonBalance !== String(0) || strategicDeposited !==String(0)){
         list.push('StrategicTON');
       }
       if (marketingTonBalance !== String(0)){
@@ -410,6 +415,7 @@ export default new Vuex.Store({
             const balance = await tokenVesting.methods.balanceOf(user).call();
             const graphDecimals = await tokenVesting.methods.decimals().call();
             const rate = await swapper.methods.ratio(address).call();
+            info.balanceUnformatted = balance;
             info.rate = rate;
             info.graphDecimals = graphDecimals;
             if (token === 'SeedTON') {
@@ -417,7 +423,7 @@ export default new Vuex.Store({
               info.released = _SeedTON(releasedAmount, 'wei');
               info.releasable = _SeedTON(releasableAmount, 'wei');
               info.vested = _SeedTON(vestedAmount, 'wei');
-              info.graphTotal = _SeedTON(balance);
+              info.graphTotal = _SeedTON(totalDeposited);
               info.total = _SeedTON(balance, 'wei');
             }
             else if (token === 'PrivateTON') {
@@ -425,7 +431,7 @@ export default new Vuex.Store({
               info.released = _PTON(releasedAmount, 'wei');
               info.releasable = _PTON(releasableAmount, 'wei');
               info.vested = _PTON(vestedAmount, 'wei');
-              info.graphTotal = _PTON(balance);
+              info.graphTotal = _PTON(totalDeposited);
               info.total = _PTON(balance, 'wei');
             }
             else if (token === 'StrategicTON') {
@@ -433,7 +439,7 @@ export default new Vuex.Store({
               info.released = _StrategicTON(releasedAmount, 'wei');
               info.releasable = _StrategicTON(releasableAmount, 'wei');
               info.vested = _StrategicTON(vestedAmount, 'wei');
-              info.graphTotal = _StrategicTON(balance);
+              info.graphTotal = _StrategicTON(totalDeposited);
               info.total = _PTON(balance, 'wei');
             }
           }
@@ -476,6 +482,7 @@ export default new Vuex.Store({
               info.releasable = _DAO(releasableAmount, 'wei');
               info.vested = _DAO(vestedAmount, 'wei');
               info.graphTotal = _DAO(balance);
+
               info.total = _DAO(balance, 'wei');
             }
             else if (token === 'TeamTON') {
