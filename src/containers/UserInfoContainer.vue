@@ -40,6 +40,13 @@
                       :tooltipWidth="'180px'"
                       :tooltipMarginTop="'-9px'"
     />
+    <text-viewer :title="'Conversion Ratio'"
+                 :content="rate"
+                 :with-divider="false"
+                 :tooltip="'Introduction to the operator'"
+                 :tooltipWidth="'180px'"
+                 :tooltipMarginTop="'-9px'"
+    />
     <text-viewer-Number :title="'Deposited'"
                         :content="deposited"
                         :with-divider="false"
@@ -90,9 +97,6 @@ export default {
     return {
       confirmed:false,
     };
-  },
-  created (){
-    console.log(this.total);
   },
   computed : {
     ...mapState([
@@ -160,7 +164,6 @@ export default {
         if(confirmationNumber === 0){
           this.confirmed = !this.confirmed;
           this.$store.dispatch('setBalance');
-          this.$emit('releaseClicked', this.confirmed);
           this.$store.dispatch('setTokenInfo');
           this.$notify({
             group: 'confirmed',
@@ -168,6 +171,8 @@ export default {
             type: 'success',
             duration: 5000,
           });
+          this.$emit('releaseClicked', this.confirmed);
+          this.$emit('changeActiveTab', this.confirmed);
         }
       });
     },
@@ -227,6 +232,7 @@ export default {
             this.confirmed = !this.confirmed;
             this.$store.dispatch('setBalance');
             this.$emit('releaseClicked', this.confirmed);
+            this.$emit('changeActiveTab', this.confirmed);
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',

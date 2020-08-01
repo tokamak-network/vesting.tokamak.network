@@ -20,7 +20,7 @@
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
       <div>Swappable TON: {{ (parseFloat(tokenInformation['totalBalance']) * 10) / 10 }}</div>
-      <button class="release-button" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
+      <button :disabled="parseFloat(tokenInformation['approvedAmount'])===0" class="release-button" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
       <notifications group="confirmed"
                      position="bottom right"
                      :speed="500"
@@ -34,6 +34,7 @@
       <div :class="parseFloat(tokenInformation.totalDeposited) !== 0 ? 'table-info-with-graph':'table-info-without-graph'">
         <div>
           <user-info-container
+            :key="activeTab"
             :tab="activeTab"
             :start="tokenInformation['startDate']"
             :end="tokenInformation['endDate']"
@@ -126,6 +127,10 @@ export default {
     clickRelease (confirmed){
       this.confirmed=confirmed;
     },
+    changeActiveTab (confirmed){
+      this.confirmed=confirmed;
+      this.activeTab=this.$store.state.tokenList[0];
+    },
     async mtonApprove (){
       const address = this.tokenInformation.address;
       const totalBalance = this.tokenInformation.totalBalance;
@@ -180,9 +185,10 @@ export default {
       }).on('confirmation', (confirmationNumber, receipt) =>{
         if (receipt.status){
           if(confirmationNumber === 0){
+            this.activeTab=this.$store.state.tokenList[0];
             this.confirmed = !this.confirmed;
             this.$store.dispatch('setBalance');
-            this.$emit('releaseClicked', this.confirmed);
+            this.releaseClicked(this.confirmed);
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',
