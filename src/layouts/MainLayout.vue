@@ -19,7 +19,7 @@
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
-      <div>Swappable TON: {{ (parseFloat(tokenInformation['totalBalance']) * 10) / 10 }}</div>
+      <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
       <button :disabled="parseFloat(tokenInformation['approvedAmount'])===0" class="release-button" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
       <notifications group="confirmed"
                      position="bottom right"
