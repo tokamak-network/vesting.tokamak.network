@@ -13,7 +13,7 @@
     <div class="vesting-address-container">
       <div class="vesting-address">
         <div class="vesting-address-intro">Ton Balance:</div>
-        <div class="vesting-address-details">{{ updateTonBalance }}</div>
+        <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ updateTonBalance.symbol }}</div>
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
       <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>

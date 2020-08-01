@@ -127,7 +127,7 @@ export default {
     },
     displayAmount (amount) {
       const displayAmounts = parseFloat(amount) / (Math.pow(10, this.decimals));
-      return Math.round(displayAmounts * 10000) / 10000;
+      return Math.round(displayAmounts * 10) / 10;
     },
     chartOptions () {
       return {
@@ -170,6 +170,12 @@ export default {
                 labelString: 'Amount of TON',
               },
               stacked: true,
+              ticks:{
+                userCallback: function (value, index, values) {
+                  return value.toLocaleString('en-US');
+                },
+              },
+
             },
           ],
         },
