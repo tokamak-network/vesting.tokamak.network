@@ -25,12 +25,12 @@
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Releasable Tokens'"
-                 :content="releasable"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
+    <text-viewer-Number :title="'Releasable Tokens'"
+                        :content="releasable"
+                        :with-divider="false"
+                        :tooltip="'Introduction to the operator'"
+                        :tooltipWidth="'180px'"
+                        :tooltipMarginTop="'-9px'"
     />
     <text-viewer-rate :title="'Releasable TON'"
                       :content="releasable"
@@ -40,12 +40,19 @@
                       :tooltipWidth="'180px'"
                       :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Deposited'"
-                 :content="deposited"
+    <text-viewer :title="'Conversion Ratio'"
+                 :content="rate"
                  :with-divider="false"
                  :tooltip="'Introduction to the operator'"
                  :tooltipWidth="'180px'"
                  :tooltipMarginTop="'-9px'"
+    />
+    <text-viewer-Number :title="'Deposited'"
+                        :content="deposited"
+                        :with-divider="false"
+                        :tooltip="'Introduction to the operator'"
+                        :tooltipWidth="'180px'"
+                        :tooltipMarginTop="'-9px'"
     />
     <notifications group="confirmed"
                    position="bottom right"
@@ -55,11 +62,11 @@
                    position="bottom right"
                    :speed="500"
     />
-    <div v-show="showButtonForMainTon" class="release-button-container">
-      <button class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+    <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
+      <button :disabled="!showButtonForMainTon" class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
-    <div v-show="showButtonForOtherTon" class="release-button-container">
-      <button class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
+    <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
+      <button :disabled="!showButtonForOtherTon" class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
@@ -74,6 +81,7 @@ import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
 import TextViewerRate from '@/components/TextViewerRate.vue';
+import TextViewerNumber from '@/components/TextViewerNumber.vue';
 import store from '@/store/index.js';
 import moment from 'moment';
 
@@ -82,6 +90,7 @@ export default {
     'text-viewer': TextViewer,
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
+    'text-viewer-Number':TextViewerNumber,
   },
   props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
   data () {
@@ -105,32 +114,22 @@ export default {
       return this.releasableByToken(this.tab, this.confirmed);
     },
     showButtonForMainTon () {
-      if(this.tab === 'SeedTON' || this.tab === 'PrivateTON' || this.tab === 'StrategicTON'){
-        const releasable = parseFloat(this.tokenReleasable);
-        const balance = parseFloat(this.tokenBalance);
-        if (releasable === 0 && balance === 0){
-          return false;
-        }
-        else if (releasable !==0 || balance !==0){
-          return true;
-        }
-        else{
-          return true;
-        }
-      }
-      else {
+      const releasable = parseFloat(this.tokenReleasable);
+      const balance = parseFloat(this.tokenBalance);
+      if (releasable === 0 && balance === 0){
         return false;
+      }
+      else if (releasable !==0 || balance !==0){
+        return true;
+      }
+      else{
+        return true;
       }
     },
     showButtonForOtherTon (){
-      if(this.tab === 'TeamTON' || this.tab === 'AdvisorTON' || this.tab === 'BusinessTON' || this.tab === 'ReserveTON' || this.tab === 'DaoTON'){
-        const releasable = parseFloat(this.tokenReleasable);
-        if (releasable !== 0 ) {
-          return true;
-        }
-        else {
-          return false;
-        }
+      const releasable = parseFloat(this.tokenReleasable);
+      if (releasable !== 0 ) {
+        return true;
       }
       else {
         return false;
@@ -165,7 +164,6 @@ export default {
         if(confirmationNumber === 0){
           this.confirmed = !this.confirmed;
           this.$store.dispatch('setBalance');
-          this.$emit('releaseClicked', this.confirmed);
           this.$store.dispatch('setTokenInfo');
           this.$notify({
             group: 'confirmed',
@@ -173,6 +171,8 @@ export default {
             type: 'success',
             duration: 5000,
           });
+          this.$emit('releaseClicked', this.confirmed);
+          this.$emit('changeActiveTab', this.confirmed);
         }
       });
     },
@@ -232,6 +232,7 @@ export default {
             this.confirmed = !this.confirmed;
             this.$store.dispatch('setBalance');
             this.$emit('releaseClicked', this.confirmed);
+            this.$emit('changeActiveTab', this.confirmed);
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',

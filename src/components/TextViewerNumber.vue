@@ -1,13 +1,12 @@
 <template>
-  <div class="text-viewer-downloader">
+  <div class="text-viewer">
     <hr class="divider" :style="[withDivider ? {} : {'visibility': 'hidden'}]">
     <div class="row">
       <div class="title">{{ title }}</div>
       <div v-if="tooltip !== ''" class="tooltip">
-        <!-- <img src="@/assets/Images/instruction.png" alt="" width="10" height="10"> -->
         <span class="tooltiptext" :style="`margin-left: 10px; margin-top: ${tooltipMarginTop}; width: ${tooltipWidth};`">{{ tooltip }}</span>
       </div>
-      <div class="content"><a :href="href" :swap="swap">{{ content }}</a></div>
+      <div class="content" :style="[title === 'Description' ? { 'width': '84px' } : {}]">{{ parseFloat(content).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ content.symbol }}</div>
     </div>
   </div>
 </template>
@@ -19,6 +18,8 @@ export default {
       type: String,
     },
     content: {
+    },
+    rate:{
     },
     tooltip: {
       type: String,
@@ -32,8 +33,6 @@ export default {
       type: String,
       default: '-17px',
     },
-    href: {},
-    swap: {},
     withDivider: {
       type: Boolean,
       default: false,
@@ -43,7 +42,11 @@ export default {
 </script>
 
 <style scoped>
-.text-viewer-downloader {
+img {
+  margin-bottom: 3px;
+}
+
+.text-viewer {
   margin-bottom: 6px;
 }
 
@@ -62,15 +65,14 @@ export default {
   font-style: normal;
   letter-spacing: normal;
   color: #161819;
-  display: flex;
-  align-items: center;
+  min-width: 100px;
 }
 
 .content {
   display: inline-block;
   flex: 1;
   text-align: center;
-  padding-right: 16px;
+  padding-right: 40px;
   font-family: Roboto;
   font-size: 10px;
   font-weight: 300;
@@ -79,12 +81,7 @@ export default {
   letter-spacing: normal;
   color: #161819;
   word-break: break-word;
-  height: 100%;
-  display: flex;
-  flex-direction: row-reverse;
-}
-a {
-  text-align: center;
+  min-width: 100px;
 }
 
 .divider {
@@ -97,6 +94,11 @@ a {
 
 .hidden {
   visibility: hidden;
+}
+
+.tooltip {
+  position: relative;
+  display: inline-block;
 }
 
 /* Tooltip text */
