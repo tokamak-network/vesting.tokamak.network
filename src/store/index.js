@@ -372,7 +372,8 @@ export default new Vuex.Store({
             info.startDate = startDate;
             const duration = await swapper.methods.duration(address).call();
             info.duration = duration;
-            const endDate = Number(startDate) + Number(duration);
+            const durationUnit = 60 * 60 * 6; // modify when we deploy it to mainnet
+            const endDate = Number(startDate) + (Number(duration) * durationUnit);
             info.endDate = endDate;
             const cliffDate = await swapper.methods.cliff(address).call();
             info.cliffDate = cliffDate;
