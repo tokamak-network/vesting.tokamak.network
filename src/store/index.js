@@ -362,6 +362,7 @@ export default new Vuex.Store({
           const info = {};
           const network = getConfig().rinkeby.contractAddress[token];
           const address = network;
+          const durationUnit = 60 * 60 * 6; // modify when we deploy it to mainnet
           info.tab = token;
           info.address = address;
           if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
@@ -372,7 +373,6 @@ export default new Vuex.Store({
             info.startDate = startDate;
             const duration = await swapper.methods.duration(address).call();
             info.duration = duration;
-            const durationUnit = 60 * 60 * 6; // modify when we deploy it to mainnet
             const endDate = Number(startDate) + (Number(duration) * durationUnit);
             info.endDate = endDate;
             const cliffDate = await swapper.methods.cliff(address).call();
@@ -432,7 +432,7 @@ export default new Vuex.Store({
             info.startDate = startDate;
             const duration = await tokenVesting.methods.duration().call();
             info.duration = duration;
-            const endDate = Number(startDate) + Number(duration);
+            const endDate = Number(startDate) + Number(duration) * durationUnit;
             info.endDate = endDate;
             const cliffDate = await tokenVesting.methods.cliff().call();
             info.cliffDate = cliffDate;
