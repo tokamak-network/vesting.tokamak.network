@@ -12,7 +12,7 @@
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
-        <div class="vesting-address-intro">Ton Balance:</div>
+        <div class="vesting-address-intro">TON Balance:</div>
         <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ updateTonBalance.symbol }}</div>
       </div>
       <div class="vesting-address-intro">Vesting address:</div>
@@ -20,7 +20,7 @@
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
-      <button :disabled="parseFloat(tokenInformation['totalBalance'])===0" class="release-button" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
+      <button :disabled="parseFloat(tokenInformation['totalBalance'])===0" class="release-button" :class="{ 'not-allowed': parseFloat(tokenInformation['totalBalance'])===0 }" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
       <notifications group="confirmed"
                      position="bottom right"
                      :speed="500"
@@ -320,5 +320,11 @@ button:focus {
   margin: 16px;
   border-radius: 7px;
   border: 1px solid #ced6d9;
+}
+.not-allowed:hover {
+  cursor: not-allowed;
+}
+.not-allowed{
+  background: #f7f8f9;
 }
 </style>

@@ -63,10 +63,10 @@
                    :speed="500"
     />
     <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
-      <button :disabled="!showButtonForMainTon" class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+      <button :disabled="!showButtonForMainTon" class="button-release" :class="{ 'not-allowed': !showButtonForMainTon }" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
     <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
-      <button :disabled="!showButtonForOtherTon" class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
+      <button :disabled="!showButtonForOtherTon" class="button-release" :class="{ 'not-allowed': !showButtonForOtherTon }" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
@@ -260,11 +260,8 @@ export default {
 }
 
 .release-button-container {
-  /* margin-bottom: 10px;
- margin-left: 16px; */
  display: flex;
  justify-content: center;
- /* width: 100%; */
  display: flex;
  justify-self: center;
 }
@@ -309,20 +306,6 @@ export default {
   border: 1px solid #ced6d9;
 }
 
-.button-commit {
-  color: #ffffff;
-  background-color: #f38776;
-  border: 1px solid #f38776;
-  text-align: center;
-  font-size: 14px;
-  border-radius: 4px;
-  height: 24px;
-  margin-right: 16px;
-}
-
-.button-commit:hover {
-  cursor: pointer;
-}
 .button {
   width: 100%;
   height: 100%;
@@ -333,6 +316,12 @@ export default {
 }
 
 .disable:hover {
+  cursor: not-allowed;
+}
+.not-allowed{
+  background: #f7f8f9;
+}
+.not-allowed:hover {
   cursor: not-allowed;
 }
 
