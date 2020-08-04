@@ -40,12 +40,13 @@
                       :tooltipWidth="'180px'"
                       :tooltipMarginTop="'-9px'"
     />
-    <text-viewer :title="'Conversion Ratio'"
-                 :content="rate"
-                 :with-divider="false"
-                 :tooltip="'Introduction to the operator'"
-                 :tooltipWidth="'180px'"
-                 :tooltipMarginTop="'-9px'"
+    <text-viewer-ratio :title="'Conversion Ratio'"
+                       :tab="tab"
+                       :rate="rate"
+                       :with-divider="false"
+                       :tooltip="'Introduction to the operator'"
+                       :tooltipWidth="'180px'"
+                       :tooltipMarginTop="'-9px'"
     />
     <text-viewer-Number :title="'Deposited'"
                         :content="deposited"
@@ -82,6 +83,7 @@ import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
 import TextViewerRate from '@/components/TextViewerRate.vue';
 import TextViewerNumber from '@/components/TextViewerNumber.vue';
+import TextViewerRatio from '@/components/TextViewerRatio.vue';
 import store from '@/store/index.js';
 import moment from 'moment';
 
@@ -90,6 +92,7 @@ export default {
     'text-viewer': TextViewer,
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
+    'text-viewer-ratio':TextViewerRatio,
     'text-viewer-Number':TextViewerNumber,
   },
   props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
@@ -319,6 +322,7 @@ export default {
   cursor: not-allowed;
 }
 .not-allowed{
+  color: #ced6d9;
   background: #f7f8f9;
 }
 .not-allowed:hover {

@@ -12,11 +12,10 @@
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
-        <div class="vesting-address-intro">TON Balance:</div>
-        <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ updateTonBalance.symbol }}</div>
+        <div class="vesting-address-intro">Vested Amount:</div>
+        <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} ( {{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON )</div>
       </div>
-      <div class="vesting-address-intro">Vesting address:</div>
-      <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
+      <div class="vesting-address-details"></div>
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
@@ -101,12 +100,16 @@ export default {
     ...mapGetters([
       'tokenInfoByTab',
       'updateBalances',
+      'updateTonBalances',
     ]),
     tokenInformation () {
       return this.tokenInfoByTab(this.activeTab);
     },
+    updateVestedBalance (){
+      return this.updateBalances(this.activeTab, this.confirmed);
+    },
     updateTonBalance (){
-      return this.updateBalances(this.confirmed);
+      return this.updateTonBalances(this.confirmed);
     },
   },
   beforeCreate (){
@@ -242,7 +245,6 @@ export default {
   align-items: center;
 }
 .vesting-address {
-  border-right: solid 1px #99ddff;
   padding-top: 5px;
   padding-right: 20px;
   display: flex;
@@ -325,6 +327,7 @@ button:focus {
   cursor: not-allowed;
 }
 .not-allowed{
+  color: #c4c4c4;
   background: #f7f8f9;
 }
 </style>

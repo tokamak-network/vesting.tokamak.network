@@ -380,6 +380,7 @@ export default new Vuex.Store({
             const releasedAmount = await swapper.methods.released (address, user).call();
             const totalDeposited = await swapper.methods.totalAmount(address, user).call();
             const totalAmount = Number(totalDeposited);
+            const pureDeposited = totalAmount - Number(releasedAmount);
             const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
             const vestedAmount = Number(releasedAmount) + Number(totalDeposited);
             const balance = await tokenVesting.methods.balanceOf(user).call();
@@ -395,6 +396,7 @@ export default new Vuex.Store({
               info.vested = _SeedTON(vestedAmount, 'wei');
               info.graphTotal = _SeedTON(totalDeposited);
               info.total = _SeedTON(balance, 'wei');
+              info.pureDeposited = _SeedTON(pureDeposited, 'wei');
             }
             else if (token === 'PrivateTON') {
               info.totalDeposited = _PTON(totalAmount, 'wei');
@@ -403,6 +405,7 @@ export default new Vuex.Store({
               info.vested = _PTON(vestedAmount, 'wei');
               info.graphTotal = _PTON(totalDeposited);
               info.total = _PTON(balance, 'wei');
+              info.pureDeposited = _PTON(pureDeposited, 'wei');
             }
             else if (token === 'StrategicTON') {
               info.totalDeposited = _StrategicTON(totalAmount, 'wei');
@@ -410,19 +413,27 @@ export default new Vuex.Store({
               info.releasable = _StrategicTON(releasableAmount, 'wei');
               info.vested = _StrategicTON(vestedAmount, 'wei');
               info.graphTotal = _StrategicTON(totalDeposited);
-              info.total = _PTON(balance, 'wei');
+              info.total = _StrategicTON(balance, 'wei');
+              info.pureDeposited = _StrategicTON(pureDeposited, 'wei');
             }
           }
           else if (token === 'MarketingTON') {
+            // const vestingSwapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+            // const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
+
             const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const marketingTon = createWeb3Contract(MtonABI, address);
             const balance = await marketingTon.methods.balanceOf(user).call();
             const totalBalance = Number(balance);
             info.totalBalance =  _MTON(totalBalance, 'wei');
+            // const released = await swapper.methods.released (address, user).call();
             const approvedAmount = await marketingTon.methods.allowance(user, swapperAddress).call();
             const totalApprovedAmount = Number(approvedAmount);
+            const pureDeposited = totalApprovedAmount;
             info.approvedAmount = _MTON(totalApprovedAmount, 'wei');
+            info.pureDeposited = _MTON(pureDeposited, 'wei');
+            info.rate = 1;
           }
           else {
             const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
@@ -441,6 +452,7 @@ export default new Vuex.Store({
             const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
             // const totalDeposited = await tokenVesting.methods.totalAmount(user).call();
             const balance = await tokenVesting.methods.balanceOf(user).call();
+            const pureDeposited = Number(balance) - Number(releasedAmount);
             const totalAmount = Number(balance);
             const graphDecimals = await tokenVesting.methods.decimals().call();
             const rate = await swapper.methods.ratio(address).call();
@@ -452,7 +464,7 @@ export default new Vuex.Store({
               info.releasable = _DAO(releasableAmount, 'wei');
               info.vested = _DAO(vestedAmount, 'wei');
               info.graphTotal = _DAO(balance);
-
+              info.pureDeposited = _DAO(pureDeposited);
               info.total = _DAO(balance, 'wei');
             }
             else if (token === 'TeamTON') {
@@ -461,6 +473,7 @@ export default new Vuex.Store({
               info.releasable = _TeamTON(releasableAmount, 'wei');
               info.vested = _TeamTON(vestedAmount, 'wei');
               info.graphTotal = _TeamTON(balance);
+              info.pureDeposited = _TeamTON(pureDeposited);
               info.total = _TeamTON(balance, 'wei');
             }
             else if (token === 'AdvisorTON') {
@@ -469,6 +482,7 @@ export default new Vuex.Store({
               info.releasable = _AdvisorTON(releasableAmount, 'wei');
               info.vested = _AdvisorTON(vestedAmount, 'wei');
               info.graphTotal = _AdvisorTON(balance);
+              info.pureDeposited = _AdvisorTON(pureDeposited);
               info.total = _AdvisorTON(balance, 'wei');
             }
             else if (token === 'BusinessTON') {
@@ -477,6 +491,7 @@ export default new Vuex.Store({
               info.releasable = _BusinessTON(releasableAmount, 'wei');
               info.vested = _BusinessTON(vestedAmount, 'wei');
               info.graphTotal = _BusinessTON(balance);
+              info.pureDeposited = _BusinessTON(pureDeposited);
               info.total = _BusinessTON(balance, 'wei');
             }
             else if (token === 'ReserveTON') {
@@ -485,6 +500,7 @@ export default new Vuex.Store({
               info.releasable = _ReserveTON(releasableAmount, 'wei');
               info.vested = _ReserveTON(vestedAmount, 'wei');
               info.graphTotal = _ReserveTON(balance);
+              info.pureDeposited = _ReserveTON(pureDeposited);
               info.total = _ReserveTON(balance, 'wei');
             }
           }
@@ -636,7 +652,17 @@ export default new Vuex.Store({
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
       return tok.releasable;
     },
-    updateBalances:(state)=>(confirmed) =>{
+    updateBalances:(state)=>(tab, confirmed) =>{
+      if (confirmed){
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+        return tok.pureDeposited;
+      }
+      else {
+        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
+        return tok.pureDeposited;
+      }
+    },
+    updateTonBalances:(state)=>(confirmed) =>{
       if (confirmed){
         return state.tonBalance;
       }

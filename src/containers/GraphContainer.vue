@@ -46,12 +46,12 @@ export default {
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
-        const ends = new Date('2021-01-26T18:06:22')/1000;
+        const ends = new Date('2021-01-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.01, 0.165, 6 );
         return [points, colors];
       }
       if (this.tab === 'PrivateTON'){
-        const ends = new Date('2021-05-09T18:06:22')/1000;
+        const ends = new Date('2021-05-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.05, 0.095, 10 );
         return [points, colors];
       }
@@ -61,7 +61,7 @@ export default {
         return [points, colors];
       }
       if (this.tab === 'StrategicTON'){
-        const ends = new Date('2021-05-17T18:06:22')/1000;
+        const ends = new Date('2021-05-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.09, 0.091, 10 );
         return [points, colors];
       }
