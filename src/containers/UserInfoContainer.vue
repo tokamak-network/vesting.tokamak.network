@@ -64,10 +64,10 @@
                    :speed="500"
     />
     <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
-      <button :disabled="!showButtonForMainTon" class="button-release" :class="{ 'not-allowed': !showButtonForMainTon }" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+      <button :disabled="!showButtonForMainTon" class="button-release" :class="{ 'not-allowed': !showButtonForMainTon }" :style="{background: color}" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
     <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
-      <button :disabled="!showButtonForOtherTon" class="button-release" :class="{ 'not-allowed': !showButtonForOtherTon }" @click="swapperAddressecondTokens(address)">Swap</button>
+      <button :disabled="!showButtonForOtherTon" class="button-release" :class="{ 'not-allowed': !showButtonForOtherTon }" :style="{background: color}" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
@@ -137,6 +137,10 @@ export default {
       else {
         return false;
       }
+    },
+    color (){
+      const color = parseFloat(this.tokenBalance) !== 0?'#f7f8f9':'#B2B5B7';
+      return color;
     },
   },
   methods: {
