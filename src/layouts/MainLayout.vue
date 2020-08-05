@@ -14,7 +14,7 @@
       <div class="vesting-address">
         <div class="vesting-address-intro">Vested Amount:</div>
         <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} </div>
-        <div class="vesting-address-details-brackets">( = {{ (parseFloat(updateVestedBalance)*tokenInformation['rate']).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON)</div>
+        <div class="vesting-address-details-brackets">( = {{ (parseFloat(updateVestedBalance)*tokenInformation['rate']).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON )</div>
 
       </div>
         <div class="vesting-address-intro">| Your Current Balance :</div>
