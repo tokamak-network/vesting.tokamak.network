@@ -13,9 +13,12 @@
     <div class="vesting-address-container">
       <div class="vesting-address">
         <div class="vesting-address-intro">Vested Amount:</div>
-        <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} ( {{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON )</div>
+        <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} </div>
+        <div class="vesting-address-details-brackets">( = {{ (parseFloat(updateVestedBalance)*tokenInformation['rate']).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON)</div>
+
       </div>
-      <div class="vesting-address-details" />
+        <div class="vesting-address-intro">| Your Current Balance :</div>
+      <div class="vesting-address-details" >{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
@@ -250,20 +253,26 @@ export default {
 }
 .vesting-address {
   padding-top: 5px;
-  padding-right: 20px;
   display: flex;
   justify-content: flex-start;
+  align-items: center;
 }
 .vesting-address-intro {
   padding-left: 20px;
   font-size: 15px;
+}
+.vesting-address-details-brackets {
+  padding-left: 5px;
+  font-size: 10px;
+  display: flex;
+  align-items: flex-end;
+
 }
 .vesting-address-details {
   padding-left: 20px;
   font-size: 15px;
   color: #003366;
 }
-
 .table-info-with-graph {
   margin-right: 20px;
   display: flex;
