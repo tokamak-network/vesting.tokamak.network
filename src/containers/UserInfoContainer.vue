@@ -170,6 +170,8 @@ export default {
       }).on('confirmation', (confirmationNumber, receipt) =>{
         if(confirmationNumber === 0){
           this.confirmed = !this.confirmed;
+          this.$emit('releaseClicked', this.confirmed);
+          this.$emit('changeActiveTab');
           this.$store.dispatch('setBalance');
           this.$store.dispatch('setTokenInfo');
           this.$notify({
@@ -178,8 +180,6 @@ export default {
             type: 'success',
             duration: 5000,
           });
-          this.$emit('releaseClicked', this.confirmed);
-          this.$emit('changeActiveTab', this.confirmed);
         }
       });
     },
@@ -237,9 +237,9 @@ export default {
         if (receipt.status){
           if(confirmationNumber === 0){
             this.confirmed = !this.confirmed;
-            this.$store.dispatch('setBalance');
             this.$emit('releaseClicked', this.confirmed);
             this.$emit('changeActiveTab', this.confirmed);
+            this.$store.dispatch('setBalance');
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',
