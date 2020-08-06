@@ -485,7 +485,7 @@ export default new Vuex.Store({
               info.releasable = _DAO(releasableAmount, 'wei');
               info.vested = _DAO(vestedAmount, 'wei');
               info.graphTotal = _DAO(balance);
-              info.pureDeposited = _DAO(pureDeposited);
+              info.pureDeposited = _DAO(pureDeposited, 'wei');
               info.total = _DAO(balance, 'wei');
             }
             else if (token === 'TeamTON') {
@@ -494,7 +494,7 @@ export default new Vuex.Store({
               info.releasable = _TeamTON(releasableAmount, 'wei');
               info.vested = _TeamTON(vestedAmount, 'wei');
               info.graphTotal = _TeamTON(balance);
-              info.pureDeposited = _TeamTON(pureDeposited);
+              info.pureDeposited = _TeamTON(pureDeposited, 'wei');
               info.total = _TeamTON(balance, 'wei');
             }
             else if (token === 'AdvisorTON') {
@@ -503,7 +503,7 @@ export default new Vuex.Store({
               info.releasable = _AdvisorTON(releasableAmount, 'wei');
               info.vested = _AdvisorTON(vestedAmount, 'wei');
               info.graphTotal = _AdvisorTON(balance);
-              info.pureDeposited = _AdvisorTON(pureDeposited);
+              info.pureDeposited = _AdvisorTON(pureDeposited, 'wei');
               info.total = _AdvisorTON(balance, 'wei');
             }
             else if (token === 'BusinessTON') {
@@ -512,7 +512,7 @@ export default new Vuex.Store({
               info.releasable = _BusinessTON(releasableAmount, 'wei');
               info.vested = _BusinessTON(vestedAmount, 'wei');
               info.graphTotal = _BusinessTON(balance);
-              info.pureDeposited = _BusinessTON(pureDeposited);
+              info.pureDeposited = _BusinessTON(pureDeposited, 'wei');
               info.total = _BusinessTON(balance, 'wei');
             }
             else if (token === 'ReserveTON') {
@@ -521,7 +521,7 @@ export default new Vuex.Store({
               info.releasable = _ReserveTON(releasableAmount, 'wei');
               info.vested = _ReserveTON(vestedAmount, 'wei');
               info.graphTotal = _ReserveTON(balance);
-              info.pureDeposited = _ReserveTON(pureDeposited);
+              info.pureDeposited = _ReserveTON(pureDeposited, 'wei');
               info.total = _ReserveTON(balance, 'wei');
             }
           }
