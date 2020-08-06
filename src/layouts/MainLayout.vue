@@ -129,9 +129,9 @@ export default {
         query: { network: this.$route.query.network },
       }).catch(err => {});
     },
-    activeTab(){
+    activeTab (){
       this.changeTab(this.activeTab);
-    }
+    },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
@@ -152,7 +152,7 @@ export default {
       this.confirmed=confirmed;
     },
     changeActiveTab (){
-       this.activeTab = this.$store.state.tokenList[0];
+      this.activeTab = this.$store.state.tokenList[0];
       this.changeTab(this.$store.state.tokenList[0]);
     },
     async mtonApprove (){
