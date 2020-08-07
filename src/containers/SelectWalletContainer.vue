@@ -33,7 +33,7 @@ export default {
         const web3 = await this.metamask();
         await this.$store.dispatch('signIn', web3);
 
-        window.ethereum.on('chainIdChanged', (chainId) => {
+        window.ethereum.on('chainChanged', (chainId) => {
           this.$store.dispatch('logout');
           this.$router
             .replace({

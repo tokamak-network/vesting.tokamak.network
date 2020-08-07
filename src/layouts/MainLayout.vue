@@ -15,10 +15,9 @@
         <div class="vesting-address-intro">Vested Amount:</div>
         <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} </div>
         <div class="vesting-address-details-brackets">( = {{ (parseFloat(updateVestedBalance)*tokenInformation['rate']).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON )</div>
-
       </div>
-        <div class="vesting-address-intro">| Your Current Balance :</div>
-      <div class="vesting-address-details" >{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
+      <div class="vesting-address-intro">| Your Current Balance :</div>
+      <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
     </div>
     <div v-if="activeTab === 'MarketingTON'" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
@@ -85,7 +84,6 @@ export default {
   data () {
     return {
       tab: '',
-      operator:{},
       activeTab: this.$store.state.tokenList[0],
       address: '',
       confirmed:{
@@ -118,10 +116,26 @@ export default {
       const color = parseFloat(this.tokenInformation.approvedAmount)===0?'#fff':'#B2B5B7';
       return color;
     },
+    swappedAllTokens () {
+      return this.tokenList.length === 0;
+    },
+  },
+  watch: {
+    swappedAllTokens () {
+      alert('You have swapped all your tokens');
+      this.$store.dispatch('logout');
+      this.$router.replace({
+        path: '/',
+        query: { network: this.$route.query.network },
+      }).catch(err => {});
+    },
+    activeTab (){
+      this.changeTab(this.activeTab);
+    },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
-      alert('you do not have tokens');
+      alert('You do not have tokens');
       this.$store.dispatch('logout');
       this.$router.replace({
         path: '/',
@@ -137,9 +151,9 @@ export default {
     clickRelease (confirmed){
       this.confirmed=confirmed;
     },
-    changeActiveTab (confirmed){
-      this.confirmed=confirmed;
-      this.activeTab=this.$store.state.tokenList[0];
+    changeActiveTab (){
+      this.activeTab = this.$store.state.tokenList[0];
+      this.changeTab(this.$store.state.tokenList[0]);
     },
     async mtonApprove (){
       const address = this.tokenInformation.address;
