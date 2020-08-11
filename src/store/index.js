@@ -384,7 +384,7 @@ export default new Vuex.Store({
           const info = {};
           const network = getConfig().mainnet.contractAddress[token];
           const address = network;
-          const durationUnit = 60 * 60 * 6; // modify when we deploy it to mainnet
+          const durationUnit = 60 * 60 * 30 * 24; // modify when we deploy it to mainnet
           info.tab = token;
           info.address = address;
           if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
@@ -395,7 +395,7 @@ export default new Vuex.Store({
             info.startDate = startDate;
             const duration = await swapper.methods.duration(address).call();
             info.duration = duration;
-            const endDate = Number(startDate) + (Number(duration) * durationUnit);
+            const endDate = Number(startDate) + (Number(duration) * durationUnit) - 7 * 60 * 60;
             info.endDate = endDate;
             const cliffDate = await swapper.methods.cliff(address).call();
             info.cliffDate = cliffDate;
