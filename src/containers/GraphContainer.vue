@@ -42,50 +42,38 @@ export default {
       const totalSourceTon = this.displayAmount(this.total);
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
       const cliff = this.cliff;
-      // const ends = this.end;
+      const ends = this.end;
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
-        const ends = new Date('2021-01-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.01, 0.165, 6 );
         return [points, colors];
       }
       if (this.tab === 'PrivateTON'){
-        const ends = new Date('2021-05-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.05, 0.095, 10 );
         return [points, colors];
       }
       if (this.tab === 'MarketingTON'){
-        const ends = new Date('2021-04-17T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
         return [points, colors];
       }
       if (this.tab === 'StrategicTON'){
-        const ends = new Date('2021-05-30T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.09, 0.091, 10 );
         return [points, colors];
       }
       if (this.tab === 'TeamTON'){
-        const starts = new Date('2021-01-21T18:06:22')/1000;
-        const ends = new Date('2023-12-21T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.0278, 0.0278, 35 );
         return [points, colors];
       }
       if (this.tab === 'AdvisorTON'){
-        const starts = new Date('2021-01-21T18:06:22')/1000;
-        const ends = new Date('2022-06-21T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.0556, 0.0556, 17 );
         return [points, colors];
       }
       if (this.tab === 'BusinessTON'){
-        const starts = new Date('2020-08-21T18:06:22')/1000;
-        const ends = new Date('2022-03-21T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.05, 0.05, 19 );
         return [points, colors];
       }
       if (this.tab === 'ReserveTON'){
-        const starts = new Date('2021-07-21T18:06:22')/1000;
-        const ends = new Date('2023-12-21T18:06:22')/1000;
         this.setPoints(points, colors, starts, ends, totals, 0.0333, 0.0333, 29 );
         return [points, colors];
       }
