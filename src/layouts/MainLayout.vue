@@ -159,7 +159,7 @@ export default {
       const address = this.tokenInformation.address;
       const totalBalance = this.tokenInformation.totalBalance;
       const mton = createWeb3Contract(MtonABI, address);
-      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
       const balance = await mton.methods.balanceOf(this.user).call();
       await mton.methods.approve(swapperAddress, balance).send({
         from: this.user,
@@ -190,7 +190,7 @@ export default {
       });
     },
     async mtonSwap (){
-      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
       const vestingAddress = this.tokenInformation.address;
       await swapper.methods.swap(vestingAddress).send({

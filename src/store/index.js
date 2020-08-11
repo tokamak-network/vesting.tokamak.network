@@ -243,16 +243,16 @@ export default new Vuex.Store({
     },
     async setTokens (context) {
       const user = context.state.user;
-      const network = getConfig().rinkeby.contractAddress;
-      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
-      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
-      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
-      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
-      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
-      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
-      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
-      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
-      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
+      const network = getConfig().mainnet.contractAddress;
+      const marketingAddress = getConfig().mainnet.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().mainnet.contractAddress.StrategicTON;
+      const seedAddress = getConfig().mainnet.contractAddress.SeedTON;
+      const privateAddress = getConfig().mainnet.contractAddress.PrivateTON;
+      const teamAddress = getConfig().mainnet.contractAddress.TeamTON;
+      const daoAddress = getConfig().mainnet.contractAddress.DaoTON;
+      const advisorAddress = getConfig().mainnet.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().mainnet.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().mainnet.contractAddress.ReserveTON;
       const marketingTon = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -278,19 +278,19 @@ export default new Vuex.Store({
     async setBalance (context){
       const user = context.state.user;
       const list = [];
-      const tonAddress = getConfig().rinkeby.contractAddress.TON;
+      const tonAddress = getConfig().mainnet.contractAddress.TON;
       const ton = createWeb3Contract(TokenABI, tonAddress);
-      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
-      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
-      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
-      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
-      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
-      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
-      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
-      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
-      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
-      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
+      const marketingAddress = getConfig().mainnet.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().mainnet.contractAddress.StrategicTON;
+      const seedAddress = getConfig().mainnet.contractAddress.SeedTON;
+      const privateAddress = getConfig().mainnet.contractAddress.PrivateTON;
+      const teamAddress = getConfig().mainnet.contractAddress.TeamTON;
+      const daoAddress = getConfig().mainnet.contractAddress.DaoTON;
+      const advisorAddress = getConfig().mainnet.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().mainnet.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().mainnet.contractAddress.ReserveTON;
       const marketingTON = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -382,14 +382,14 @@ export default new Vuex.Store({
       const tokenInfo = await Promise.all(
         tokenList.map(async token =>{
           const info = {};
-          const network = getConfig().rinkeby.contractAddress[token];
+          const network = getConfig().mainnet.contractAddress[token];
           const address = network;
           const durationUnit = 60 * 60 * 6; // modify when we deploy it to mainnet
           info.tab = token;
           info.address = address;
           if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
             const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-            const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+            const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
             const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
             const startDate = await swapper.methods.start(address).call();
             info.startDate = startDate;
@@ -443,7 +443,7 @@ export default new Vuex.Store({
             // const vestingSwapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
             // const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
 
-            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+            const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const marketingTon = createWeb3Contract(MtonABI, address);
             const balance = await marketingTon.methods.balanceOf(user).call();
@@ -459,7 +459,7 @@ export default new Vuex.Store({
           }
           else {
             const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
-            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+            const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const startDate = await tokenVesting.methods.start().call();
             info.startDate = startDate;
