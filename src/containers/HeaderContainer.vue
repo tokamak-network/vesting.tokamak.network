@@ -12,13 +12,13 @@
           class="header-link"
           target="_blank"
           rel="noopener noreferrer"
-          href="#"
+          href=""
         >What is vesting?</a>
         <a
           class="header-link"
           target="_blank"
           rel="noopener noreferrer"
-          href="#"
+          href="https://www.notion.so/onther/Vesting-User-Guide-ec9cb4baa1714f99a602964568c0b82f"
           style="margin-left: 48px; margin-right: 36px;"
         >Vesting User Guide</a>
       </div>
