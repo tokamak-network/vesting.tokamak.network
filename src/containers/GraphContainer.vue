@@ -85,11 +85,11 @@ export default {
       const now = new Date() / 1000;
       points.push({ x:this.formatDate(starts), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
-      if (now >= starts && now < Number(starts)+(2592000)){
+      if (now >= starts && now < Number(starts)+(2566800)){
         points.push({ x:this.formatDate(now), y:totals * ratio1 });
         colors.push('rgba(255, 71, 99, 1)');
       }
-      points.push({ x:this.formatDate(Number(starts)+(2592000)), y:totals * ratio1 });
+      points.push({ x:this.formatDate(Number(starts)+(2566800)), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
       let j = 1;
       for (j; j<i; j++){
