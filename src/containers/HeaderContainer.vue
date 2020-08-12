@@ -12,7 +12,7 @@
           class="header-link"
           target="_blank"
           rel="noopener noreferrer"
-          href=""
+          href="https://www.notion.so/onther/Token-Vesting-System-2b10efc2838f4be6965f6ad9fe712d65"
         >What is vesting?</a>
         <a
           class="header-link"
