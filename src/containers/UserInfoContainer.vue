@@ -40,13 +40,12 @@
                       :tooltipWidth="'180px'"
                       :tooltipMarginTop="'-9px'"
     />
-    <text-viewer-ratio :title="'Conversion Ratio'"
-                       :tab="tab"
-                       :rate="rate"
-                       :with-divider="false"
-                       :tooltip="'Introduction to the operator'"
-                       :tooltipWidth="'180px'"
-                       :tooltipMarginTop="'-9px'"
+    <text-viewer :title="'Conversion Ratio'"
+                 :content="rate"
+                 :with-divider="false"
+                 :tooltip="'Introduction to the operator'"
+                 :tooltipWidth="'180px'"
+                 :tooltipMarginTop="'-9px'"
     />
     <text-viewer-Number :title="'Deposited'"
                         :content="deposited"
@@ -64,10 +63,10 @@
                    :speed="500"
     />
     <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
-      <button :disabled="!showButtonForMainTon" class="button-release" :class="{ 'not-allowed': !showButtonForMainTon }" :style="{background: color}" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+      <button :disabled="!showButtonForMainTon" class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
     <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
-      <button :disabled="!showButtonForOtherTon" class="button-release" :class="{ 'not-allowed': !showButtonForOtherTon }" :style="{background: color}" @click="swapperAddressecondTokens(address)">Swap</button>
+      <button :disabled="!showButtonForOtherTon" class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
   </div>
 </template>
@@ -83,7 +82,6 @@ import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
 import TextViewerRate from '@/components/TextViewerRate.vue';
 import TextViewerNumber from '@/components/TextViewerNumber.vue';
-import TextViewerRatio from '@/components/TextViewerRatio.vue';
 import store from '@/store/index.js';
 import moment from 'moment';
 
@@ -92,10 +90,9 @@ export default {
     'text-viewer': TextViewer,
     'text-viewer-link': TextViewerLink,
     'text-viewer-rate':TextViewerRate,
-    'text-viewer-ratio':TextViewerRatio,
     'text-viewer-Number':TextViewerNumber,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
   data () {
     return {
       confirmed:false,
@@ -138,10 +135,6 @@ export default {
         return false;
       }
     },
-    color (){
-      const color = parseFloat(this.tokenBalance) !== 0?'#f7f8f9':'#B2B5B7';
-      return color;
-    },
   },
   methods: {
     formatDate (date) {
@@ -152,7 +145,7 @@ export default {
       return dateFormatted;
     },
     async swapFirstTokens (vestingAddress) {
-      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
@@ -170,8 +163,6 @@ export default {
       }).on('confirmation', (confirmationNumber, receipt) =>{
         if(confirmationNumber === 0){
           this.confirmed = !this.confirmed;
-          this.$emit('releaseClicked', this.confirmed);
-          this.$emit('changeActiveTab');
           this.$store.dispatch('setBalance');
           this.$store.dispatch('setTokenInfo');
           this.$notify({
@@ -180,11 +171,13 @@ export default {
             type: 'success',
             duration: 5000,
           });
+          this.$emit('releaseClicked', this.confirmed);
+          this.$emit('changeActiveTab', this.confirmed);
         }
       });
     },
     async deposit ( vestingAddress ){
-      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
       await tokenVesting.methods.approveAndCall(swapperAddress, this.graphTotal, []).send({
@@ -218,7 +211,7 @@ export default {
       });
     },
     async swapperAddressecondTokens (vestingAddress){
-      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
@@ -237,9 +230,9 @@ export default {
         if (receipt.status){
           if(confirmationNumber === 0){
             this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
             this.$emit('releaseClicked', this.confirmed);
             this.$emit('changeActiveTab', this.confirmed);
-            this.$store.dispatch('setBalance');
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',
@@ -267,8 +260,11 @@ export default {
 }
 
 .release-button-container {
+  /* margin-bottom: 10px;
+ margin-left: 16px; */
  display: flex;
  justify-content: center;
+ /* width: 100%; */
  display: flex;
  justify-self: center;
 }
@@ -313,6 +309,20 @@ export default {
   border: 1px solid #ced6d9;
 }
 
+.button-commit {
+  color: #ffffff;
+  background-color: #f38776;
+  border: 1px solid #f38776;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 24px;
+  margin-right: 16px;
+}
+
+.button-commit:hover {
+  cursor: pointer;
+}
 .button {
   width: 100%;
   height: 100%;
@@ -323,13 +333,6 @@ export default {
 }
 
 .disable:hover {
-  cursor: not-allowed;
-}
-.not-allowed{
-  color: #ced6d9;
-  background: #f7f8f9;
-}
-.not-allowed:hover {
   cursor: not-allowed;
 }
 

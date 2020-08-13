@@ -34,7 +34,7 @@ const _DAO = createCurrency('DAO');
 const initialState = {
   loading: false,
   signIn: false,
-
+  owner: '0x9E1Ef1eC212F5DFfB41d35d9E5c14054F26c6560',
   // transactionss (based on receipt: getTransactionReceipt)
   transactions: [],
   pendingTransactions: [],
@@ -243,16 +243,16 @@ export default new Vuex.Store({
     },
     async setTokens (context) {
       const user = context.state.user;
-      const network = getConfig().mainnet.contractAddress;
-      const marketingAddress = getConfig().mainnet.contractAddress.MarketingTON;
-      const strategicAddress = getConfig().mainnet.contractAddress.StrategicTON;
-      const seedAddress = getConfig().mainnet.contractAddress.SeedTON;
-      const privateAddress = getConfig().mainnet.contractAddress.PrivateTON;
-      const teamAddress = getConfig().mainnet.contractAddress.TeamTON;
-      const daoAddress = getConfig().mainnet.contractAddress.DaoTON;
-      const advisorAddress = getConfig().mainnet.contractAddress.AdvisorTON;
-      const businessAddress = getConfig().mainnet.contractAddress.BusinessTON;
-      const reserveAddress = getConfig().mainnet.contractAddress.ReserveTON;
+      const network = getConfig().rinkeby.contractAddress;
+      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
+      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
+      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
+      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
+      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
+      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
       const marketingTon = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTon = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTon = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -278,19 +278,19 @@ export default new Vuex.Store({
     async setBalance (context){
       const user = context.state.user;
       const list = [];
-      const tonAddress = getConfig().mainnet.contractAddress.TON;
+      const tonAddress = getConfig().rinkeby.contractAddress.TON;
       const ton = createWeb3Contract(TokenABI, tonAddress);
-      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
-      const marketingAddress = getConfig().mainnet.contractAddress.MarketingTON;
-      const strategicAddress = getConfig().mainnet.contractAddress.StrategicTON;
-      const seedAddress = getConfig().mainnet.contractAddress.SeedTON;
-      const privateAddress = getConfig().mainnet.contractAddress.PrivateTON;
-      const teamAddress = getConfig().mainnet.contractAddress.TeamTON;
-      const daoAddress = getConfig().mainnet.contractAddress.DaoTON;
-      const advisorAddress = getConfig().mainnet.contractAddress.AdvisorTON;
-      const businessAddress = getConfig().mainnet.contractAddress.BusinessTON;
-      const reserveAddress = getConfig().mainnet.contractAddress.ReserveTON;
+      const marketingAddress = getConfig().rinkeby.contractAddress.MarketingTON;
+      const strategicAddress = getConfig().rinkeby.contractAddress.StrategicTON;
+      const seedAddress = getConfig().rinkeby.contractAddress.SeedTON;
+      const privateAddress = getConfig().rinkeby.contractAddress.PrivateTON;
+      const teamAddress = getConfig().rinkeby.contractAddress.TeamTON;
+      const daoAddress = getConfig().rinkeby.contractAddress.DaoTON;
+      const advisorAddress = getConfig().rinkeby.contractAddress.AdvisorTON;
+      const businessAddress = getConfig().rinkeby.contractAddress.BusinessTON;
+      const reserveAddress = getConfig().rinkeby.contractAddress.ReserveTON;
       const marketingTON = createWeb3Contract(MtonABI, marketingAddress);
       const strategicTON = createWeb3Contract(VestingTokenABI, strategicAddress);
       const seedTON = createWeb3Contract(VestingTokenABI, seedAddress);
@@ -309,33 +309,11 @@ export default new Vuex.Store({
       const privateDeposited = await swapper.methods.totalAmount(privateAddress, user).call();
       const seedDeposited = await swapper.methods.totalAmount(seedAddress, user).call();
       const strategicDeposited = await swapper.methods.totalAmount(strategicAddress, user).call();
-      //-----------------------
-      const privateReleasedAmount = await swapper.methods.released (privateAddress, user).call();
-      const seedReleasedAmount = await swapper.methods.released (seedAddress, user).call();
-      const strategicReleasedAmount = await swapper.methods.released (strategicAddress, user).call();
-      //-----------------------
-      const privatePureDeposited = Number(privateDeposited) - Number(privateReleasedAmount);
-      const seedPureDeposited = Number(seedDeposited) - Number(seedReleasedAmount);
-      const stretegicPureDeposited = Number(strategicDeposited) - Number(strategicReleasedAmount);
-      //-----------------------
       const advisorTonBalance = await advisorTON.methods.balanceOf(user).call();
       const teamTonBalance = await teamTON.methods.balanceOf(user).call();
       const daoTonBalance = await daoTON.methods.balanceOf(user).call();
       const businessTonBalance = await businessTON.methods.balanceOf(user).call();
       const reserveTonBalance = await reserveTON.methods.balanceOf(user).call();
-      //-----------------------
-      const advisorReleased = await advisorTON.methods.released (user).call();
-      const TeamReleased = await teamTON.methods.released (user).call();
-      const businessReleased = await businessTON.methods.released (user).call();
-      const reserveReleased = await reserveTON.methods.released (user).call();
-      const daoReleased = await daoTON.methods.released (user).call();
-      //-----------------------
-      const advisorPureDeposited = Number(advisorTonBalance) - Number(advisorReleased);
-      const teamPureDeposited = Number(teamTonBalance) - Number(TeamReleased);
-      const businessPureDeposited = Number(businessTonBalance) - Number(businessReleased);
-      const reservePureDeposited = Number(reserveTonBalance) - Number(reserveReleased);
-      const daoPureDeposited = Number(daoTonBalance) - Number(daoReleased);
-
       context.commit('SET_PRIVATE_BALANCE', privateTonBalance);
       context.commit('SET_MARKETING_BALANCE', marketingTonBalance);
       context.commit('SET_SEED_BALANCE', seedTonBalance);
@@ -346,31 +324,31 @@ export default new Vuex.Store({
       context.commit('SET_RESERVE_BALANCE', reserveTonBalance );
       context.commit('SET_DAO_BALANCE', daoTonBalance);
       context.commit('SET_TON_BALANCE', tonBalanceFormatted);
-      if (parseFloat(seedTonBalance) !== 0 || parseFloat(seedPureDeposited) !== 0){
+      if (seedTonBalance !== String(0) || seedDeposited !== String(0)){
         list.push('SeedTON');
       }
-      if (parseFloat(privateTonBalance) !== 0 || parseFloat(privatePureDeposited) !== 0){
+      if (privateTonBalance !== String(0) || privateDeposited !== String(0)){
         list.push('PrivateTON');
       }
-      if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
+      if (strategicTonBalance !== String(0) || strategicDeposited !==String(0)){
         list.push('StrategicTON');
       }
-      if (parseFloat(marketingTonBalance) !== 0){
+      if (marketingTonBalance !== String(0)){
         list.push('MarketingTON');
       }
-      if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
+      if (teamTonBalance !== String(0)){
         list.push('TeamTON');
       }
-      if (parseFloat(advisorTonBalance) !== 0 || parseFloat(advisorPureDeposited) !== 0){
+      if (advisorTonBalance !== String(0)){
         list.push('AdvisorTON');
       }
-      if (parseFloat(businessTonBalance) !== 0 || parseFloat(businessPureDeposited) !== 0){
+      if (businessTonBalance !== String(0)){
         list.push('BusinessTON');
       }
-      if (parseFloat(reserveTonBalance) !== 0 || parseFloat(reservePureDeposited) !== 0){
+      if (reserveTonBalance !== String(0)){
         list.push('ReserveTON');
       }
-      if (parseFloat(daoTonBalance) !== 0 || parseFloat(daoPureDeposited) !== 0){
+      if (daoTonBalance !== String(0)){
         list.push('DaoTON');
       }
       context.commit('SET_TOKEN_LIST', list);
@@ -382,27 +360,26 @@ export default new Vuex.Store({
       const tokenInfo = await Promise.all(
         tokenList.map(async token =>{
           const info = {};
-          const network = getConfig().mainnet.contractAddress[token];
+          const network = getConfig().rinkeby.contractAddress[token];
           const address = network;
-          const durationUnit = 60 * 60 * 30 * 24; // modify when we deploy it to mainnet
+          const durationUnit = 60 * 60 * 30 * 24;
           info.tab = token;
           info.address = address;
           if(token === 'SeedTON' ||token === 'PrivateTON' ||token === 'StrategicTON'){
             const tokenVesting = createWeb3Contract(VestingTokenABI, address);
-            const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+            const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
             const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
             const startDate = await swapper.methods.start(address).call();
             info.startDate = startDate;
             const duration = await swapper.methods.duration(address).call();
             info.duration = duration;
-            const endDate = Number(startDate) + (Number(duration) * durationUnit) - 7 * 60 * 60;
+            const endDate = Number(startDate) + Number(duration);
             info.endDate = endDate;
             const cliffDate = await swapper.methods.cliff(address).call();
             info.cliffDate = cliffDate;
             const releasedAmount = await swapper.methods.released (address, user).call();
             const totalDeposited = await swapper.methods.totalAmount(address, user).call();
             const totalAmount = Number(totalDeposited);
-            const pureDeposited = totalAmount - Number(releasedAmount);
             const releasableAmount = await swapper.methods.releasableAmount(address, user).call();
             const vestedAmount = Number(releasedAmount) + Number(totalDeposited);
             const balance = await tokenVesting.methods.balanceOf(user).call();
@@ -418,7 +395,6 @@ export default new Vuex.Store({
               info.vested = _SeedTON(vestedAmount, 'wei');
               info.graphTotal = _SeedTON(totalDeposited);
               info.total = _SeedTON(balance, 'wei');
-              info.pureDeposited = _SeedTON(pureDeposited, 'wei');
             }
             else if (token === 'PrivateTON') {
               info.totalDeposited = _PTON(totalAmount, 'wei');
@@ -427,7 +403,6 @@ export default new Vuex.Store({
               info.vested = _PTON(vestedAmount, 'wei');
               info.graphTotal = _PTON(totalDeposited);
               info.total = _PTON(balance, 'wei');
-              info.pureDeposited = _PTON(pureDeposited, 'wei');
             }
             else if (token === 'StrategicTON') {
               info.totalDeposited = _StrategicTON(totalAmount, 'wei');
@@ -435,45 +410,62 @@ export default new Vuex.Store({
               info.releasable = _StrategicTON(releasableAmount, 'wei');
               info.vested = _StrategicTON(vestedAmount, 'wei');
               info.graphTotal = _StrategicTON(totalDeposited);
-              info.total = _StrategicTON(balance, 'wei');
-              info.pureDeposited = _StrategicTON(pureDeposited, 'wei');
+              info.total = _PTON(balance, 'wei');
             }
           }
           else if (token === 'MarketingTON') {
-            // const vestingSwapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
-            // const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
-
-            const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+            const vestingSwapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+            const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
+            const startDate = await vestingSwapper.methods.start(address).call();
+            info.startDate = startDate;
+            const duration = await vestingSwapper.methods.duration(address).call();
+            info.duration = duration;
+            const endDate = Number(startDate) + (Number(duration) * durationUnit) - 7 * 60 * 60;
+            info.endDate = endDate;
+            const cliffDate = await vestingSwapper.methods.cliff(address).call();
+            info.cliffDate = cliffDate;
+            const releasedAmount = await vestingSwapper.methods.released (address, user).call();
+            const totalDeposited = await vestingSwapper.methods.totalAmount(address, user).call();
+            const totalAmount = Number(totalDeposited);
+            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const marketingTon = createWeb3Contract(MtonABI, address);
             const balance = await marketingTon.methods.balanceOf(user).call();
             const totalBalance = Number(balance);
+            const releasableAmount = await vestingSwapper.methods.releasableAmount(address, user).call();
+            const graphDecimals = await marketingTon.methods.decimals().call();
             info.totalBalance =  _MTON(totalBalance, 'wei');
+            const rate = await vestingSwapper.methods.ratio(address).call();
+            info.balanceUnformatted = balance;
+            info.rate = rate;
+            info.graphDecimals = graphDecimals;
+            info.totalDeposited = _MTON(totalAmount, 'wei');
+            info.released = _MTON(releasedAmount, 'wei');
+            info.releasable = _MTON(releasableAmount, 'wei');
+            info.graphTotal = _MTON(totalDeposited);
+            info.total = _MTON(balance, 'wei');
             // const released = await swapper.methods.released (address, user).call();
             const approvedAmount = await marketingTon.methods.allowance(user, swapperAddress).call();
             const totalApprovedAmount = Number(approvedAmount);
-            const pureDeposited = totalApprovedAmount;
             info.approvedAmount = _MTON(totalApprovedAmount, 'wei');
-            info.pureDeposited = _MTON(pureDeposited, 'wei');
-            info.rate = 1;
           }
           else {
             const tokenVesting = createWeb3Contract(VestingTokenStepABI, address);
-            const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+            const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const startDate = await tokenVesting.methods.start().call();
             info.startDate = startDate;
             const duration = await tokenVesting.methods.duration().call();
             info.duration = duration;
-            const endDate = Number(startDate) + Number(duration) * durationUnit;
+            const endDate = Number(startDate) + Number(duration);
             info.endDate = endDate;
             const cliffDate = await tokenVesting.methods.cliff().call();
             info.cliffDate = cliffDate;
             const releasedAmount = await tokenVesting.methods.released (user).call();
             const releasableAmount = await tokenVesting.methods.releasableAmount(user).call();
             const vestedAmount = Number(releasedAmount) + Number(releasableAmount);
+            // const totalDeposited = await tokenVesting.methods.totalAmount(user).call();
             const balance = await tokenVesting.methods.balanceOf(user).call();
-            const pureDeposited = Number(balance) - Number(releasedAmount);
             const totalAmount = Number(balance);
             const graphDecimals = await tokenVesting.methods.decimals().call();
             const rate = await swapper.methods.ratio(address).call();
@@ -485,7 +477,7 @@ export default new Vuex.Store({
               info.releasable = _DAO(releasableAmount, 'wei');
               info.vested = _DAO(vestedAmount, 'wei');
               info.graphTotal = _DAO(balance);
-              info.pureDeposited = _DAO(pureDeposited, 'wei');
+
               info.total = _DAO(balance, 'wei');
             }
             else if (token === 'TeamTON') {
@@ -494,7 +486,6 @@ export default new Vuex.Store({
               info.releasable = _TeamTON(releasableAmount, 'wei');
               info.vested = _TeamTON(vestedAmount, 'wei');
               info.graphTotal = _TeamTON(balance);
-              info.pureDeposited = _TeamTON(pureDeposited, 'wei');
               info.total = _TeamTON(balance, 'wei');
             }
             else if (token === 'AdvisorTON') {
@@ -503,7 +494,6 @@ export default new Vuex.Store({
               info.releasable = _AdvisorTON(releasableAmount, 'wei');
               info.vested = _AdvisorTON(vestedAmount, 'wei');
               info.graphTotal = _AdvisorTON(balance);
-              info.pureDeposited = _AdvisorTON(pureDeposited, 'wei');
               info.total = _AdvisorTON(balance, 'wei');
             }
             else if (token === 'BusinessTON') {
@@ -512,7 +502,6 @@ export default new Vuex.Store({
               info.releasable = _BusinessTON(releasableAmount, 'wei');
               info.vested = _BusinessTON(vestedAmount, 'wei');
               info.graphTotal = _BusinessTON(balance);
-              info.pureDeposited = _BusinessTON(pureDeposited, 'wei');
               info.total = _BusinessTON(balance, 'wei');
             }
             else if (token === 'ReserveTON') {
@@ -521,7 +510,6 @@ export default new Vuex.Store({
               info.releasable = _ReserveTON(releasableAmount, 'wei');
               info.vested = _ReserveTON(vestedAmount, 'wei');
               info.graphTotal = _ReserveTON(balance);
-              info.pureDeposited = _ReserveTON(pureDeposited, 'wei');
               info.total = _ReserveTON(balance, 'wei');
             }
           }
@@ -673,17 +661,7 @@ export default new Vuex.Store({
       const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
       return tok.releasable;
     },
-    updateBalances:(state)=>(tab, confirmed) =>{
-      if (confirmed){
-        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-        return tok.pureDeposited;
-      }
-      else {
-        const tok = state.tokenInfo.find(token => token.tab.toLowerCase() === tab.toLowerCase());
-        return tok.pureDeposited;
-      }
-    },
-    updateTonBalances:(state)=>(confirmed) =>{
+    updateBalances:(state)=>(confirmed) =>{
       if (confirmed){
         return state.tonBalance;
       }

@@ -12,14 +12,13 @@
     </div>
     <div class="vesting-address-container">
       <div class="vesting-address">
-        <div class="vesting-address-intro">Vested Amount:</div>
-        <div class="vesting-address-details">{{ parseFloat(updateVestedBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ activeTab }} </div>
-        <div class="vesting-address-details-brackets">( = {{ (parseFloat(updateVestedBalance)*tokenInformation['rate']).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON )</div>
+        <div class="vesting-address-intro">Ton Balance:</div>
+        <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} {{ updateTonBalance.symbol }}</div>
       </div>
-      <div class="vesting-address-intro">| Your Current Balance :</div>
-      <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
+      <div class="vesting-address-intro">Vesting address:</div>
+      <div class="vesting-address-details">{{ tokenInformation['address'] }}</div>
     </div>
-    <div v-if="activeTab === 'MarketingTON'" class="mton">
+    <div v-if="activeTab === 'MarketingTON' && user !== owner" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
       <button :disabled="parseFloat(tokenInformation['totalBalance'])===0" class="release-button" :class="{ 'not-allowed': parseFloat(tokenInformation['totalBalance'])===0 }" :style="{background: color}" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
       <notifications group="confirmed"
@@ -41,8 +40,6 @@
             :end="tokenInformation['endDate']"
             :cliff="tokenInformation['cliffDate']"
             :total="tokenInformation['total']"
-            :released="tokenInformation['released']"
-            :vested="tokenInformation['vested']"
             :deposited="tokenInformation['totalDeposited']"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
@@ -84,6 +81,7 @@ export default {
   data () {
     return {
       tab: '',
+      operator:{},
       activeTab: this.$store.state.tokenList[0],
       address: '',
       confirmed:{
@@ -97,51 +95,31 @@ export default {
       'user',
       'tokenList',
       'tonBalance',
+      'owner',
     ]),
     ...mapGetters([
       'tokenInfoByTab',
       'updateBalances',
-      'updateTonBalances',
     ]),
     tokenInformation () {
       return this.tokenInfoByTab(this.activeTab);
     },
-    updateVestedBalance (){
-      return this.updateBalances(this.activeTab, this.confirmed);
-    },
     updateTonBalance (){
-      return this.updateTonBalances(this.confirmed);
-    },
-    color (){
-      const color = parseFloat(this.tokenInformation.approvedAmount)===0?'#fff':'#B2B5B7';
-      return color;
-    },
-    swappedAllTokens () {
-      return this.tokenList.length === 0;
-    },
-  },
-  watch: {
-    swappedAllTokens () {
-      alert('You have swapped all your tokens');
-      this.$store.dispatch('logout');
-      this.$router.replace({
-        path: '/',
-        query: { network: this.$route.query.network },
-      }).catch(err => {});
-    },
-    activeTab (){
-      this.changeTab(this.activeTab);
+      return this.updateBalances(this.confirmed);
     },
   },
   beforeCreate (){
     if (this.$store.state.tokenList.length ===0){
-      alert('You do not have tokens');
+      alert('you do not have tokens');
       this.$store.dispatch('logout');
       this.$router.replace({
         path: '/',
         query: { network: this.$route.query.network },
       }).catch(err => {});
     }
+  },
+  created () {
+    console.log(this.user);
   },
   methods: {
     async changeTab (tab) {
@@ -151,15 +129,15 @@ export default {
     clickRelease (confirmed){
       this.confirmed=confirmed;
     },
-    changeActiveTab (){
-      this.activeTab = this.$store.state.tokenList[0];
-      this.changeTab(this.$store.state.tokenList[0]);
+    changeActiveTab (confirmed){
+      this.confirmed=confirmed;
+      this.activeTab=this.$store.state.tokenList[0];
     },
     async mtonApprove (){
       const address = this.tokenInformation.address;
       const totalBalance = this.tokenInformation.totalBalance;
       const mton = createWeb3Contract(MtonABI, address);
-      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const balance = await mton.methods.balanceOf(this.user).call();
       await mton.methods.approve(swapperAddress, balance).send({
         from: this.user,
@@ -190,7 +168,7 @@ export default {
       });
     },
     async mtonSwap (){
-      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
       const vestingAddress = this.tokenInformation.address;
       await swapper.methods.swap(vestingAddress).send({
@@ -266,27 +244,22 @@ export default {
   align-items: center;
 }
 .vesting-address {
+  border-right: solid 1px #99ddff;
   padding-top: 5px;
+  padding-right: 20px;
   display: flex;
   justify-content: flex-start;
-  align-items: center;
 }
 .vesting-address-intro {
   padding-left: 20px;
   font-size: 15px;
-}
-.vesting-address-details-brackets {
-  padding-left: 5px;
-  font-size: 10px;
-  display: flex;
-  align-items: flex-end;
-
 }
 .vesting-address-details {
   padding-left: 20px;
   font-size: 15px;
   color: #003366;
 }
+
 .table-info-with-graph {
   margin-right: 20px;
   display: flex;
@@ -349,12 +322,5 @@ button:focus {
   margin: 16px;
   border-radius: 7px;
   border: 1px solid #ced6d9;
-}
-.not-allowed:hover {
-  cursor: not-allowed;
-}
-.not-allowed{
-  color: #c4c4c4;
-  background: #f7f8f9;
 }
 </style>
