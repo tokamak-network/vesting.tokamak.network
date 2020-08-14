@@ -19,7 +19,7 @@
       <div class="vesting-address-intro">| Your Current Balance :</div>
       <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
     </div>
-    <div v-if="activeTab === 'MarketingTON'" class="mton">
+    <div v-if="activeTab === 'MarketingTON' && user !== owner" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
       <button :disabled="parseFloat(tokenInformation['totalBalance'])===0" class="release-button" :class="{ 'not-allowed': parseFloat(tokenInformation['totalBalance'])===0 }" :style="{background: color}" @click="parseFloat(tokenInformation['approvedAmount'])===0?mtonApprove():mtonSwap()">{{ parseFloat(tokenInformation['approvedAmount'])===0?'Approve':'Swap' }}</button>
       <notifications group="confirmed"
@@ -41,8 +41,6 @@
             :end="tokenInformation['endDate']"
             :cliff="tokenInformation['cliffDate']"
             :total="tokenInformation['total']"
-            :released="tokenInformation['released']"
-            :vested="tokenInformation['vested']"
             :deposited="tokenInformation['totalDeposited']"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
@@ -97,6 +95,7 @@ export default {
       'user',
       'tokenList',
       'tonBalance',
+      'owner',
     ]),
     ...mapGetters([
       'tokenInfoByTab',
@@ -159,7 +158,7 @@ export default {
       const address = this.tokenInformation.address;
       const totalBalance = this.tokenInformation.totalBalance;
       const mton = createWeb3Contract(MtonABI, address);
-      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const balance = await mton.methods.balanceOf(this.user).call();
       await mton.methods.approve(swapperAddress, balance).send({
         from: this.user,
@@ -190,7 +189,7 @@ export default {
       });
     },
     async mtonSwap (){
-      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
       const vestingAddress = this.tokenInformation.address;
       await swapper.methods.swap(vestingAddress).send({
@@ -280,13 +279,13 @@ export default {
   font-size: 10px;
   display: flex;
   align-items: flex-end;
-
 }
 .vesting-address-details {
   padding-left: 20px;
   font-size: 15px;
   color: #003366;
 }
+
 .table-info-with-graph {
   margin-right: 20px;
   display: flex;

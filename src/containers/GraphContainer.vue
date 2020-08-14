@@ -54,7 +54,7 @@ export default {
         return [points, colors];
       }
       if (this.tab === 'MarketingTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
+        this.setPoints(points, colors, starts, ends, totals, 0.077, 0.0923, 10 );
         return [points, colors];
       }
       if (this.tab === 'StrategicTON'){

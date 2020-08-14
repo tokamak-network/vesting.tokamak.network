@@ -50,7 +50,7 @@ export default {
   },
   computed: {
     href () {
-      return getConfig().mainnet.prefixAddress + this.content;
+      return getConfig().rinkeby.prefixAddress + this.content;
     },
   },
 };
