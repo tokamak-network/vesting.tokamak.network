@@ -118,9 +118,6 @@ export default {
       }).catch(err => {});
     }
   },
-  created () {
-    console.log(this.user);
-  },
   methods: {
     async changeTab (tab) {
       this.activeTab = tab;

@@ -65,6 +65,9 @@
     <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
       <button :disabled="!showButtonForMainTon" class="button-release" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
+    <div v-show="tab === 'MarketingTON'" class="release-button-container">
+      <button :disabled="!showButtonForMTON" class="button-release" @click="parseFloat(tokenBalance) !== 0?depositMTON(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+    </div>
     <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
       <button :disabled="!showButtonForOtherTon" class="button-release" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
@@ -84,6 +87,7 @@ import TextViewerRate from '@/components/TextViewerRate.vue';
 import TextViewerNumber from '@/components/TextViewerNumber.vue';
 import store from '@/store/index.js';
 import moment from 'moment';
+import MtonABI from '@/contracts/abi/MTON.json';
 
 export default {
   components: {
@@ -135,6 +139,15 @@ export default {
         return false;
       }
     },
+    showButtonForMTON (){
+      const releasable = parseFloat(this.tokenReleasable);
+      if (releasable !== 0 ) {
+        return true;
+      }
+      else {
+        return false;
+      }
+    },
   },
   methods: {
     formatDate (date) {
@@ -145,6 +158,7 @@ export default {
       return dateFormatted;
     },
     async swapFirstTokens (vestingAddress) {
+      console.log('swap');
       const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
@@ -181,6 +195,79 @@ export default {
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
       await tokenVesting.methods.approveAndCall(swapperAddress, this.graphTotal, []).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async depositMTON (vestingAddress) {
+      console.log('deposit');
+      // const totalBalance = this.tokenInformation.total;
+      const mton = createWeb3Contract(MtonABI, vestingAddress);
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const balance = await mton.methods.balanceOf(this.user).call();
+      await mton.methods.approve(swapperAddress, balance).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.receiveApproval(vestingAddress);
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async receiveApproval (vestingAddress) {
+      console.log('aproval');
+      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
+      const mton = createWeb3Contract(MtonABI, vestingAddress);
+      const balance = await mton.methods.balanceOf(this.user).call();
+      await swapper.methods.receiveApproval(this.user, balance, vestingAddress, []).send({
         from: this.user,
       }).on('error', (error) => {
         this.$notify({
