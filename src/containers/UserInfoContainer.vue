@@ -169,7 +169,7 @@ export default {
       return dateFormatted;
     },
     async swapFirstTokens (vestingAddress) {
-      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
@@ -203,7 +203,7 @@ export default {
       });
     },
     async deposit ( vestingAddress ){
-      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
       await tokenVesting.methods.approveAndCall(swapperAddress, this.graphTotal, []).send({
@@ -240,7 +240,7 @@ export default {
       console.log('deposit');
       // const totalBalance = this.tokenInformation.total;
       const mton = createWeb3Contract(MtonABI, vestingAddress);
-      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const balance = await mton.methods.balanceOf(this.user).call();
       await mton.methods.approve(swapperAddress, balance).send({
         from: this.user,
@@ -275,7 +275,7 @@ export default {
     },
     async receiveApproval (vestingAddress) {
       console.log('aproval');
-      const swapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const mton = createWeb3Contract(MtonABI, vestingAddress);
       const balance = await mton.methods.balanceOf(this.user).call();
@@ -310,7 +310,7 @@ export default {
       });
     },
     async swapperAddressecondTokens (vestingAddress){
-      const swapperAddress = getConfig().rinkeby.contractAddress.StepSwapper;
+      const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
       const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
       await swapper.methods.swap(vestingAddress).send({
         from: this.user,
