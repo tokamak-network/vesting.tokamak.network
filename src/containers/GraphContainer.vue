@@ -41,67 +41,67 @@ export default {
       const starts = this.start;
       const totalSourceTon = this.displayAmount(this.total);
       const totals = this.rate * Math.round(parseFloat(totalSourceTon) * 10) / 10;
-      const cliff = this.cliff;
+      const cliff = Number(starts)+2566800;
       const ends = this.end;
       const points = [];
       const colors = [];
       if (this.tab === 'SeedTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.01, 0.165, 6 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.01, 0.165, 5 );
         return [points, colors];
       }
       if (this.tab === 'PrivateTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.05, 0.095, 10 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.05, 0.095, 9 );
         return [points, colors];
       }
       if (this.tab === 'MarketingTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.1, 0.1, 9 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.1, 0.1, 8 );
         return [points, colors];
       }
       if (this.tab === 'StrategicTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.09, 0.091, 10 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.09, 0.091, 9 );
         return [points, colors];
       }
       if (this.tab === 'TeamTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.0278, 0.0278, 35 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.0278, 0.0278, 34 );
         return [points, colors];
       }
       if (this.tab === 'AdvisorTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.0556, 0.0556, 17 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.0556, 0.0556, 16 );
         return [points, colors];
       }
       if (this.tab === 'BusinessTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.05, 0.05, 19 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.05, 0.05, 18 );
         return [points, colors];
       }
       if (this.tab === 'ReserveTON'){
-        this.setPoints(points, colors, starts, ends, totals, 0.0333, 0.0333, 29 );
+        this.setPoints(points, colors, starts, ends, cliff, totals, 0.0333, 0.0333, 28 );
         return [points, colors];
       }
       if (this.tab === 'DaoTON'){
         return [points, colors];
       }
     },
-    setPoints (points, colors, starts, ends, totals, ratio1, ratio2, i){
+    setPoints (points, colors, starts, ends, cliff, totals, ratio1, ratio2, i){
       const now = new Date() / 1000;
       points.push({ x:this.formatDate(starts), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
-      if (now >= starts && now < Number(starts)+(2566800)){
+      if (now >= starts && now < Number(cliff)){
         points.push({ x:this.formatDate(now), y:totals * ratio1 });
         colors.push('rgba(255, 71, 99, 1)');
       }
-      points.push({ x:this.formatDate(Number(starts)+(2566800)), y:totals * ratio1 });
+      points.push({ x:this.formatDate(cliff), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
-      let j = 1;
+      let j = 0;
       for (j; j<i; j++){
-        points.push({ x:this.formatDate(Number(starts)+(2592000*j)), y:totals * (ratio1 +(ratio2*j)) });
+        points.push({ x:this.formatDate(Number(cliff)+(2592000*j)), y:totals * (ratio1 +(ratio2*(j+1))) });
         colors.push('rgba(92,182,228,1)');
-        if (now >= Number(starts)+(2592000*j) && now < Number(starts)+(2592000*(j+1))){
+        if (now >= Number(cliff)+(2592000*j) && now < Number(cliff)+(2592000*(j+1))){
           points.push({ x:this.formatDate(now), y:totals * (ratio1 +(ratio2*(j) )) });
           colors.push('rgba(255, 71, 99, 1)');
         }
-        points.push({ x:this.formatDate(Number(starts)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*j)) });
+        points.push({ x:this.formatDate(Number(cliff)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*(j+1))) });
         colors.push('rgba(92,182,228,1)');
-        if (now >= Number(starts)+(2592000*(j+1)) && now < Number(ends)){
+        if (now >= Number(cliff)+(2592000*(j+1)) && now < Number(ends)){
           points.push({ x:this.formatDate(now), y:totals });
           colors.push('rgba(255, 71, 99, 1)');
         }
