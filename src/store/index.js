@@ -34,6 +34,7 @@ const _DAO = createCurrency('DAO');
 const initialState = {
   loading: false,
   signIn: false,
+  owner: '0x2b3a5a8e301e3e0aa6facf0b2ef821b236ee5ee3',
 
   // transactionss (based on receipt: getTransactionReceipt)
   transactions: [],
@@ -309,14 +310,17 @@ export default new Vuex.Store({
       const privateDeposited = await swapper.methods.totalAmount(privateAddress, user).call();
       const seedDeposited = await swapper.methods.totalAmount(seedAddress, user).call();
       const strategicDeposited = await swapper.methods.totalAmount(strategicAddress, user).call();
+      const marketingDeposited = await swapper.methods.totalAmount(marketingAddress, user).call();
       //-----------------------
       const privateReleasedAmount = await swapper.methods.released (privateAddress, user).call();
       const seedReleasedAmount = await swapper.methods.released (seedAddress, user).call();
       const strategicReleasedAmount = await swapper.methods.released (strategicAddress, user).call();
+      const marketingReleasedAmount = await swapper.methods.released (marketingAddress, user).call();
       //-----------------------
       const privatePureDeposited = Number(privateDeposited) - Number(privateReleasedAmount);
       const seedPureDeposited = Number(seedDeposited) - Number(seedReleasedAmount);
       const stretegicPureDeposited = Number(strategicDeposited) - Number(strategicReleasedAmount);
+      const marketingPureDeposited = Number(marketingDeposited) - Number(marketingReleasedAmount);
       //-----------------------
       const advisorTonBalance = await advisorTON.methods.balanceOf(user).call();
       const teamTonBalance = await teamTON.methods.balanceOf(user).call();
@@ -346,32 +350,64 @@ export default new Vuex.Store({
       context.commit('SET_RESERVE_BALANCE', reserveTonBalance );
       context.commit('SET_DAO_BALANCE', daoTonBalance);
       context.commit('SET_TON_BALANCE', tonBalanceFormatted);
-      if (parseFloat(seedTonBalance) !== 0 || parseFloat(seedPureDeposited) !== 0){
-        list.push('SeedTON');
+      if ( user === this.state.owner) {
+        if (parseFloat(seedTonBalance) !== 0 || parseFloat(seedPureDeposited) !== 0){
+          list.push('SeedTON');
+        }
+        if (parseFloat(privateTonBalance) !== 0 || parseFloat(privatePureDeposited) !== 0){
+          list.push('PrivateTON');
+        }
+        if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
+          list.push('StrategicTON');
+        }
+        if (parseFloat(marketingTonBalance) !== 0 || parseFloat(marketingPureDeposited) !== 0){
+          list.push('MarketingTON');
+        }
+        if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
+          list.push('TeamTON');
+        }
+        if (parseFloat(advisorTonBalance) !== 0 || parseFloat(advisorPureDeposited) !== 0){
+          list.push('AdvisorTON');
+        }
+        if (parseFloat(businessTonBalance) !== 0 || parseFloat(businessPureDeposited) !== 0){
+          list.push('BusinessTON');
+        }
+        if (parseFloat(reserveTonBalance) !== 0 || parseFloat(reservePureDeposited) !== 0){
+          list.push('ReserveTON');
+        }
+        if (parseFloat(daoTonBalance) !== 0 || parseFloat(daoPureDeposited) !== 0){
+          list.push('DaoTON');
+        }
       }
-      if (parseFloat(privateTonBalance) !== 0 || parseFloat(privatePureDeposited) !== 0){
-        list.push('PrivateTON');
-      }
-      if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
-        list.push('StrategicTON');
-      }
-      if (parseFloat(marketingTonBalance) !== 0){
-        list.push('MarketingTON');
-      }
-      if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
-        list.push('TeamTON');
-      }
-      if (parseFloat(advisorTonBalance) !== 0 || parseFloat(advisorPureDeposited) !== 0){
-        list.push('AdvisorTON');
-      }
-      if (parseFloat(businessTonBalance) !== 0 || parseFloat(businessPureDeposited) !== 0){
-        list.push('BusinessTON');
-      }
-      if (parseFloat(reserveTonBalance) !== 0 || parseFloat(reservePureDeposited) !== 0){
-        list.push('ReserveTON');
-      }
-      if (parseFloat(daoTonBalance) !== 0 || parseFloat(daoPureDeposited) !== 0){
-        list.push('DaoTON');
+      else {
+        if (parseFloat(seedTonBalance) !== 0 || parseFloat(seedPureDeposited) !== 0){
+          list.push('SeedTON');
+        }
+        if (parseFloat(privateTonBalance) !== 0 || parseFloat(privatePureDeposited) !== 0){
+          list.push('PrivateTON');
+        }
+        if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
+          list.push('StrategicTON');
+        }
+        if (parseFloat(marketingTonBalance) !== 0 ){
+          list.push('MarketingTON');
+        }
+        if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
+          list.push('TeamTON');
+        }
+        if (parseFloat(advisorTonBalance) !== 0 || parseFloat(advisorPureDeposited) !== 0){
+          list.push('AdvisorTON');
+        }
+        if (parseFloat(businessTonBalance) !== 0 || parseFloat(businessPureDeposited) !== 0){
+          list.push('BusinessTON');
+        }
+        if (parseFloat(reserveTonBalance) !== 0 || parseFloat(reservePureDeposited) !== 0){
+          list.push('ReserveTON');
+        }
+        if (parseFloat(daoTonBalance) !== 0 || parseFloat(daoPureDeposited) !== 0){
+          list.push('DaoTON');
+        }
+
       }
       context.commit('SET_TOKEN_LIST', list);
 
@@ -440,21 +476,42 @@ export default new Vuex.Store({
             }
           }
           else if (token === 'MarketingTON') {
-            // const vestingSwapperAddress = getConfig().rinkeby.contractAddress.VestingSwapper;
-            // const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
-
+            const vestingSwapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+            const vestingSwapper = createWeb3Contract(VestingSwapperABI, vestingSwapperAddress);
+            const startDate = await vestingSwapper.methods.start(address).call();
+            info.startDate = startDate;
+            const duration = await vestingSwapper.methods.duration(address).call();
+            info.duration = duration;
+            const endDate = Number(startDate) + (Number(duration) * durationUnit) - 7 * 60 * 60;
+            info.endDate = endDate;
+            const cliffDate = await vestingSwapper.methods.cliff(address).call();
+            info.cliffDate = cliffDate;
+            const releasedAmount = await vestingSwapper.methods.released (address, user).call();
+            const totalDeposited = await vestingSwapper.methods.totalAmount(address, user).call();
+            const totalAmount = Number(totalDeposited);
             const swapperAddress = getConfig().mainnet.contractAddress.StepSwapper;
             const swapper = createWeb3Contract(SimpleSwapperABI, swapperAddress);
             const marketingTon = createWeb3Contract(MtonABI, address);
             const balance = await marketingTon.methods.balanceOf(user).call();
             const totalBalance = Number(balance);
+            const ontherPureDeposited = totalAmount - Number(releasedAmount);
+            const releasableAmount = await vestingSwapper.methods.releasableAmount(address, user).call();
+            const graphDecimals = await marketingTon.methods.decimals().call();
             info.totalBalance =  _MTON(totalBalance, 'wei');
-            // const released = await swapper.methods.released (address, user).call();
+            const rate = await vestingSwapper.methods.ratio(address).call();
+            info.balanceUnformatted = balance;
+            info.rate = rate;
+            info.graphDecimals = graphDecimals;
+            info.totalDeposited = _MTON(totalAmount, 'wei');
+            info.released = _MTON(releasedAmount, 'wei');
+            info.releasable = _MTON(releasableAmount, 'wei');
+            info.graphTotal = _MTON(totalDeposited);
+            info.total = _MTON(balance, 'wei');
             const approvedAmount = await marketingTon.methods.allowance(user, swapperAddress).call();
             const totalApprovedAmount = Number(approvedAmount);
             const pureDeposited = totalApprovedAmount;
             info.approvedAmount = _MTON(totalApprovedAmount, 'wei');
-            info.pureDeposited = _MTON(pureDeposited, 'wei');
+            info.pureDeposited = user === this.state.owner? _MTON(ontherPureDeposited, 'wei'):_MTON(pureDeposited, 'wei');
             info.rate = 1;
           }
           else {

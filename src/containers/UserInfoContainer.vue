@@ -66,6 +66,9 @@
     <div v-show="tab === 'SeedTON' || tab === 'PrivateTON' || tab === 'StrategicTON'" class="release-button-container">
       <button :disabled="!showButtonForMainTon" class="button-release" :class="{ 'not-allowed': !showButtonForMainTon }" :style="{background: color}" @click="parseFloat(tokenBalance) !== 0?deposit(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
     </div>
+    <div v-show="tab === 'MarketingTON'" class="release-button-container">
+      <button :disabled="!showButtonForMTON" class="button-release" :class="{ 'not-allowed': !showButtonForMTON }" :style="{background: color}" @click="parseFloat(tokenBalance) !== 0?depositMTON(address):swapFirstTokens(address)">{{ parseFloat(tokenBalance) !== 0? 'Deposit':'Swap' }}</button>
+    </div>
     <div v-show="tab === 'TeamTON' || tab === 'AdvisorTON' || tab === 'BusinessTON' || tab === 'ReserveTON' || tab === 'DaoTON'" class="release-button-container">
       <button :disabled="!showButtonForOtherTon" class="button-release" :class="{ 'not-allowed': !showButtonForOtherTon }" :style="{background: color}" @click="swapperAddressecondTokens(address)">Swap</button>
     </div>
@@ -82,10 +85,11 @@ import { createWeb3Contract } from '@/helpers/Contract';
 import TextViewer from '@/components/TextViewer.vue';
 import TextViewerLink from '@/components/TextViewerLink.vue';
 import TextViewerRate from '@/components/TextViewerRate.vue';
-import TextViewerNumber from '@/components/TextViewerNumber.vue';
 import TextViewerRatio from '@/components/TextViewerRatio.vue';
+import TextViewerNumber from '@/components/TextViewerNumber.vue';
 import store from '@/store/index.js';
 import moment from 'moment';
+import MtonABI from '@/contracts/abi/MTON.json';
 
 export default {
   components: {
@@ -95,7 +99,7 @@ export default {
     'text-viewer-ratio':TextViewerRatio,
     'text-viewer-Number':TextViewerNumber,
   },
-  props: ['tab', 'start', 'end', 'cliff', 'total', 'released', 'vested', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
+  props: ['tab', 'start', 'end', 'cliff', 'total', 'deposited', 'releasable', 'address', 'rate', 'graphTotal' ],
   data () {
     return {
       confirmed:false,
@@ -136,6 +140,19 @@ export default {
       }
       else {
         return false;
+      }
+    },
+    showButtonForMTON (){
+      const releasable = parseFloat(this.tokenReleasable);
+      const balance = parseFloat(this.tokenBalance);
+      if (releasable === 0 && balance === 0){
+        return false;
+      }
+      else if (releasable !==0 || balance !==0){
+        return true;
+      }
+      else{
+        return true;
       }
     },
     color (){
@@ -180,6 +197,8 @@ export default {
             type: 'success',
             duration: 5000,
           });
+          this.$emit('releaseClicked', this.confirmed);
+          this.$emit('changeActiveTab', this.confirmed);
         }
       });
     },
@@ -188,6 +207,79 @@ export default {
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const tokenVesting = createWeb3Contract(VestingTokenABI, vestingAddress);
       await tokenVesting.methods.approveAndCall(swapperAddress, this.graphTotal, []).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async depositMTON (vestingAddress) {
+      console.log('deposit');
+      // const totalBalance = this.tokenInformation.total;
+      const mton = createWeb3Contract(MtonABI, vestingAddress);
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+      const balance = await mton.methods.balanceOf(this.user).call();
+      await mton.methods.approve(swapperAddress, balance).send({
+        from: this.user,
+      }).on('error', (error) => {
+        this.$notify({
+          group: 'reverted',
+          title: 'Transaction is reverted',
+          type: 'error',
+          duration: 5000,
+        });
+        this.$router.replace({
+          path: this.from.path,
+          query: { network: this.$route.query.network },
+        }).catch(err => {});
+      }).on('confirmation', (confirmationNumber, receipt) =>{
+        if (receipt.status){
+          if(confirmationNumber === 0){
+            this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
+            this.$emit('releaseClicked', this.confirmed);
+            this.$store.dispatch('setTokenInfo');
+            this.receiveApproval(vestingAddress);
+            this.$notify({
+              group: 'confirmed',
+              title: 'Transaction is confirmed',
+              type: 'success',
+              duration: 5000,
+            });
+          }
+        }
+      });
+    },
+    async receiveApproval (vestingAddress) {
+      console.log('aproval');
+      const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
+      const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
+      const mton = createWeb3Contract(MtonABI, vestingAddress);
+      const balance = await mton.methods.balanceOf(this.user).call();
+      await swapper.methods.receiveApproval(this.user, balance, vestingAddress, []).send({
         from: this.user,
       }).on('error', (error) => {
         this.$notify({
@@ -237,9 +329,9 @@ export default {
         if (receipt.status){
           if(confirmationNumber === 0){
             this.confirmed = !this.confirmed;
+            this.$store.dispatch('setBalance');
             this.$emit('releaseClicked', this.confirmed);
             this.$emit('changeActiveTab', this.confirmed);
-            this.$store.dispatch('setBalance');
             this.$store.dispatch('setTokenInfo');
             this.$notify({
               group: 'confirmed',
@@ -313,6 +405,20 @@ export default {
   border: 1px solid #ced6d9;
 }
 
+.button-commit {
+  color: #ffffff;
+  background-color: #f38776;
+  border: 1px solid #f38776;
+  text-align: center;
+  font-size: 14px;
+  border-radius: 4px;
+  height: 24px;
+  margin-right: 16px;
+}
+
+.button-commit:hover {
+  cursor: pointer;
+}
 .button {
   width: 100%;
   height: 100%;
@@ -326,11 +432,10 @@ export default {
   cursor: not-allowed;
 }
 .not-allowed{
-  color: #ced6d9;
-  background: #f7f8f9;
+color: #ced6d9;
+background: #f7f8f9;
 }
 .not-allowed:hover {
-  cursor: not-allowed;
+cursor: not-allowed;
 }
-
 </style>

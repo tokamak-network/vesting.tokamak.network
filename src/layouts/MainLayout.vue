@@ -19,7 +19,7 @@
       <div class="vesting-address-intro">| Your Current Balance :</div>
       <div class="vesting-address-details">{{ parseFloat(updateTonBalance).toLocaleString('en-US', {minimumFractionDigits: 2}) }} TON </div>
     </div>
-    <div v-if="activeTab === 'MarketingTON'" class="mton">
+    <div v-if="activeTab === 'MarketingTON' && user !== owner" class="mton">
       <div>Swappable TON: {{ ((parseFloat(tokenInformation['totalBalance']) * 10) / 10).toLocaleString('en-US', {minimumFractionDigits: 2}) }}</div>
       <button :disabled="parseFloat(tokenInformation['totalBalance'])===0"
               class="release-button"
@@ -47,8 +47,6 @@
             :end="tokenInformation['endDate']"
             :cliff="tokenInformation['cliffDate']"
             :total="tokenInformation['total']"
-            :released="tokenInformation['released']"
-            :vested="tokenInformation['vested']"
             :deposited="tokenInformation['totalDeposited']"
             :releasable="tokenInformation['releasable']"
             :address="tokenInformation['address']"
@@ -103,6 +101,7 @@ export default {
       'user',
       'tokenList',
       'tonBalance',
+      'owner',
     ]),
     ...mapGetters([
       'tokenInfoByTab',
@@ -286,13 +285,13 @@ export default {
   font-size: 10px;
   display: flex;
   align-items: flex-end;
-
 }
 .vesting-address-details {
   padding-left: 20px;
   font-size: 15px;
   color: #003366;
 }
+
 .table-info-with-graph {
   margin-right: 20px;
   display: flex;
