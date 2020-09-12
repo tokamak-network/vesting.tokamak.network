@@ -96,7 +96,7 @@ export default {
         points.push({ x:this.formatDate(Number(cliff)+(2592000*j)), y:totals * (ratio1 +(ratio2*(j+1))) });
         colors.push('rgba(92,182,228,1)');
         if (now >= Number(cliff)+(2592000*j) && now < Number(cliff)+(2592000*(j+1))){
-          points.push({ x:this.formatDate(now), y:totals * (ratio1 +(ratio2*(j) )) });
+          points.push({ x:this.formatDate(now), y:totals * (ratio1 +(ratio2*(j+1) )) });
           colors.push('rgba(255, 71, 99, 1)');
         }
         points.push({ x:this.formatDate(Number(cliff)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*(j+1))) });
