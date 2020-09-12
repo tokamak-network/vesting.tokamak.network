@@ -273,7 +273,6 @@ export default {
       });
     },
     async receiveApproval (vestingAddress) {
-      console.log('aproval');
       const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
       const swapper = createWeb3Contract(VestingSwapperABI, swapperAddress);
       const mton = createWeb3Contract(MtonABI, vestingAddress);
