@@ -237,7 +237,6 @@ export default {
       });
     },
     async depositMTON (vestingAddress) {
-      console.log('deposit');
       // const totalBalance = this.tokenInformation.total;
       const mton = createWeb3Contract(MtonABI, vestingAddress);
       const swapperAddress = getConfig().mainnet.contractAddress.VestingSwapper;
