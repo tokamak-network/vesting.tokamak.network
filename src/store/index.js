@@ -360,7 +360,7 @@ export default new Vuex.Store({
         if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
           list.push('StrategicTON');
         }
-        if (parseFloat(marketingTonBalance) !== 0 || parseFloat(marketingPureDeposited) !== 0){
+        if (parseFloat(marketingTonBalance) !== 0 || parseFloat(marketingDeposited) !== 0){
           list.push('MarketingTON');
         }
         if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
