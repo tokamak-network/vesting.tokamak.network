@@ -34,7 +34,7 @@ const _DAO = createCurrency('DAO');
 const initialState = {
   loading: false,
   signIn: false,
-  owner: '0x2b3a5a8e301e3e0aa6facf0b2ef821b236ee5ee3',
+  owner: '0x2b3a5A8E301e3e0aA6FACf0B2ef821b236ee5EE3',
 
   // transactionss (based on receipt: getTransactionReceipt)
   transactions: [],
@@ -360,7 +360,7 @@ export default new Vuex.Store({
         if (parseFloat(strategicTonBalance) !== 0 || parseFloat(stretegicPureDeposited) !== 0){
           list.push('StrategicTON');
         }
-        if (parseFloat(marketingTonBalance) !== 0 || parseFloat(marketingDeposited) !== 0){
+        if (parseFloat(marketingTonBalance) !== 0 || parseFloat(marketingPureDeposited) !== 0){
           list.push('MarketingTON');
         }
         if (parseFloat(teamTonBalance) !== 0 || parseFloat(teamPureDeposited) !== 0){
