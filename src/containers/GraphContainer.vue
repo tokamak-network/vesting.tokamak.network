@@ -83,7 +83,6 @@ export default {
     },
     setPoints (points, colors, starts, ends, cliff, totals, ratio1, ratio2, i){
       const now = new Date() / 1000;
-      console.log(now);
       points.push({ x:this.formatDate(starts), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
       if (now >= starts && now < Number(cliff)){
