@@ -83,6 +83,7 @@ export default {
     },
     setPoints (points, colors, starts, ends, cliff, totals, ratio1, ratio2, i){
       const now = new Date() / 1000;
+      console.log(now);
       points.push({ x:this.formatDate(starts), y:totals * ratio1 });
       colors.push('rgba(92,182,228,1)');
       if (now >= starts && now < Number(cliff)){
@@ -101,13 +102,17 @@ export default {
         }
         points.push({ x:this.formatDate(Number(cliff)+(2592000*(j+1))), y:totals * (ratio1 +(ratio2*(j+1))) });
         colors.push('rgba(92,182,228,1)');
-        if (now >= Number(cliff)+(2592000*(j+1)) && now < Number(ends)){
+        if (now >= Number(cliff)+(2592000*(i)) && now < Number(ends)){
           points.push({ x:this.formatDate(now), y:totals });
           colors.push('rgba(255, 71, 99, 1)');
         }
       }
       points.push({ x:this.formatDate(ends), y:totals });
       colors.push('rgba(92,182,228,1)');
+      if (now === Number(ends)) {
+        points.push({ x:this.formatDate(now), y:totals });
+        colors.push('rgba(255, 71, 99, 1)');
+      }
       // this.pointBackgroundColors = colors;
     },
     formatDate (date) {
