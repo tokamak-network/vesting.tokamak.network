@@ -6,7 +6,7 @@
   >
     <img
       class="wallet-image"
-      src="@/assets/Images/Metamask.jpg"
+      src="@/assets/images/Metamask.jpg"
       width="25"
       height="23"
     >

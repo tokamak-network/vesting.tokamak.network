@@ -2,7 +2,7 @@
   <div class="header-container">
     <div class="header">
       <div class="header-title-container">
-        <img src="@/assets/Images/Tokamak_transparent.png" height="28px" width="35px">
+        <img src="@/assets/images/Tokamak_transparent.png" height="28px" width="35px">
         <div class="header-title" target="_self" rel="noopener noreferrer">
           Tokamak Network Vesting Dashboard
         </div>
