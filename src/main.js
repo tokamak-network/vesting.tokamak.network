@@ -18,7 +18,7 @@ Vue.config.performance = isDev;
 
 Vue.use(VueGtag, {
   config: {
-    id: 'UA-141664476-1',
+    id: 'G-TFGJ3ECWWM',
   },
 });
 
