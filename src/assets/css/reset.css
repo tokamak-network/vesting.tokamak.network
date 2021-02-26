@@ -140,7 +140,7 @@ img {
   vertical-align: middle;
 /*
   For IE.
-  http://css-tricks.com/ie-fix-bicubic-scaling-for-images
+  http://css-tricks.com/ie-fix-bicubic-scaling-for-Images
 */
   -ms-interpolation-mode: bicubic;
 }

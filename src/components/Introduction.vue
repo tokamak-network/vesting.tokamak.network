@@ -1,6 +1,6 @@
 <template>
   <div class="introduction-container">
-    <img class="introduction-image" src="@/assets/images/Intro.png">
+    <img class="introduction-image" src="@/assets/Images/Intro.png">
     <div class="introduction-title">
       Turing Complete
       <br>

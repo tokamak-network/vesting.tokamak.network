@@ -34,7 +34,7 @@
         >info@onther.io</a>
         <img
           class="filter-grey"
-          src="@/assets/images/Mail.png"
+          src="@/assets/Images/Mail.png"
           width="14;"
           height="10;"
         >
@@ -47,7 +47,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/medium.png"
+            src="@/assets/Images/community/medium.png"
             width="28x;"
             height="28px;"
           >
@@ -59,7 +59,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/linkedin.png"
+            src="@/assets/Images/community/linkedin.png"
             width="28x;"
             height="28px;"
           >
@@ -71,7 +71,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/twitter.png"
+            src="@/assets/Images/community/twitter.png"
             width="28x;"
             height="28px;"
           >
@@ -83,7 +83,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/youtube.png"
+            src="@/assets/Images/community/youtube.png"
             width="28x;"
             height="28px;"
           >
@@ -95,7 +95,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/facebook.png"
+            src="@/assets/Images/community/facebook.png"
             width="28x;"
             height="28px;"
           >
@@ -107,7 +107,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/github.png"
+            src="@/assets/Images/community/github.png"
             width="28x;"
             height="28px;"
           >
@@ -119,7 +119,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/discord.png"
+            src="@/assets/Images/community/discord.png"
             width="28x;"
             height="28px;"
           >
@@ -131,7 +131,7 @@
         >
           <img
             class="footer-channel-image filter-grey"
-            src="@/assets/images/community/telegram.png"
+            src="@/assets/Images/community/telegram.png"
             width="28x;"
             height="28px;"
           >

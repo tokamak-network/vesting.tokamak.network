@@ -15,12 +15,12 @@
         {{ selectedItem }}
         <img v-if="unfolded"
              class="dropdown-icon"
-             src="@/assets/images/arrow-folded.png" alt=""
+             src="@/assets/Images/arrow-folded.png" alt=""
              width="9" height="8"
         >
         <img v-else
              class="dropdown-icon"
-             src="@/assets/images/icon_arrow@2x.png" alt=""
+             src="@/assets/Images/icon_arrow@2x.png" alt=""
              width="10" height="9"
         >
       </button>
