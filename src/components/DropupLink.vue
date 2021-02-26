@@ -149,6 +149,7 @@ export default {
   letter-spacing: 0.2px;
   text-align: left;
   color: #000000;
+  border-radius: 0px;
 
   border: solid 1px #555555;
   background-color: #ffffff;
