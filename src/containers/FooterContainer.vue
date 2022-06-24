@@ -158,7 +158,7 @@ export default {
       else if (item === 'Staking Simulator') window.open('https://staking-simulator.tokamak.network', '_blank'); // eslint-disable-line
       else if (item === 'Price Dashboard') window.open('https://price.tokamak.network', '_blank'); // eslint-disable-line
       else if (item === 'Vesting Dashboard') window.open('https://vesting.tokamak.network', '_blank'); // eslint-disable-line
-      else if (item === 'WTON Swapper') window.open('https://wton-swapper.tokamak.network', '_blank'); // eslint-disable-line
+      else if (item === 'Swapper') window.open('https://swap.tokamak.network', '_blank'); // eslint-disable-line
       else if (item === 'Developer Guide') window.open('https://docs.tokamak.network', '_blank'); // eslint-disable-line
     },
   },
