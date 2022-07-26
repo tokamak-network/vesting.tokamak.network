@@ -19,6 +19,7 @@ import { getConfig } from '../../config.js';
 import { setProvider } from '@/helpers/Contract';
 import { mapState } from 'vuex';
 import Wallet from '@/components/Wallet.vue';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 export default {
   components: {
@@ -56,24 +57,29 @@ export default {
       }
     },
     async metamask () {
-      let provider;
-      if (typeof window.ethereum !== 'undefined') {
-        try {
-          await window.ethereum.enable();
-          provider = window.ethereum;
-        } catch (e) {
-          if (e.stack.includes('Error: User denied account authorization')) {
-            throw new Error('User denied account authorization');
-          } else {
-            throw new Error(e.message);
-          }
-        }
-      } else if (window.web3) {
-        provider = window.web3.currentProvider;
-      } else {
-        throw new Error('No web3 provider detected');
-      }
+      // let provider;
+      // if (typeof window.ethereum !== 'undefined') {
+      //   try {
+      //     await window.ethereum.enable();
+      //     provider = window.ethereum;
+      //   } catch (e) {
+      //     if (e.stack.includes('Error: User denied account authorization')) {
+      //       throw new Error('User denied account authorization');
+      //     } else {
+      //       throw new Error(e.message);
+      //     }
+      //   }
+      // } else if (window.web3) {
+      //   provider = window.web3.currentProvider;
+      // } else {
+      //   throw new Error('No web3 provider detected');
+      // }
 
+      const prov = await detectEthereumProvider();
+      if (prov) {
+        const { ethereum } = window;
+        await ethereum.request({ method: 'eth_requestAccounts' });
+      }
       // if (provider.networkVersion !== getConfig().network) {
       //   throw new Error(
       //     `Please connect to the '${this.$options.filters.nameOfNetwork(
@@ -82,7 +88,7 @@ export default {
       //   );
       // }
 
-      return new Web3(provider);
+      return new Web3(prov);
     },
   },
 };
