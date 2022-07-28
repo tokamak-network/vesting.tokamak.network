@@ -57,36 +57,24 @@ export default {
       }
     },
     async metamask () {
-      // let provider;
-      // if (typeof window.ethereum !== 'undefined') {
-      //   try {
-      //     await window.ethereum.enable();
-      //     provider = window.ethereum;
-      //   } catch (e) {
-      //     if (e.stack.includes('Error: User denied account authorization')) {
-      //       throw new Error('User denied account authorization');
-      //     } else {
-      //       throw new Error(e.message);
-      //     }
-      //   }
-      // } else if (window.web3) {
-      //   provider = window.web3.currentProvider;
-      // } else {
-      //   throw new Error('No web3 provider detected');
-      // }
-
       const prov = await detectEthereumProvider();
       if (prov) {
         const { ethereum } = window;
-        await ethereum.request({ method: 'eth_requestAccounts' });
+
+        try {
+          await ethereum.request({ method: 'eth_requestAccounts' });
+        } catch(e) {
+          console.log(e);
+        }
+
       }
-      // if (provider.networkVersion !== getConfig().network) {
-      //   throw new Error(
-      //     `Please connect to the '${this.$options.filters.nameOfNetwork(
-      //       getConfig().network
-      //     )}' network`
-      //   );
-      // }
+      if (prov.networkVersion !== getConfig().mainnet.network) {
+        throw new Error(
+          `Please connect to the '${this.$options.filters.nameOfNetwork(
+            getConfig().mainnet.network
+          )}' network`
+        );
+      }
 
       return new Web3(prov);
     },
