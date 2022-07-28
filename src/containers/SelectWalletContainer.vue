@@ -68,7 +68,7 @@ export default {
             try {
               await ethereum.request({ method: 'eth_requestAccounts' });
             } catch(e) {
-              console.log(e);
+              throw new Error(e.message);
             }
           }
         }
