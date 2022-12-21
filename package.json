@@ -63,6 +63,9 @@
     "vue-jest": "^3.0.5",
     "vue-template-compiler": "^2.6.10"
   },
+  "engines": {
+    "node": "16.1"
+  },
   "jest": {
     "moduleFileExtensions": [
       "js",
