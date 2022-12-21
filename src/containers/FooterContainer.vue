@@ -2,7 +2,7 @@
   <div class="footer-container">
     <div>
       <div class="footer-name">
-        ONTHER PTE.LTD.
+        TOKAMAK NETWORK PTE.LTD.
       </div>
       <div class="footer-address">
         111 SOMERSET ROAD #06-07O 111 SOMERSET SINGAPORE 238164
