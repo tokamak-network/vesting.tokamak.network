@@ -19,6 +19,7 @@ import { getConfig } from '../../config.js';
 import { setProvider } from '@/helpers/Contract';
 import { mapState } from 'vuex';
 import Wallet from '@/components/Wallet.vue';
+import detectEthereumProvider from '@metamask/detect-provider';
 
 export default {
   components: {
@@ -56,31 +57,42 @@ export default {
       }
     },
     async metamask () {
+
       let provider;
       if (typeof window.ethereum !== 'undefined') {
         try {
-          await window.ethereum.enable();
-          provider = window.ethereum;
-        } catch (e) {
+          const prov = await detectEthereumProvider();
+          provider = prov;
+          if (prov) {
+            const { ethereum } = window;
+            try {
+              await ethereum.request({ method: 'eth_requestAccounts' });
+            } catch(e) {
+              throw new Error(e.message);
+            }
+          }
+        }
+        catch(e) {
           if (e.stack.includes('Error: User denied account authorization')) {
             throw new Error('User denied account authorization');
           } else {
             throw new Error(e.message);
           }
         }
-      } else if (window.web3) {
+      }
+      else if (window.web3) {
         provider = window.web3.currentProvider;
+        this.showConnectModal = false;
       } else {
         throw new Error('No web3 provider detected');
       }
-
-      // if (provider.networkVersion !== getConfig().network) {
-      //   throw new Error(
-      //     `Please connect to the '${this.$options.filters.nameOfNetwork(
-      //       getConfig().network
-      //     )}' network`
-      //   );
-      // }
+      if (provider.networkVersion !== getConfig().mainnet.network) {
+        throw new Error(
+          `Please connect to the '${this.$options.filters.nameOfNetwork(
+            getConfig().mainnet.network
+          )}' network`
+        );
+      }
 
       return new Web3(provider);
     },

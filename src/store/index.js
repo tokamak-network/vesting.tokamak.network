@@ -225,7 +225,7 @@ export default new Vuex.Store({
         // context.dispatch('setTokenInfo')
         // context.dispatch('setTokenInfo')
       ]);
-      await new Promise(resolve => setTimeout(resolve, 1000)); // https://github.com/Onther-Tech/dashboard.tokamak.network/issues/81
+      await new Promise(resolve => setTimeout(resolve, 500)); // https://github.com/Onther-Tech/dashboard.tokamak.network/issues/81
       await context.dispatch('setTokenInfo');
       context.commit('SIGN_IN');
       context.commit('IS_LOADING', false);
