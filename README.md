@@ -1,5 +1,5 @@
 # vesting.tokamak.network
-![img](https://github.com/Onther-Tech/vesting.tokamak.network/blob/master/interface.png)
+![img](https://github.com/tokamak-network/vesting.tokamak.network/blob/master/interface.png)
 ## Project setup
 ```
 npm install
